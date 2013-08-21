@@ -47,6 +47,7 @@
 			var miniMapSize = this.miniMapSize;
 			var currentLevel = mapIndex;
 			this.mapData = data.Map[currentLevel];
+			new CAAT.SyncWave().init(director, this, mapIndex, level, 1, [4, 5, 8, 7, 5, 6, 7, 8]).create();
 			var mapData = this.mapData;
 			this.life = mapData.Life;
 			this.currentLife = this.life;

@@ -117,7 +117,9 @@
 				flagBtt[i] = new CAAT.Button().initialize(director, flagImage, 0, 0, 0, 0, function(button){
 		            	i = this.idInArray;
 
-		            	// call battle container
+				        // call battle container
+		            	self.mapindex = 0;
+		            	self.initMap(director);
 		            	director.switchToScene(1);
 
 		            	// sau battle, open next flag, cho no 2 sao lam demo
@@ -132,6 +134,26 @@
 			}
 
 			return this;
+		},
+		initData: function (director, battleContainer, skillarray, unlockTower, level, sceneSkillContainer, scenMainMenuIndex, sceneMenuIndex, battleLoad) {
+		    
+		    this.battleContainer = battleContainer;
+		    this.skillarray=skillarray;
+		    this.unlockTower=unlockTower;
+		    this.level = level;
+		    this.sceneSkillContainer = sceneSkillContainer;
+		    this.scenMainMenuIndex = scenMainMenuIndex;
+		    this.sceneMenuIndex = sceneMenuIndex;
+		    this.battleLoad = battleLoad;
+		    
+		    return this;
+		},
+		initMap: function (director) {
+		    
+		    this.battleContainer.initialize(director, this.mapindex, this.skillarray, this.unlockTower, this.level, this.sceneSkillContainer, this.scenMainMenuIndex, this.sceneMenuIndex);
+		    this.battleLoad();
+
+		    return this;
 		}
 	};
 	extend(CAAT.SemiMainMapCtn, CAAT.Foundation.ActorContainer);
