@@ -9,6 +9,7 @@ var currentMap;
 var monsterAddTime = 750;
 var addedMonster = 0;
 */
+//test commit;
 window.onload = function () {
     
 	//*
