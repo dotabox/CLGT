@@ -5,6 +5,7 @@
 			ID1:["Sấm Sét","Thunder"],
 			ID2:["Băng Giá","Ice"]
 		},
+
 		Tower:{
 			ID0:["Kim","Steel"],
 			ID1:["Mộc","Nature"],

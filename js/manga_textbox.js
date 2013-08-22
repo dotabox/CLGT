@@ -13,6 +13,7 @@
 			this.setSize(textActor.width, textActor.height);
             this.setPosition(actor.width - 15, -this.height - 15);
 			this.addChild(textActor);
+			this.director = director;
             actor.addChild(this);
             return this;
         },
@@ -39,7 +40,8 @@
 			ctx.fill();
 			ctx.stroke();
 			ctx.restore();
-            var image = director.getImage(this.type);
+			
+            var image = this.director.getImage(this.type);
             (typeof this.talkPositionX != "undefined")?
 				ctx.drawImage(image, this.talkPositionX, height + 4):
 				ctx.drawImage(image, this.radius, height + 4);

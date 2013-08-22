@@ -36,12 +36,12 @@
 					ctx.save();
 					ctx.strokeStyle = "#0F0";
 					ctx.lineWidth = 5;
-					/*
+					
 					ctx.beginPath();
 					ctx.arc(self.width/2,self.height/2,self.range/self.scaleX,0,Math.PI*2);
 					ctx.stroke();
 					ctx.closePath();
-					*/
+					
 					ctx.beginPath();
 					ctx.scale(1,0.4);
 					ctx.arc(77,360,70,-Math.PI/4,5*Math.PI/4);

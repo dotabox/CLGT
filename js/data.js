@@ -711,7 +711,7 @@
         Name:lang.data.Tower.ID19,
         Description:lang.description.Tower.ID19,
         Image: "tower1",
-        Damage: [10, 10],
+        Damage: [100, 100],
         Element: [4,4],
 		Resitant:[2,1.5,0.75,0.5,1],
         EffectID: [1],
@@ -720,7 +720,7 @@
 		LevelUp:{Dmg:10,Ran:0.1,RlT:10,Eff:[0,30,200]},
         Range: 5,
         ReloadTime: 300,
-        Price: 400,
+        Price: 300,
     }
 	
 	],
@@ -871,8 +871,8 @@
 	{
 		ID:19,
 		Name:["Sét","Lightning"],
-		Image: "lightning",	
-		Typebullet: 0,
+		Image: "bullet2",	
+		Typebullet: 1,
 		Speed:8
 		
 	}

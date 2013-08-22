@@ -301,7 +301,9 @@ window.onload = function () {
 						if (bc.isTimePaused) {this.cancel();}
 						if(bc.endBattle!=0){
 							sceneBattle.time = 0;
-							battleContainer = new CAAT.BattleContainer().initialize(director, 1 ,[2,1,0],[0,1,2,5,6,7,10,11,14],5, sceneSkillContainer,scenMainMenuIndex,sceneMenuIndex);
+							var tower = [];
+							for(var i=0;i<20;i++) tower.push(i);
+							battleContainer = new CAAT.BattleContainer().initialize(director, 1 ,[2,1,0],tower,5, sceneSkillContainer,scenMainMenuIndex,sceneMenuIndex);
 							sceneBattle.emptyChildren();
 							battleContainer.paused=pausedFunction;
 							sceneBattle.addChild(battleContainer);
@@ -331,6 +333,5 @@ window.onload = function () {
         CAAT.loop(60);
     }
 }
-
 
 var loadObj;
