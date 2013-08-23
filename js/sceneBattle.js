@@ -864,7 +864,6 @@
 				var callback = function(animation){
 					if(!animation.isEnd){
 						animation.isEnd = true;
-						console.log("dffd");
 						if(animation.animationIndex == 1) {
 							var cloudActor = animation.cloudActor;
 							var alphaBehavior = new CAAT.Behavior.AlphaBehavior().setValues(cloudActor.getChildAt(0).alpha, 0).setDelayTime(0, 1000).setCycle(false).
@@ -978,7 +977,7 @@
 				ctx.closePath();
 				ctx.restore();
 			}
-			self.setBuildIcon.addChild(showSelected);
+			if(!self.setBuildIcon.getChildAt(0))self.setBuildIcon.addChild(showSelected);
 			self.setBuildIcon.alpha = 0.5;
 			
 			self.redBuildIcon = new CAAT.Foundation.Actor().
@@ -986,9 +985,9 @@
 				setSize(self.setBuildIcon.width,self.setBuildIcon.height).
 				setLocation(0,0).
 				setAlpha(0);
-			self.setBuildIcon.addChild(self.redBuildIcon);
-
-			self.addChild(self.setBuildIcon);
+			if(!self.setBuildIcon.getChildAt(1))self.setBuildIcon.addChild(self.redBuildIcon);
+			
+			if(!self.setBuildIcon.parent)self.addChild(self.setBuildIcon);
 			self.curBuildType = type;
 
 		},
@@ -1325,42 +1324,24 @@
         if ((self.minimapPanel.parent)&&(self.minimapPanel.AABB.contains(ex, ey))) {
             self.setViewportTo(ex, ey);
             self.isDrag = true;
-            self.last.x = ex;
-            self.last.y = ey;
-
         }
 
         if (self.mapPanel.AABB.contains(ex, ey)) {
             self.isDrag = true;
-            self.last.x = ex;
+        }
+		if(self.isDrag){
+			self.last.x = ex;
             self.last.y = ey;
-        }
-		/*
-        if(self.skillPanel.AABB.contains(ex, ey)) {
-	        if(self.skillBtt_1.AABB.contains(ex, ey)) {
-	    		self.skillBtt_1.mouseDown();
-	    	}
-	    	else if(self.skillBtt_2.AABB.contains(ex, ey)) {
-	    		self.skillBtt_2.mouseDown();
-	    	}
-    	}
-        if (self.controlPanel.settingbutton.AABB.contains(ex, ey)) {
-            self.controlPanel.clickSttBtt();
-        }
-        else {
-            for (var i = 0; i < self.controlPanel.chooseTowers.length; i++) {
-                if (self.controlPanel.chooseTowers[i].AABB.contains(ex, ey)) {
-
-                }
-            }
-        }
-		//*/
+			self.startDragMouseX = ex;
+			self.startDragMouseY = ey;
+		}
     };
     var _mtDrag = function (self, ex, ey) {
         if ((self.minimapPanel.parent)&&(self.minimapPanel.AABB.contains(ex, ey))) {
             self.setViewportTo(ex, ey);
         }
         if (self.mapPanel.AABB.contains(ex, ey)) {
+			self.draggingBuild = true;
             if (self.isDrag) {
                 var dx = ex - self.last.x;
                 var dy = ey - self.last.y;
@@ -1379,7 +1360,10 @@
                 self.last.x = ex;
                 self.last.y = ey;
             }
-        }        
+        }
+		else{
+			self.draggingBuild = true;
+		}
     };
     var _mtMove = function (self, ex, ey) {
 		if(self.tooltip.positionIndex!=0) self.tooltip.setPosition(0);
@@ -1430,38 +1414,39 @@
     }
     var _btUp = function (self, ex, ey) {
         
-			for(var i=0;i<self.buildButtonArray.length;i++){
-				if(self.buildButtonArray[i].AABB.contains(ex,ey)) {
-					
-					return;
-				}
+		for(var i=0;i<self.buildButtonArray.length;i++){
+			if(self.buildButtonArray[i].AABB.contains(ex,ey)) {
+				
+				return;
 			}
-            self.isDrag = false;
-            if (self.isSetBuild && self.mapPanel.AABB.contains(ex, ey)) {
-                // check can build ?
+		}
+		self.isDrag = false;
+		if(self.draggingBuild||((self.startDragMouseX==self.last.x)&&(self.startDragMouseY==self.last.y))){
+			if (self.isSetBuild && self.mapPanel.AABB.contains(ex, ey)) {
+				// check can build ?
 				if(self.checkMouseInCircle(ex,ey,[self.width,self.height,self.buildCircle.radius])) {
 					self.unShowSetBuildIcon();
 					return;
 				}
-                var posx = Math.floor(((ex - self.mapBound.x) / TOWER_SIZE) >> 0) * TOWER_SIZE;
-                var posy = Math.floor(((ey - self.mapBound.y) / TOWER_SIZE) >> 0) * TOWER_SIZE;
-                self.towerID++;
-                if (self.canbuild) {
-                    
-                    if (self.currentGold < data.Tower[self.curBuildType].Price) {
-                        self.unShowSetBuildIcon();
-                    }
-                    else {
-                        var towerBuy = new CAAT.Tower().initialize(self, self.curBuildType, 0, posx, posy, self.towerID);
-                        self.currentGold -= towerBuy.price;
-                        self.mapBound.addChild(towerBuy);
-                        self.towerArray.push(towerBuy);
+				var posx = Math.floor(((ex - self.mapBound.x) / TOWER_SIZE) >> 0) * TOWER_SIZE;
+				var posy = Math.floor(((ey - self.mapBound.y) / TOWER_SIZE) >> 0) * TOWER_SIZE;
+				self.towerID++;
+				if (self.canbuild) {
+					
+					if (self.currentGold < data.Tower[self.curBuildType].Price) {
+						self.unShowSetBuildIcon();
+					}
+					else {
+						var towerBuy = new CAAT.Tower().initialize(self, self.curBuildType, 0, posx, posy, self.towerID);
+						self.currentGold -= towerBuy.price;
+						self.mapBound.addChild(towerBuy);
+						self.towerArray.push(towerBuy);
 						self.replayInformation("buildTower",[self.curBuildType,0,posx,posy,self.towerID]);
-                        self.unShowSetBuildIcon();
-                    }
-                }
-			
-        }
+						self.unShowSetBuildIcon();
+					}
+				}
+			}
+		}
     }
     var _mtUp = function (self,ex,ey) {
         var monsterArray = self.monsterArray;
