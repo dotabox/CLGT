@@ -1,51 +1,5 @@
 ﻿langvkl={
-	data:{
-		UserSkill:{
-			ID0:["Hỏa Công","Flamethower"],
-			ID1:["Sấm Sét","Thunder"],
-			ID2:["Băng Giá","Ice"]
-		},
-
-		Tower:{
-			ID0:["Kim","Steel"],
-			ID1:["Mộc","Nature"],
-			ID2:["Thổ","Earth"],
-			ID3:["Thủy","Water"],
-			ID4:["Hỏa","Fire"],
-			ID5:["Nhuệ Kim", "Amplified Steel"],
-			ID6:["Thương", "Spear"],
-			ID7:["Khóa Điện", "Purge"],
-			ID8:["Tốc Độ", "Agility"],
-			ID9:["Tiền Thưởng", "Bounty"],
-			ID10:["Cự Mộc", "Amplified Nature"],
-			ID11:["Sinh Mệnh", "Life"],
-			ID12:["Dầu", "Oil"],
-			ID13:["Đuốc", "Torch"],
-			ID14:["Hậu Thổ", "Amplified Earth"],
-			ID15:["Đất Bùn", "Mire"],
-			ID16:["Đá Lửa", "Flint"],
-			ID17:["Hồng Thủy", "Amplified Water"],
-			ID18:["Khí", "Air"],
-			ID19:["Liệt Hỏa", "Amplified Fire"]
-		},
-		Monster:{
-			ID0:["Cóc Ghẻ","Itching Frog"],
-			ID1:["Thủy Quái","Sea Monster"],
-			ID2:["Rùa Biển","Sea Turtle"],
-			ID3:["Kiến lửa","Fire Ant"],
-			ID4:["Chim Lửa","Fire Bird"],
-			ID5:["Phượng Hoàng Lửa","Phoenix"],
-			ID6:["Ngựa Sắt","Iron Horse"],
-			ID7:["Lính Mặc Giáp","Armed Soldier"],
-			ID8:["Xe Thép","Armored Vehicle"],
-			ID9:["Xe Gỗ","Wood Car"],
-			ID10:["Người Cây","Treeman"],
-			ID11:["Thiên Niên Thụ","Thousand-years-old Tree"],
-			ID12:["Ma Bùn","Mud Ghost"],
-			ID13:["Đá Lăn","Rolling Stone"],
-			ID14:["Người Đá","Rockman"]			
-		}
-	},
+	
 	description:{
 		UserSkill:{
 			ID0:["Phát nổ trong một khoảng nhỏ, có khả năng gây bỏng.","Explosion thay may burn."],
