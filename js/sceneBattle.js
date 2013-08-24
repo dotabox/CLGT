@@ -1341,7 +1341,7 @@
             self.setViewportTo(ex, ey);
         }
         if (self.mapPanel.AABB.contains(ex, ey)) {
-			self.draggingBuild = true;
+			self.draggingBuild = false;
             if (self.isDrag) {
                 var dx = ex - self.last.x;
                 var dy = ey - self.last.y;
