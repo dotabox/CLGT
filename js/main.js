@@ -155,11 +155,11 @@ window.onload = function () {
 		var sceneMenuIndex = 0;
 		var sceneBattleIndex = 1;
 		var sceneMenuBattleIndex = 2;
-		var sceneMapIndex =scenMainMenuIndex= 3;
+		var sceneMapIndex =sceneMainMenuIndex= 3;
 		var sceneGameIndex = 4;		
 		var sceneSkillIndex = 5;
         //load user data
-		var user = new CAAT.User().init(0, 0, 0, 0, 0, 0, [], []);
+		var user = new CAAT.User().init(0, 0, 2, 0, 0, 0, [0,1,2,3,4,5,6,7,8,9,10], []);
 		
 		//var battleContainer = new CAAT.BattleContainer().initialize(director,1,"",8,50,200,null, sceneMenuIndex);
 		//sceneBattle.addChild(battleContainer);
@@ -172,26 +172,20 @@ window.onload = function () {
 		var t = 0;
 		var sceneTime = 0;
         
-		var battleLoad = function () {
+		var battleLoad = function (battleContainer) {
 		   
 
 		    if (battleContainer.loadingRep !== null) sceneBattle.addChild(battleContainer);
 
 		    var menuBattleContainer;
-		    var pausedFunction = function () {
-		        director.switchToScene(sceneMenuBattleIndex);
-		        menuBattleContainer = new CAAT.MenuBattleContainer().initialize(battleContainer, null, sceneBattleIndex);
-		        sceneMenuBattle.emptyChildren();
-		        sceneMenuBattle.addChild(menuBattleContainer);
-		    }
-		    battleContainer.paused = pausedFunction;
+		    
 		    lastTime = sceneBattle.time;
 		    sceneBattle.createTimer(sceneBattle.time, Number.MAX_VALUE,
 				function (scene_time, timer_time, timertask_instance) {   // timeout
 
 				},
 				function (scene_time, timer_time, timertask_instance) {   // tick
-				    var bc = sceneBattle.getChildAt(0);
+				    var bc = battleContainer;
 
 
 				    var dt = scene_time - lastTime;//Khoang thoi gian giua 2 lan cap nhat
@@ -204,7 +198,15 @@ window.onload = function () {
 				    }
 				    if (bc.isTimePaused) { this.cancel(); }
 				    if (bc.endBattle != 0) {
-
+				        sceneBattle.time = 0;
+				        //battleContainer = new CAAT.BattleContainer().initialize(director, 1, [2, 1, 0], [0, 1, 2, 5, 6, 7, 10, 11, 14], 5, sceneSkillContainer, scenMainMenuIndex, sceneMenuIndex);
+				        //sceneBattle.emptyChildren();
+				        //bc.paused = pausedFunction;
+				        bc.endBattle = 0;
+				        menu.initialize(director, 3);
+				       // sceneBattle.addChild(battleContainer);
+				        sceneTime = 0;
+				        lastTime = 0;
 				    }
 
 				},
@@ -214,7 +216,7 @@ window.onload = function () {
 				}
 			);
 		}
-		if (!user.isCompleteTUT) {
+		if (!user.isCompleteTUT()) {
 		    var king = new CAAT.MyActor().initialize(director, "An Dương Vương", "king_face", 2, 4);
 		    king.setAnimation([4, 5]);
 		    var sodier = new CAAT.MyActor().initialize(director, "Lính ghẻ", "sodier_face", 2, 4);
@@ -252,7 +254,7 @@ window.onload = function () {
                           "arguments": "cg1"
                       }]
                   },
-                */
+               // */
                   {
                       "actor": 0,
                       "dialog": "I need help",
@@ -313,6 +315,7 @@ window.onload = function () {
 		    log.setBounds(0, 0, 800, 600);
 		    sceneBattle.addChild(log);
 		    log.createTut = function (element) {
+		        
 		        battleContainer = new CAAT.TUT();
 		        sceneBattle.removeChild(log);
 		        log.setExpired();
@@ -326,8 +329,8 @@ window.onload = function () {
                 
 		        //for(var i=0;i<15;i++) unlockTower.push(i);
 
-		        battleContainer.initData(element).initialize(director, 0, [1, 0], unlockTower, 0, sceneSkillContainer, scenMainMenuIndex, sceneMenuIndex).runTUT();	// 0: map index, skill, trụ đã unlock, level
-		        battleLoad();
+		        battleContainer.initData(element).initialize(director, 0, [1, 0], unlockTower, 0, sceneSkillContainer, sceneMainMenuIndex, sceneMenuIndex).runTUT();	// 0: map index, skill, trụ đã unlock, level
+		        battleLoad(battleContainer);
 		    }
 		} else {
 		    battleContainer = new CAAT.BattleContainer();
@@ -341,7 +344,7 @@ window.onload = function () {
 		    var unlockTower = user.buttressUnlock;
 		    var level = user.level;
 		    menu.initialize(director, 3);
-		    sceneMapContainer.initMap(director, battleContainer,  [1, 0], unlockTower, level, sceneSkillContainer, scenMainMenuIndex, sceneMenuIndex, battleLoad)
+		    sceneMapContainer.initMap(director, battleContainer,  [1, 0], unlockTower, level, sceneSkillContainer, sceneMainMenuIndex, sceneMenuIndex, battleLoad)
 		   // battleContainer.initialize();	// 0: map index, skill, trụ đã unlock, level
 		    //for(var i=0;i<15;i++) unlockTower.push(i);	
 		    //menu.initialize(director, 3);

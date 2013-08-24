@@ -118,7 +118,7 @@
 		            	i = this.idInArray;
 
 				        // call battle container
-		            	self.mapindex = 0;
+		            	self.mapindex = 1;
 		            	self.initMap(director);
 		            	director.switchToScene(1);
 
@@ -138,6 +138,7 @@
 		initData: function (director, battleContainer, skillarray, unlockTower, level, sceneSkillContainer, scenMainMenuIndex, sceneMenuIndex, battleLoad) {
 		    
 		    this.battleContainer = battleContainer;
+		    
 		    this.skillarray=skillarray;
 		    this.unlockTower=unlockTower;
 		    this.level = level;
@@ -149,10 +150,14 @@
 		    return this;
 		},
 		initMap: function (director) {
-		    
-		    this.battleContainer.initialize(director, this.mapindex, this.skillarray, this.unlockTower, this.level, this.sceneSkillContainer, this.scenMainMenuIndex, this.sceneMenuIndex);
-		    this.battleLoad();
 
+		    //var load_data = new CAAT.Replay();
+		    this.battleContainer.emptyChildren();
+		    this.battleContainer.currentWave = 0;
+		    this.battleContainer.timeDrop = 0;
+		    this.battleContainer.initialize(director, this.mapindex, this.skillarray, this.unlockTower, this.level, this.sceneSkillContainer, this.scenMainMenuIndex, this.sceneMenuIndex);
+		    if (this.battleContainer.parent == null) this.battleLoad(this.battleContainer);
+		    //else this.battleContainer.parent.addChild(this.battleContainer);
 		    return this;
 		}
 	};

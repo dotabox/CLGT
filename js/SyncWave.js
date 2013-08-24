@@ -30,7 +30,6 @@
 					n-=m;						
 				}
 			}
-			console.log(wave);
 			data.Map[this.id].Wave=wave;
         },
 		random: function (x) {
