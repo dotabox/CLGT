@@ -1,6 +1,6 @@
 ﻿langvkl={
 	sceneBattle:{
-		ID0:["tfdkjf","Wave: "],
+		ID0:["thành","Wave: "],
 		ID0:["sdd ","Wave: "],
 		ID1:["sdsd","Press Start to begin."],
 		ID2:["dsds"," seconds."],
