@@ -17,6 +17,15 @@
 			this.semiMainMap = new CAAT.SemiMainMapCtn()
 				.create(director, this.width, this.height*5/6)
 				.setLocation(0, 0);
+				
+			var bttSize = 80;
+			var backImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('back'), 1, 1 );
+			var backBtt = new CAAT.Button().initialize(director, backImage, 0, 0, 0, 0, function(button){
+	            	self.director.switchToScene(self.semiMainMap.sceneMenuIndex);
+	            })
+	        	.setLocation(0, 0)
+	        	.setScaleAnchored(bttSize / backImage.singleWidth, bttSize / backImage.singleHeight, 0, 0);
+	        this.addChild(backBtt);
 			
 			var areaButtonSize = 150;
 			var castleImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('castle'), 1, 1 );

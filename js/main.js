@@ -159,7 +159,7 @@ window.onload = function () {
 		var sceneGameIndex = 4;		
 		var sceneSkillIndex = 5;
         //load user data
-		var user = new CAAT.User().init(0, 0, 2, 0, 0, 0, [0,1,2,3,4,5,6,7,8,9,10], []);
+		var user = new CAAT.User().init(0, 0, 1, 0, 0, 0, [0,1,2,3,4,5,6,7,8,9,10], []);
 		
 		//var battleContainer = new CAAT.BattleContainer().initialize(director,1,"",8,50,200,null, sceneMenuIndex);
 		//sceneBattle.addChild(battleContainer);
@@ -176,7 +176,21 @@ window.onload = function () {
 		   
 
 		    if (battleContainer.loadingRep !== null) sceneBattle.addChild(battleContainer);
-
+			if(battleContainer.endBattle = 0) menu.initialize(director, 1);
+			else menu.initialize(director,3);
+			battleContainer.resetTime = function(){
+				sceneBattle.time = 0;
+				sceneTime = 0;
+				lastTime = 0;
+			}
+			battleContainer.restart = function(){
+				var bc = battleContainer;
+				bc.endBattle = 0;
+				sceneBattle.time = 0;
+				bc.resetTime();
+				bc.emptyChildren();
+				bc.initialize(bc.director,bc.currentLevel, bc.userSkill, bc.unlockTower, bc.level, bc.sceneSkillContainer, bc.nextScene, bc.prevScene);
+			}
 		    var menuBattleContainer;
 		    
 		    lastTime = sceneBattle.time;
@@ -187,7 +201,7 @@ window.onload = function () {
 				function (scene_time, timer_time, timertask_instance) {   // tick
 				    var bc = battleContainer;
 
-
+					
 				    var dt = scene_time - lastTime;//Khoang thoi gian giua 2 lan cap nhat
 				    lastTime = scene_time;
 				    t += dt * GAME_SPEED;//Thoi gian delay giua 2 lan cap nhat
@@ -197,7 +211,11 @@ window.onload = function () {
 				        bc.update(director, sceneTime, scene_time);
 				    }
 				    if (bc.isTimePaused) { this.cancel(); }
+					/*
 				    if (bc.endBattle != 0) {
+						bc.restart();
+						menu.initialize(director, 3);
+						/*
 				        sceneBattle.time = 0;
 				        //battleContainer = new CAAT.BattleContainer().initialize(director, 1, [2, 1, 0], [0, 1, 2, 5, 6, 7, 10, 11, 14], 5, sceneSkillContainer, scenMainMenuIndex, sceneMenuIndex);
 				        //sceneBattle.emptyChildren();
@@ -207,8 +225,9 @@ window.onload = function () {
 				       // sceneBattle.addChild(battleContainer);
 				        sceneTime = 0;
 				        lastTime = 0;
+						* /
 				    }
-
+					*/
 				},
 				function (scene_time, timer_time, timertask_instance) {   // cancel
 				    var _this = this;

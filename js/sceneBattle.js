@@ -15,6 +15,14 @@
             //this.replayData = loadObj;
             this.sceneSkillContainer = sceneSkillContainer;
             this.endBattle = 0;
+			this.countDownTime = Number.MAX_VALUE;
+			this.showStartText = false;
+			this.startText = "";
+			this.timePerWave = 15000;
+			this.timeDrop = 0; //thời gian bỏ qua để vào wave mới
+			this.currentWave = 0;
+			this.action_number = 0;//bien so thu tu su kien khi load replay
+			
 			this.randomArray = [];
             var i = 5000;
 			this.randomIndex = (Math.random()*(i-1))<<0;
@@ -331,7 +339,7 @@
 					}
 				},
 				function(button,ex,ey){	//drag
-				
+					self.draggingBuild  = true;
 					var x = ex;
 					var y = ey;
 					_mtMove(self, x, y);
@@ -340,6 +348,7 @@
 					var x = ex ;
 					var y = ey;
 					_btUp(self, x, y);
+					self.draggingBuild = false;
 				},
 				function(){
 					var index = self.buildButtonArray.indexOf(this);
@@ -1171,15 +1180,10 @@
 		    var sceneMap = this.director.getScene(this.nextScene);
 		    var sceneMapContainer = sceneMap.getChildAt(0);
 		    sceneMapContainer.initMap(this.director, this, this.userSkill, this.unlockTower, this.level+1, this.sceneSkillContainer, this.nextScene, this.prevScene, null);
+			sceneMapContainer.semiMainMap.updateWinBattle();
 			this.switchToNextScene();
 		},
-		countDownTime : Number.MAX_VALUE,
-		showStartText : false,
-		startText : "",
-		timePerWave : 15000,
-		timeDrop: 0, //thời gian bỏ qua để vào wave mới
-		currentWave: 0,
-        action_number:0,//bien so thu tu su kien khi load replay
+		
 		paint : function (director, time){
 			var self=this;
 			var elapsedTime = self.sceneTime;
@@ -1336,12 +1340,12 @@
 
         if (self.mapPanel.AABB.contains(ex, ey)) {
             self.isDrag = true;
+			self.startDragMouseX = ex;
+			self.startDragMouseY = ey;
         }
 		if(self.isDrag){
 			self.last.x = ex;
             self.last.y = ey;
-			self.startDragMouseX = ex;
-			self.startDragMouseY = ey;
 		}
     };
     var _mtDrag = function (self, ex, ey) {
@@ -1349,11 +1353,9 @@
             self.setViewportTo(ex, ey);
         }
         if (self.mapPanel.AABB.contains(ex, ey)) {
-			self.draggingBuild = false;
             if (self.isDrag) {
                 var dx = ex - self.last.x;
                 var dy = ey - self.last.y;
-
                 if ((self.mapBound.x + dx < 0) && (self.mapBound.x + dx > -self.currentMap.mapWidth * TILE_SIZE + CANVAS_WIDTH)) {
                     self.sumdx -= dx;
                     self.mapBound.setLocation(self.mapBound.x + dx, self.mapBound.y);
@@ -1369,9 +1371,6 @@
                 self.last.y = ey;
             }
         }
-		else{
-			self.draggingBuild = true;
-		}
     };
     var _mtMove = function (self, ex, ey) {
 		if(self.tooltip.positionIndex!=0) self.tooltip.setPosition(0);

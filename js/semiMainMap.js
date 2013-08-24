@@ -116,16 +116,19 @@
 			for(var i = 0; i < flagNumber; i++) {
 				flagBtt[i] = new CAAT.Button().initialize(director, flagImage, 0, 0, 0, 0, function(button){
 		            	i = this.idInArray;
-
+						
 				        // call battle container
 		            	self.mapindex = 1;
 		            	self.initMap(director);
 		            	director.switchToScene(1);
-
+						
 		            	// sau battle, open next flag, cho no 2 sao lam demo
-		            	setFlagIsLock((i+1 < flagNumber) ? (i+1) : i, false);
-		            	self.historyData[id][i].star = 2;
-		            	addStar(this, self.historyData[id][i].star, self.maxStarPerLevel);
+						var currentBtt = this;
+						self.updateWinBattle = function(){
+							setFlagIsLock((i+1 < flagNumber) ? (i+1) : i, false);
+							self.historyData[id][i].star = (Math.random()*5)<<0;
+							addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
+						}
 		            })
 	            	.setLocation(i*flagImage.width*2, 200);
 	            flagBtt[i].idInArray = i;
@@ -153,11 +156,10 @@
 
 		    //var load_data = new CAAT.Replay();
 		    this.battleContainer.emptyChildren();
-		    this.battleContainer.currentWave = 0;
-		    this.battleContainer.timeDrop = 0;
 		    this.battleContainer.initialize(director, this.mapindex, this.skillarray, this.unlockTower, this.level, this.sceneSkillContainer, this.scenMainMenuIndex, this.sceneMenuIndex);
 		    if (this.battleContainer.parent == null) this.battleLoad(this.battleContainer);
 		    //else this.battleContainer.parent.addChild(this.battleContainer);
+			this.battleContainer.resetTime();
 		    return this;
 		}
 	};
