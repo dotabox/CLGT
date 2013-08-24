@@ -39,6 +39,7 @@
 			this.updateArray=[];
 			this.towerArray = [];
 			this.unlockTower = unlockTower.concat();
+			this.level = level;
 			this.monsterArray = [];
 			this.addedMonster = 0;
 			this.addedMonsterInWave = 0;
@@ -47,6 +48,7 @@
 			var miniMapSize = this.miniMapSize;
 			var currentLevel = mapIndex;
 			this.mapData = data.Map[currentLevel];
+			if(mapIndex!=0) new CAAT.SyncWave().init(director, this, mapIndex, level, 2, [4, 4, 4, 4, 4, 4, 4, 4]).create();
 			var mapData = this.mapData;
 			this.life = mapData.Life;
 			this.currentLife = this.life;
@@ -131,7 +133,7 @@
 			this.menuFunction = function(){
 				
 				self.cacheAsBitmap(self.time,CAAT.Foundation.Actor.CACHE_DEEP);
-				if (self.paused) self.paused();
+				pausedFunction(director,self,director.getScene(2));
 				
 			}
 			this.menuButton = new CAAT.Button().initialize(this.director,menuImage,0,1,1,0,this.menuFunction)
@@ -1158,11 +1160,17 @@
 				}
 			}
 			this.endBattle = -1;
+			var sceneMap = this.director.getScene(this.nextScene);
+			var sceneMapContainer = sceneMap.getChildAt(0);
+			sceneMapContainer.initMap(this.director, this, this.userSkill, this.unlockTower, this.level, this.sceneSkillContainer, this.nextScene, this.prevScene, null);
 			//
 			this.switchToNextScene();
 		},
 		winBattle : function (){
 			this.endBattle = 1;
+		    var sceneMap = this.director.getScene(this.nextScene);
+		    var sceneMapContainer = sceneMap.getChildAt(0);
+		    sceneMapContainer.initMap(this.director, this, this.userSkill, this.unlockTower, this.level+1, this.sceneSkillContainer, this.nextScene, this.prevScene, null);
 			this.switchToNextScene();
 		},
 		countDownTime : Number.MAX_VALUE,
@@ -1498,74 +1506,14 @@
         }
         
     }
-    var animate=function (director, time,sceneTime) {
-				var sc=                         CAAT.Foundation.ActorContainer.superclass;
-				var sc_animate=                 sc.animate;
-				var __CD =                      CAAT.Foundation.Actor.CACHE_DEEP;
-				//time=arguments[2]||0; 
-                if (!this.visible) {
-                    return false;
-                }
-
-                this.activeChildren = [];
-                var last = null;
-				
-				for (i = 0; i < this.behaviorList.length; i++) {
-                    this.behaviorList[i].apply(time, this);
-                }
-				
-                if (false === sc_animate.call(this, director, time)) {
-                    return false;
-                }
-
-                if (this.cached === __CD) {
-                    return true;
-                }
-
-                this.__validateLayout();
-                CAAT.currentDirector.inValidation = false;
-
-                var i, l;
-
-                /**
-                 * Incluir los actores pendientes.
-                 * El momento es ahora, antes de procesar ninguno del contenedor.
-                 */
-                var pcl = this.pendingChildrenList;
-                for (i = 0; i < pcl.length; i++) {
-                    var child = pcl[i];
-                    this.addChildImmediately(child.child, child.constraint);
-                }
-
-                this.pendingChildrenList = [];
-                var markDelete = [];
-
-                var cl = this.childrenList;
-                this.size_active = 1;
-                this.size_total = 1;
-                for (i = 0; i < cl.length; i++) {
-                    var actor = cl[i];
-                    actor.time = time;
-                    this.size_total += actor.size_total;
-                    if (actor.animate(director, time)) {
-                        this.activeChildren.push(actor);
-                        this.size_active += actor.size_active;
-                    } else {
-                        if (actor.expired && actor.discardable) {
-                            markDelete.push(actor);
-                        }
-                    }
-                }
-
-                for (i = 0, l = markDelete.length; i < l; i++) {
-                    var md = markDelete[i];
-                    md.destroy(time);
-                    if (director.dirtyRectsEnabled) {
-                        director.addDirtyRect(md.AABB);
-                    }
-                }
-
-                return true;
-            };
+    
+	var pausedFunction = function (director, battleContainer, sceneMenuBattle) {
+        var sceneBattleIndex = 1;
+        var sceneMenuBattleIndex = 2;
+        director.switchToScene(sceneMenuBattleIndex);
+        menuBattleContainer = new CAAT.MenuBattleContainer().initialize(battleContainer, null, sceneBattleIndex);
+        sceneMenuBattle.emptyChildren();
+        sceneMenuBattle.addChild(menuBattleContainer);
+    }
     extend(CAAT.BattleContainer, CAAT.SceneActor);
 })();

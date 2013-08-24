@@ -96,6 +96,10 @@
 	        this.addChild(this.semiMainMap);
 
 			return this;
+		},
+		initMap: function (director, battleContainer, skillarray, unlockTower, level, sceneSkillContainer, scenMainMenuIndex, sceneMenuIndex, battleLoad) {
+		    this.semiMainMap.initData(director, battleContainer, skillarray, unlockTower, level, sceneSkillContainer, scenMainMenuIndex, sceneMenuIndex, battleLoad);
+			return this;
 		}
 	};
 	extend(CAAT.SceneMapCtn, CAAT.Foundation.ActorContainer);

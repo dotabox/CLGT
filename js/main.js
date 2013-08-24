@@ -9,7 +9,6 @@ var currentMap;
 var monsterAddTime = 750;
 var addedMonster = 0;
 */
-//test commit;
 window.onload = function () {
     
 	//*
@@ -141,198 +140,225 @@ window.onload = function () {
 		var sceneMenu = director.createScene();
 		var sceneBattle = director.createScene();
 		var sceneMenuBattle = director.createScene();
-        
+        //main map
+		var sceneMap = director.createScene();
+		var sceneGame = director.createScene();
+		var sceneSkill = director.createScene();		
+		
+		var sceneMapContainer = new CAAT.SceneMapCtn().create(director);
+		sceneMap.addChild(sceneMapContainer);
+		var sceneGameContainer = new CAAT.SceneGameCtn().create(director);
+		sceneGame.addChild(sceneGameContainer);
+		var sceneSkillContainer = new CAAT.SceneSkill().create(director);
+		sceneSkill.addChild(sceneSkillContainer);
 
 		var sceneMenuIndex = 0;
 		var sceneBattleIndex = 1;
 		var sceneMenuBattleIndex = 2;
-        var scenMainMenuIndex = 3;
+		var sceneMapIndex =sceneMainMenuIndex= 3;
+		var sceneGameIndex = 4;		
+		var sceneSkillIndex = 5;
+        //load user data
+		var user = new CAAT.User().init(0, 0, 2, 0, 0, 0, [0,1,2,3,4,5,6,7,8,9,10], []);
 		
 		//var battleContainer = new CAAT.BattleContainer().initialize(director,1,"",8,50,200,null, sceneMenuIndex);
 		//sceneBattle.addChild(battleContainer);
 		var menu = new CAAT.MenuActor().initialize(director, sceneBattleIndex);
-		
-		var king = new CAAT.MyActor().initialize(director, "An Dương Vương", "king_face", 2, 4);
-        king.setAnimation([4, 5]);
-        var sodier = new CAAT.MyActor().initialize(director, "Lính ghẻ", "sodier_face", 2, 4);
-        sodier.setAnimation([0, 4]);
-        var knight = new CAAT.MyActor().initialize(director, "Coder", "knight_face", 2, 4);
-        knight.setAnimation([6, 7]);
-        var fire = new CAAT.MyActor().initialize(director, "Fire Elemental", "fire_face", 1, 1);
-        var water = new CAAT.MyActor().initialize(director, "Water Elemental", "water_face", 1, 1);
-        var earth = new CAAT.MyActor().initialize(director, "Earth Elemental", "earth_face", 1, 1);
-        var wood = new CAAT.MyActor().initialize(director, "Wood Elemental", "wood_face", 1, 1);
-        var steel = new CAAT.MyActor().initialize(director, "Steel Elemental", "steel_face", 1, 1);
-        var sceneDatas = [
-              {
-                  "callback" : [{
-                      "name": "changeBackground",
-                      "arguments": "inCastle_bg"
-                  }]
-              },
-			 /*
-              {
-                  "callback": [{
-                      "name": "shakeScreen",
-                      "arguments": [20, 30, 20]
-                  }]
-              },
-              {
-                  "actor": 0,
-                  "dialog": "CLGT"
-              },
-              {
-                  "actor": 1,
-                  "dialog": "We are under attack",
-                  "callback": [{
-                      "name": "changeBackground",
-                      "arguments": "cg1"
-                  }]
-              },
-			*/
-              {
-                  "actor": 0,
-                  "dialog": "I need help",
-                  "callback": [
-                      {
-                          "name": "addImage",
-                          "arguments" : ["king", 100, 300]
-                      },
-                      {
-                          "name": "createChoose",
-                          "arguments": {
-                              "choices": ["Fire", "Water", "Earth", "Wood", "Steel"],
-                              "choice1": [
-                                  {
-                                      "actor": 3,
-                                      "dialog": "I am fire element. I will help you"
-                                  },
-                                  { 
-                                      "actor": 3,
-                                      "dialog": "Nothing imposible"
-                                  }
-                              ],
-                              "choice2": [{
-                                  "actor": 4,
-                                  "dialog": "I am water element. I will help you"
-                              }],
-                              "choice3": [{
-                                  "actor": 5,
-                                  "dialog": "I am earth element. I will help you"
-                              }],
-                              "choice4": [{
-                                  "actor": 6,
-                                  "dialog": "I am wood element. I will help you"
-                              }],
-                              "choice5": [{
-                                  "actor": 7,
-                                  "dialog": "I am steel element. I will help you"
-                              }]
-                          }
-                      }
-                  ]
-              },
-              {
-                  "actor": 0,
-                  "dialog": ""
-              },
-              {
-                  "actor": 0,
-                  "dialog": "Ok. Thank for the help",
-                  "callback": [{
-                      "name": "complete"
-                  }]
-              },
-              {}
-        ];
-        var actor = [king, sodier, knight, fire, water, earth, wood, steel];
-        var log = new CAAT.StoryScene().initialize(director, 0, 0, actor, sceneDatas);
-        log.setBounds(0, 0, 800, 600);
+		sceneMenu.addChild(menu);
 
-        sceneMenu.addChild(menu);
-        sceneBattle.addChild(log);
 
+		var battleContainer;
 		var lastTime = 0;
 		var t = 0;
 		var sceneTime = 0;
-		var battleContainer;
-		log.createTut=function(element){
-			battleContainer = new CAAT.TUT();
-			sceneBattle.removeChild(log);
-			log.setExpired();
-			
-			//var load_data = new CAAT.Replay();
-			var load_data = null;
-			if (load_data) load_data.load_data(function () { battleContainer.loadingRep = true; console.log(loadObj); }, 'https://dl.dropboxusercontent.com/u/153398256/26_7_2013_10_37_22.json')
-			else battleContainer.loadingRep = false;
-			var elementPP = 5; 
-			for(var i=0;i<element;i++) elementPP += 5-i ;
-			var unlockTower = [element,elementPP];
-			//for(var i=0;i<15;i++) unlockTower.push(i);
+        
+		var battleLoad = function (battleContainer) {
+		   
 
-			battleContainer.initData(element).initialize(director, 0 ,[1,0],unlockTower,5, sceneSkillContainer,scenMainMenuIndex,sceneMenuIndex).runTUT();;	// 0: map index, skill, trụ đã unlock, level
+		    if (battleContainer.loadingRep !== null) sceneBattle.addChild(battleContainer);
 
-			if (battleContainer.loadingRep !== null) sceneBattle.addChild(battleContainer);
-			
-			var menuBattleContainer;
-			var pausedFunction =function(){
-				director.switchToScene(sceneMenuBattleIndex);
-				menuBattleContainer = new CAAT.MenuBattleContainer().initialize(battleContainer,null,sceneBattleIndex);
-				sceneMenuBattle.emptyChildren();
-				sceneMenuBattle.addChild(menuBattleContainer);
-			}
-			battleContainer.paused = pausedFunction;
-			lastTime=sceneBattle.time;
-			sceneBattle.createTimer(sceneBattle.time,Number.MAX_VALUE,
+		    var menuBattleContainer;
+		    
+		    lastTime = sceneBattle.time;
+		    sceneBattle.createTimer(sceneBattle.time, Number.MAX_VALUE,
 				function (scene_time, timer_time, timertask_instance) {   // timeout
 
 				},
 				function (scene_time, timer_time, timertask_instance) {   // tick
-						var bc = sceneBattle.getChildAt(0);
-						
-						
-						var dt = scene_time - lastTime;//Khoang thoi gian giua 2 lan cap nhat
-						lastTime = scene_time;
-						t += dt*GAME_SPEED;//Thoi gian delay giua 2 lan cap nhat
-						while (t >= frameTime) {//Chay chi khi thoi gian delay giua 2 lan lon hon 10ms
-							t -= frameTime;//Dung de xac dinh so buoc' tinh toan
-							sceneTime += frameTime;
-							bc.update(director, sceneTime,scene_time);
-						}
-						if (bc.isTimePaused) {this.cancel();}
-						if(bc.endBattle!=0){
-							sceneBattle.time = 0;
-							var tower = [];
-							for(var i=0;i<20;i++) tower.push(i);
-							battleContainer = new CAAT.BattleContainer().initialize(director, 1 ,[2,1,0],tower,5, sceneSkillContainer,scenMainMenuIndex,sceneMenuIndex);
-							sceneBattle.emptyChildren();
-							battleContainer.paused=pausedFunction;
-							sceneBattle.addChild(battleContainer);
-							sceneTime = 0;
-							lastTime = 0;
-						}
-						
+				    var bc = battleContainer;
+
+
+				    var dt = scene_time - lastTime;//Khoang thoi gian giua 2 lan cap nhat
+				    lastTime = scene_time;
+				    t += dt * GAME_SPEED;//Thoi gian delay giua 2 lan cap nhat
+				    while (t >= frameTime) {//Chay chi khi thoi gian delay giua 2 lan lon hon 10ms
+				        t -= frameTime;//Dung de xac dinh so buoc' tinh toan
+				        sceneTime += frameTime;
+				        bc.update(director, sceneTime, scene_time);
+				    }
+				    if (bc.isTimePaused) { this.cancel(); }
+				    if (bc.endBattle != 0) {
+				        sceneBattle.time = 0;
+				        //battleContainer = new CAAT.BattleContainer().initialize(director, 1, [2, 1, 0], [0, 1, 2, 5, 6, 7, 10, 11, 14], 5, sceneSkillContainer, scenMainMenuIndex, sceneMenuIndex);
+				        //sceneBattle.emptyChildren();
+				        //bc.paused = pausedFunction;
+				        bc.endBattle = 0;
+				        menu.initialize(director, 3);
+				       // sceneBattle.addChild(battleContainer);
+				        sceneTime = 0;
+				        lastTime = 0;
+				    }
+
 				},
 				function (scene_time, timer_time, timertask_instance) {   // cancel
-					var _this=this;					
-					battleContainer.isStart=function(){var ss=sceneBattle.time;lastTime=ss;_this.reset(ss);};
+				    var _this = this;
+				    battleContainer.isStart = function () { var ss = sceneBattle.time; lastTime = ss; _this.reset(ss); };
 				}
 			);
 		}
-		//main map
-		var sceneMap = director.createScene();
-        var sceneMapContainer = new CAAT.SceneMapCtn().create(director);
-        sceneMap.addChild(sceneMapContainer);
+		if (!user.isCompleteTUT()) {
+		    var king = new CAAT.MyActor().initialize(director, "An Dương Vương", "king_face", 2, 4);
+		    king.setAnimation([4, 5]);
+		    var sodier = new CAAT.MyActor().initialize(director, "Lính ghẻ", "sodier_face", 2, 4);
+		    sodier.setAnimation([0, 4]);
+		    var knight = new CAAT.MyActor().initialize(director, "Coder", "knight_face", 2, 4);
+		    knight.setAnimation([6, 7]);
+		    var fire = new CAAT.MyActor().initialize(director, "Fire Elemental", "fire_face", 1, 1);
+		    var water = new CAAT.MyActor().initialize(director, "Water Elemental", "water_face", 1, 1);
+		    var earth = new CAAT.MyActor().initialize(director, "Earth Elemental", "earth_face", 1, 1);
+		    var wood = new CAAT.MyActor().initialize(director, "Wood Elemental", "wood_face", 1, 1);
+		    var steel = new CAAT.MyActor().initialize(director, "Steel Elemental", "steel_face", 1, 1);
+		    var sceneDatas = [
+                  {
+                      "callback": [{
+                          "name": "changeBackground",
+                          "arguments": "inCastle_bg"
+                      }]
+                  },
+                 /*
+                  {
+                      "callback": [{
+                          "name": "shakeScreen",
+                          "arguments": [20, 30, 20]
+                      }]
+                  },
+                  {
+                      "actor": 0,
+                      "dialog": "CLGT"
+                  },
+                  {
+                      "actor": 1,
+                      "dialog": "We are under attack",
+                      "callback": [{
+                          "name": "changeBackground",
+                          "arguments": "cg1"
+                      }]
+                  },
+               // */
+                  {
+                      "actor": 0,
+                      "dialog": "I need help",
+                      "callback": [
+                          {
+                              "name": "addImage",
+                              "arguments": ["king", 100, 300]
+                          },
+                          {
+                              "name": "createChoose",
+                              "arguments": {
+                                  "choices": ["Fire", "Water", "Earth", "Wood", "Steel"],
+                                  "choice1": [
+                                      {
+                                          "actor": 3,
+                                          "dialog": "I am fire element. I will help you"
+                                      },
+                                      {
+                                          "actor": 3,
+                                          "dialog": "Nothing imposible"
+                                      }
+                                  ],
+                                  "choice2": [{
+                                      "actor": 4,
+                                      "dialog": "I am water element. I will help you"
+                                  }],
+                                  "choice3": [{
+                                      "actor": 5,
+                                      "dialog": "I am earth element. I will help you"
+                                  }],
+                                  "choice4": [{
+                                      "actor": 6,
+                                      "dialog": "I am wood element. I will help you"
+                                  }],
+                                  "choice5": [{
+                                      "actor": 7,
+                                      "dialog": "I am steel element. I will help you"
+                                  }]
+                              }
+                          }
+                      ]
+                  },
+                  {
+                      "actor": 0,
+                      "dialog": ""
+                  },
+                  {
+                      "actor": 0,
+                      "dialog": "Ok. Thank for the help",
+                      "callback": [{
+                          "name": "complete"
+                      }]
+                  },
+                  {}
+		    ];
+		    var actor = [king, sodier, knight, fire, water, earth, wood, steel];
+		    var log = new CAAT.StoryScene().initialize(director, 0, 0, actor, sceneDatas);
+		    log.setBounds(0, 0, 800, 600);
+		    sceneBattle.addChild(log);
+		    log.createTut = function (element) {
+		        
+		        battleContainer = new CAAT.TUT();
+		        sceneBattle.removeChild(log);
+		        log.setExpired();
+		        //var load_data = new CAAT.Replay();
+		        var load_data = null;
+		        if (load_data) load_data.load_data(function () { battleContainer.loadingRep = true; console.log(loadObj); }, 'https://dl.dropboxusercontent.com/u/153398256/26_7_2013_10_37_22.json')
+		        else battleContainer.loadingRep = false;
+		        var elementPP = 5;
+		        for (var i = 0; i < element; i++) elementPP += 5 - i;
+		        var unlockTower = [element, elementPP];
+                
+		        //for(var i=0;i<15;i++) unlockTower.push(i);
 
-        var sceneGame = director.createScene();
-        var sceneGameContainer = new CAAT.SceneGameCtn().create(director);
-        sceneGame.addChild(sceneGameContainer);
+		        battleContainer.initData(element).initialize(director, 0, [1, 0], unlockTower, 0, sceneSkillContainer, sceneMainMenuIndex, sceneMenuIndex).runTUT();	// 0: map index, skill, trụ đã unlock, level
+		        battleLoad(battleContainer);
+		    }
+		} else {
+		    battleContainer = new CAAT.BattleContainer();
+		    
+		    
+		    //var load_data = new CAAT.Replay();
+		    var load_data = null;
+		    if (load_data) load_data.load_data(function () { battleContainer.loadingRep = true; console.log(loadObj); }, 'https://dl.dropboxusercontent.com/u/153398256/26_7_2013_10_37_22.json')
+		    else battleContainer.loadingRep = false;
+		    
+		    var unlockTower = user.buttressUnlock;
+		    var level = user.level;
+		    menu.initialize(director, 3);
+		    sceneMapContainer.initMap(director, battleContainer,  [1, 0], unlockTower, level, sceneSkillContainer, sceneMainMenuIndex, sceneMenuIndex, battleLoad);
+		   // battleContainer.initialize();	// 0: map index, skill, trụ đã unlock, level
+		    //for(var i=0;i<15;i++) unlockTower.push(i);	
+		    //menu.initialize(director, 3);
+		    
+		}
+
+       
+        
+
 		
-		var sceneSkill = director.createScene();
-        var sceneSkillContainer = new CAAT.SceneSkill().create(director);
-        sceneSkill.addChild(sceneSkillContainer);
+		
         CAAT.loop(60);
     }
 }
+
 
 var loadObj;

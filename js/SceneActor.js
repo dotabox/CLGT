@@ -481,7 +481,7 @@
                     if (power <= 0) {
                         self.enableEvents(true);
                         self.setPosition(lastX, lastY);
-                        self.removeBehaviour(behavior);
+                        self.removeBehaviorById(0);
                     } else {
                         self.offsetX = Math.sin(elapsedTime * xrate) * power;
                         self.offsetY = Math.sin(elapsedTime * yrate) * power + Math.cos(elapsedTime * yrate) * power;
