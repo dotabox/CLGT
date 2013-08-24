@@ -6,11 +6,5 @@
 		ID2:[" giây."," seconds."],
 		ID3:["Đợt kế tiếp: ","Next wave: "]
 	},
-	tut:{
-		ID0:["Nhấn vào đây","Click here"],
-		ID1:["Click để xây trụ","Click to build tower"],
-		ID2:["Nhấn vào để bắt đầu thủ thành","Click to start battle"],
-		ID3:["Vị trí quái ra","Monster starting point"],
-		ID4:["Vị trí đích đến của quái","Monster destination point"],
-	}
+	
 }
