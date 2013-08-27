@@ -10,12 +10,33 @@ var monsterAddTime = 750;
 var addedMonster = 0;
 */
 window.onload = function () {
-    
-	//*
-    load();
-	//*/
-    function load() {
-        new CAAT.Module.Preloader.Preloader().
+    var loadedImage = 0;
+	var loadedPercent = 0;
+	var loadImages;
+    windowLoad();
+	function windowLoad(){
+		var canvas = document.getElementById("canvas");
+		var context = canvas.getContext("2d");
+		var drawIntervalID = setInterval(paint, 24);
+		var startTime = +new Date();
+		var currentIndex = 0;
+		function paint(){
+			context.fillStyle = "#0F0";
+			context.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+			context.fillStyle = "#0FF";
+			context.font = "30px Times New Roman";
+			context.strokeRect(300,200,200,20);
+			context.fillRect(300,200,200*loadedPercent/100,20)
+			context.fillText(loadedPercent+"%",100,100);
+			if(loadImages&&(+new Date() - startTime>3000)) {
+				clearInterval(drawIntervalID);
+				run(loadImages);
+			}
+		}
+		loadImage();
+	}
+    function loadImage() {
+        var thanhdeptrai = new CAAT.Module.Preloader.Preloader().
             addElement("monster1", "img/monster1.png").
             addElement("tower1", "img/Tower1.png").
             addElement("towerSprite1", "img/sprite_tower.png").
@@ -127,9 +148,13 @@ window.onload = function () {
             addElement("wood", "img/wood.png").
             addElement("earth", "img/earth.png").
             load(function onAllAssetsLoaded(images) {
-                run(images);
-            }
-        );
+				loadImages = images;
+            },
+			function thanhdeptrai1(index){
+				loadedImage++;
+				var length = thanhdeptrai.elements.length;
+				loadedPercent = Math.round(loadedImage/length*100);
+			});
     }
     function run(images) {
         CAAT.DEBUG = 1;
