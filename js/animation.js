@@ -199,10 +199,8 @@
 			else{
 				var frameIndex = self.frameIndex.concat();
 				var frameAnimationIndex = self.frameAnimationIndex.concat();
-				
-				
-				
 				for(var index = 0;index < frameIndex.length; index++){
+					if(index<frameIndex.length-1) continue
 					if(frameIndex[index]>=self.data[frameAnimationIndex[index]].length) continue;
 					var animationFrame = self.data[frameAnimationIndex[index]][frameIndex[index]].concat();
 					var monster = self.battleContainer.monsterArray[self.targetArray[index]];

@@ -124,9 +124,10 @@
 						
 		            	// sau battle, open next flag, cho no 2 sao lam demo
 						var currentBtt = this;
-						self.updateWinBattle = function(){
+						self.updateWinBattle = function(star){
+							
 							setFlagIsLock((i+1 < flagNumber) ? (i+1) : i, false);
-							self.historyData[id][i].star = (Math.random()*5)<<0;
+							self.historyData[id][i].star = star;
 							addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
 						}
 		            })

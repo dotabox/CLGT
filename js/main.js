@@ -27,8 +27,8 @@ window.onload = function () {
 			context.font = "30px Times New Roman";
 			context.strokeRect(300,200,200,20);
 			context.fillRect(300,200,200*loadedPercent/100,20)
-			context.fillText(loadedPercent+"%",100,100);
-			if(loadImages&&(+new Date() - startTime>3000)) {
+			context.fillText(loadedPercent+"%",300,190);
+			if(loadImages&&(+new Date() - startTime>1000)) {
 				clearInterval(drawIntervalID);
 				run(loadImages);
 			}
@@ -36,7 +36,7 @@ window.onload = function () {
 		loadImage();
 	}
     function loadImage() {
-        var thanhdeptrai = new CAAT.Module.Preloader.Preloader().
+        var imageElement = new CAAT.Module.Preloader.Preloader().
             addElement("monster1", "img/monster1.png").
             addElement("tower1", "img/Tower1.png").
             addElement("towerSprite1", "img/sprite_tower.png").
@@ -147,12 +147,15 @@ window.onload = function () {
             addElement("water", "img/water.png").
             addElement("wood", "img/wood.png").
             addElement("earth", "img/earth.png").
+			
+            addElement("backgroundBoard", "img/backgroundBoard.jpg").
+			
             load(function onAllAssetsLoaded(images) {
 				loadImages = images;
             },
-			function thanhdeptrai1(index){
+			function onEachLoad(index){
 				loadedImage++;
-				var length = thanhdeptrai.elements.length;
+				var length = imageElement.elements.length;
 				loadedPercent = Math.round(loadedImage/length*100);
 			});
     }

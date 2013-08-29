@@ -18,7 +18,7 @@
 			this.countDownTime = Number.MAX_VALUE;
 			this.showStartText = false;
 			this.startText = "";
-			this.timePerWave = 15000;
+			this.timePerWave = 30000;
 			this.timeDrop = 0; //thời gian bỏ qua để vào wave mới
 			this.currentWave = 0;
 			this.action_number = 0;//bien so thu tu su kien khi load replay
@@ -125,7 +125,7 @@
 				self.clickNextWave = true;
 				var pastTime = self.timePerWave - self.startAddMonsterWaveTime;
 				self.timeDrop += pastTime;
-				var gold = Math.ceil(pastTime/100);
+				var gold = Math.ceil(pastTime/200);
 				self.currentGold+= gold;
 				var showText = new CAAT.DamageShow().initialize("+"+gold,this.x,this.y+self.buttonSize/2,"#FF0",self,30);
 				self.addChild(showText);
@@ -158,6 +158,7 @@
 				_this.isTimePaused=!_this.isTimePaused;
 				
 			}
+			self.pausefunc = pausefunc;
 			this.pauseButton = new CAAT.Button().initialize(this.director,pauseImage,0,0,0,0,pausefunc)
 
 				.setLocation((CANVAS_WIDTH-menuWidth-buttonSize-30),0)
@@ -812,9 +813,6 @@
 			
 			var mapBound = this.mapBound;
 			
-			
-			
-			
             return this;
         },
         replayInformation: function (actionType, actionArg) {
@@ -1160,6 +1158,7 @@
 			}
 		},
 		lostBattle : function (){
+			/*
 			for (var i = 0; i < this.towerArray.length; i++) {
 				this.mapBound.removeChild(this.towerArray[i]);
 			}
@@ -1168,22 +1167,136 @@
 					this.mapBound.removeChild(this.monsterArray[i]);
 				}
 			}
+			*/
+			var self = this;
+			for(var i=self.userSkill.length;i<this.updateArray.length;i++) this.updateArray[i].setVisible(false);
+			var blurActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).setFillStyle("#000").setGlobalAlpha(true).setAlpha(0);
+			var alphaBehavior = new CAAT.Behavior.AlphaBehavior().setValues(0, 1).setFrameTime(self.time, 2000).setCycle(false).
+			addListener({
+				behaviorExpired: function(director, time) {
+					var sceneMap = self.director.getScene(self.nextScene);
+					var sceneMapContainer = sceneMap.getChildAt(0);
+					sceneMapContainer.initMap(self.director, self, self.userSkill, self.unlockTower, self.level, self.sceneSkillContainer, self.nextScene, self.prevScene, null);
+					self.switchToNextScene();
+				}
+			});
+			blurActor.addBehavior(alphaBehavior);
+			
+			var lostText = new CAAT.Foundation.ActorContainer().setLocation(300,this.height/2);
+			lostText.paint = function(director,time){
+				var ctx = director.ctx;
+				ctx.fillStyle = "#F00";
+				ctx.font = "50px Times New Roman";
+				ctx.fillText("YOU LOST",0,0);
+			}
+			var scaleBehavior = new CAAT.Behavior.ScaleBehavior().setValues(0.2,1,0.2,1).setFrameTime(self.time, 2000);
+			lostText.addBehavior(scaleBehavior);
+			this.addChild(blurActor);
+			this.addChild(lostText);
 			this.endBattle = -1;
-			var sceneMap = this.director.getScene(this.nextScene);
-			var sceneMapContainer = sceneMap.getChildAt(0);
-			sceneMapContainer.initMap(this.director, this, this.userSkill, this.unlockTower, this.level, this.sceneSkillContainer, this.nextScene, this.prevScene, null);
-			//
-			this.switchToNextScene();
+			
 		},
 		winBattle : function (){
+			var self = this;
 			this.endBattle = 1;
-		    var sceneMap = this.director.getScene(this.nextScene);
-		    var sceneMapContainer = sceneMap.getChildAt(0);
-		    sceneMapContainer.initMap(this.director, this, this.userSkill, this.unlockTower, this.level+1, this.sceneSkillContainer, this.nextScene, this.prevScene, null);
-			sceneMapContainer.semiMainMap.updateWinBattle();
-			this.switchToNextScene();
+			for(var i=self.userSkill.length;i<this.updateArray.length;i++) this.updateArray[i].setVisible(false);
+			var blurActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).setFillStyle("#000").setGlobalAlpha(true).setAlpha(0);
+			this.addChild(blurActor);
+			var winText = new CAAT.Foundation.ActorContainer().setLocation(300,this.height/2);
+			winText.paint = function(director,time){
+				var ctx = director.ctx;
+				ctx.fillStyle = "#F00";
+				ctx.font = "50px Times New Roman";
+				ctx.fillText("YOU WIN",0,0);
+			}
+			var scaleBehavior = new CAAT.Behavior.ScaleBehavior().setValues(0.2,1,0.2,1).setFrameTime(self.time, 1000).
+			addListener({
+				behaviorExpired: function(director, time) {
+					winText.emptyBehaviorList();
+					var path= new CAAT.PathUtil.LinearPath().
+					setInitialPosition(winText.x,winText.y).
+					setFinalPosition(300,150);
+					var pathBehavior= new CAAT.PathBehavior().setPath( path ).setFrameTime(time,500).addListener({
+						behaviorExpired: function(director,time){
+							winText.emptyBehaviorList();
+							self.showScoreBoard(time);
+						}
+					});
+					winText.addBehavior(pathBehavior);
+				}
+			});
+			
+			winText.addBehavior(scaleBehavior);
+			this.addChild(winText);
+			
 		},
-		
+		showScoreBoard: function(time){
+			var self = this;
+			var scoreBoard = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).enableEvents(true);
+			self.endTime = time;
+			var x = 250, y = 170, width = 350, height = 220;
+			var starEarned = 0;
+			starEarned+= (self.currentLife/self.life*4)<<0;
+			if(starEarned==4) starEarned = 3;
+			if(self.currentGold>=self.startingGold) starEarned++;
+			if(self.timeDrop>=60000) starEarned++;
+			
+			scoreBoard.paint = function(director,time){
+				var ctx = director.ctx;
+				if(time>self.endTime+1500) self.clickToSwitchScene = true;
+				else self.clickToSwitchScene = false;
+				var backgroundImage = director.getImage("backgroundBoard");
+				ctx.drawImage(backgroundImage,x,y,width,height);
+				ctx.fillStyle = "#F08";
+				ctx.font = "30px Times New Roman";
+				var headText = lang.statistic.head[LANGUAGE];
+				ctx.fillText(headText,x+(width-ctx.measureText(headText).width)/2,y+30);
+				ctx.font = "25px Times New Roman";
+				var line = 0;
+				for(key in lang.statistic) {
+					if(key=="head") continue;
+					var text = lang.statistic[key][LANGUAGE];
+					ctx.fillText(text,x+20,y+70+line*30);
+					var text = "";
+					switch(key){
+						case "line1":
+							text = self.monsterArray.length;
+							break;
+						case "line2":
+							text = self.currentLife+"/"+self.life;
+							break;
+						case "line3":
+							text = self.currentGold;
+							break;
+						case "line4":
+							text = (self.timeDrop/1000)<<0;
+							break;
+					}
+					var measure = ctx.measureText(text).width;
+					ctx.fillText(text,x+width-30-measure,y+70+line*30);
+					line++;
+				}
+				var starImage = director.getImage("star");
+				for(var i=0;i<starEarned;i++) ctx.drawImage(starImage,x+width-60-i*30,y+85+(line-1)*30,30,30);
+			}
+			var winFunction = function(){
+				if(self.clickToSwitchScene){
+					var sceneMap = self.director.getScene(self.nextScene);
+					var sceneMapContainer = sceneMap.getChildAt(0);
+					sceneMapContainer.initMap(self.director, self, self.userSkill, self.unlockTower, self.level+1, self.sceneSkillContainer, self.nextScene, self.prevScene, null);
+					sceneMapContainer.semiMainMap.updateWinBattle(starEarned);
+					self.switchToNextScene();
+				}
+			}
+			scoreBoard.mouseDown = winFunction;
+			scoreBoard.touchStart = winFunction;
+			this.addChild(scoreBoard);
+		},
+		winBattleSwitchScene: function(){
+			var self = this;
+			console.log(self);
+			
+		},
 		paint : function (director, time){
 			var self=this;
 			var elapsedTime = self.sceneTime;
@@ -1258,8 +1371,6 @@
 		///*
 			var self = this;
 			self.sceneTime = time;
-			if((time>=self.countDownTime)&&(time%300==0)) self.currentGold++;
-			
 		    ///*
 			if (self.loadingRep) {
 			    if (loadObj.actionData.length>self.action_number&&loadObj.actionData[self.action_number].time == time) {
@@ -1271,6 +1382,7 @@
 			//*/
 			
 			if(this.endBattle==0){	//Update nếu chưa kết thúc trận 
+				if((time>=self.countDownTime)&&(time%300==0)) self.currentGold++;
 				for (var i = 0; i < this.updateArray.length; i++) {
 					this.updateArray[i].update(director,time);
 				}
@@ -1286,6 +1398,14 @@
 						monster.update(director,time);
 						monster.setLocation(monster.positionX,monster.positionY);
 					}
+				}
+				
+				if(self.directCameraObj){
+					var selectedObj;
+					(self.selectingType==0)?selectedObj = self.towerArray[self.selectingIndex]:selectedObj = self.monsterArray[self.selectingIndex];
+					var mouseX = self.minimapPanel.x+self.miniMapSize*selectedObj.x/self.currentMap.width;
+					var mouseY = self.minimapPanel.y+self.miniMapSize*selectedObj.y/self.currentMap.height;
+					self.setViewportTo(mouseX,mouseY);
 				}
 				var elapsedTime = time;
 				if(elapsedTime>=self.countDownTime){
@@ -1337,7 +1457,9 @@
             self.setViewportTo(ex, ey);
             self.isDrag = true;
         }
-
+		if((self.selectingIndex!=-1)&&(self.checkMouseInCircle(ex,ey,[self.infomationBar.circleArg[0],self.infomationBar.circleArg[1],self.infomationBar.circleArg[2]+self.infomationBar.circleArg[3]/2]))){
+			self.directCameraObj = true;
+		}
         if (self.mapPanel.AABB.contains(ex, ey)) {
             self.isDrag = true;
 			self.startDragMouseX = ex;
@@ -1349,6 +1471,11 @@
 		}
     };
     var _mtDrag = function (self, ex, ey) {
+		if(self.directCameraObj){
+			if(!((self.selectingIndex!=-1)&&(self.checkMouseInCircle(ex,ey,[self.infomationBar.circleArg[0],self.infomationBar.circleArg[1],self.infomationBar.circleArg[2]+self.infomationBar.circleArg[3]/2])))){
+				self.directCameraObj = false;
+			}
+		}
         if ((self.minimapPanel.parent)&&(self.minimapPanel.AABB.contains(ex, ey))) {
             self.setViewportTo(ex, ey);
         }
@@ -1459,7 +1586,7 @@
         var monsterArray = self.monsterArray;
         var towerArray = self.towerArray;
         var clickedOnTower = false;
-        
+        self.directCameraObj = false;
         for (var i = 0; i < towerArray.length; i++) {
             if (towerArray[i].AABB.contains(ex, ey)) {
 				if(self.sellTowerMouse){

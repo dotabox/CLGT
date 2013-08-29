@@ -16,29 +16,41 @@
             return this;
         },
         create: function () {
-            var wave=[[],[],[],[],[],[],[],[]];
 			data.Map[this.id].Wave=[];
-			var a = [6, 9, 12, 0, 3];
-			for (i=0;i<8;i++){
-				var n=this.arr_mon[i];
-				while (n>0){
-					var m=this.random(this.arr_mon[i]/3)>>0;
-					if (n<m)
-						m=n;
-					var a1=[a[this.randomMon(5)],m,this.random(this.num_gate)];
+			var waveNumber = data.Map[this.id].WaveNumber;
+			var wavePoint = data.Map[this.id].WavePoint.concat();
+			var wave = [];
+			for (i=0;i<waveNumber;i++){
+				var tempArray = [];
+				wave.push(tempArray);
+				while (wavePoint[i]>0){
+					var randomNum = (i<2)?this.random(2):this.random(3);
+					var randomMonster;
+					var monsterNumber = 0;
+					switch(randomNum){
+						case 2:
+							monsterNumber = 1;
+							randomMonster = this.random(5)*3+2;
+							break;
+						case 1:
+							monsterNumber = 2;
+							randomMonster = this.random(5)*3+1;
+							break;
+						default:
+							monsterNumber = 6;
+							randomMonster = this.random(5)*3;
+							break;
+					}
+					wavePoint[i] -= 6;
+					var a1=[randomMonster,monsterNumber,this.random(this.num_gate)];
 					wave[i].push(a1);
-					n-=m;						
 				}
 			}
 			data.Map[this.id].Wave=wave;
         },
 		random: function (x) {
-		 number=this.battleContainer.random()*x>>0;
-			return number;
-		},
-		randomMon: function (x) {
-		 number=this.battleContainer.random()*x>>0;
-		 if (number==5)number=0;
+			number=this.battleContainer.random()*x>>0;
+			if(number== x) number = 0;
 			return number;
 		}
     }
