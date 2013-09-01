@@ -354,6 +354,8 @@
 			var bullet = new CAAT.Bullet().initialize(director, self.type, self.x + TOWER_SIZE / 2, self.y, battleContainer);
 			bullet.tower = self;
 			bullet.reloadTime=self.reloadTime;
+			Sound.playSfx(director,"arrow"+(1+battleContainer.randomNumber(5)));
+			
 			var scene=self.parent;
 			scene.addChild(bullet);
 			bullet.textShow=function(){

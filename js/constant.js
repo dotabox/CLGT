@@ -7,8 +7,8 @@ var GAME_SPEED = 1;
 var frameTime = 10;
 
 var LANGUAGE = 1; // 0: Vietnamese, 1: English
-var SFX_VOLUME = 62; 	// 0~100
-var MUSIC_VOLUME = 50;
+var SFX_VOLUME = 100; 	// 0~100
+var MUSIC_VOLUME = 100;
 var MONSTER_SIZE = 48;
 var TOWER_SIZE = 64;
 var BULLET_SIZE= 64;

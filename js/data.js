@@ -35,11 +35,11 @@
 				 [0 ,0 ,0 ,10 ,0 ,0 ,0 ,0 ,0 ,0,0,0,0],
 			]
 	},{
-		WaveNumber: 4,//quái có id 0: số lượng 3 con, đi vào từ cổng 0 (map hiện tại có 2 cổng)
+		WaveNumber: 1,//quái có id 0: số lượng 3 con, đi vào từ cổng 0 (map hiện tại có 2 cổng)
 		Wave:[
 			],
 		WavePoint: [5,10,15,20,30,40,50,60],
-		Life: 20,
+		Life: 1,
 		Gold: 300,
 		Level:0,
 		Tile:"tile1",
@@ -115,6 +115,7 @@
 			Name:lang.data.UserSkill.ID0,
 			Description:lang.description.UserSkill.ID0,
 			AnimationType: "AOE",
+			Sound: "fire",
 			Damage: 500,
 			EffectID:[1],
 			InfoEff:[[70,100,5000]],
@@ -167,6 +168,7 @@
 			Name:lang.data.UserSkill.ID1,
 			Description:lang.description.UserSkill.ID1,
 			AnimationType: "Target",
+			Sound: ["thunder1","thunder2","thunder3","thunder4","thunder5"],
 			TargetNumber: 10,
 			Duration : 5000,
 			Damage: 500,
@@ -224,6 +226,7 @@
 			Description:lang.description.UserSkill.ID2,
 			AnimationType: "AOE",
 			Damage: 700,
+			Sound: "ice",
 			EffectID:[6],
 			InfoEff:[[100,0.5,2000,5000]],
 			CoolDown: 12000,

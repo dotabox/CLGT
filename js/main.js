@@ -12,7 +12,7 @@ var addedMonster = 0;
 window.onload = function () {
     var loadedImage = 0;
 	var loadedPercent = 0;
-	var loadImages;
+	var loadAudios,loadImages;
     windowLoad();
 	function windowLoad(){
 		var canvas = document.getElementById("canvas");
@@ -28,14 +28,43 @@ window.onload = function () {
 			context.strokeRect(300,200,200,20);
 			context.fillRect(300,200,200*loadedPercent/100,20)
 			context.fillText(loadedPercent+"%",300,190);
-			if(loadImages&&(+new Date() - startTime>1000)) {
+			
+			if(loadAudios&&loadImages&&(+new Date() - startTime>1000)) {
 				clearInterval(drawIntervalID);
-				run(loadImages);
+				run(loadImages,loadAudios);
 			}
 		}
-		loadImage();
+		load();
 	}
-    function loadImage() {
+    function load() {
+		var audioElement = new CAAT.AudioPreloader().__init().
+			addElement("thunder1", "sound/sfx/thunder1.ogg").
+			addElement("thunder2", "sound/sfx/thunder2.ogg").
+			addElement("thunder3", "sound/sfx/thunder3.ogg").
+			addElement("thunder4", "sound/sfx/thunder4.ogg").
+			addElement("thunder5", "sound/sfx/thunder5.ogg").
+			addElement("ice", "sound/sfx/ice.ogg").
+			addElement("fire", "sound/sfx/fire.ogg").
+			addElement("gold", "sound/sfx/gold.ogg").
+			addElement("star", "sound/sfx/star.ogg").
+			addElement("arrow1", "sound/sfx/arrow1.ogg").
+			addElement("arrow2", "sound/sfx/arrow2.ogg").
+			addElement("arrow3", "sound/sfx/arrow3.ogg").
+			addElement("arrow4", "sound/sfx/arrow4.ogg").
+			addElement("arrow5", "sound/sfx/arrow5.ogg").
+			addElement("button", "sound/sfx/button.ogg").
+			addElement("start", "sound/music/start.ogg").
+			addElement("lose", "sound/music/lose.ogg").
+			addElement("win", "sound/music/win.ogg").
+			addElement("winMelody", "sound/music/winMelody.ogg").
+			addElement("credits", "sound/music/credits.ogg").
+			addElement("map1", "sound/music/map1.ogg").
+			addElement("map2", "sound/music/map2.ogg").
+			addElement("battle1", "sound/music/battle1.ogg").
+			addElement("battle2", "sound/music/battle2.ogg").
+			addElement("battle3", "sound/music/battle3.ogg").
+			addElement("battle4", "sound/music/battle4.ogg");
+			
         var imageElement = new CAAT.Module.Preloader.Preloader().
             addElement("monster1", "img/monster1.png").
             addElement("tower1", "img/Tower1.png").
@@ -148,9 +177,12 @@ window.onload = function () {
             addElement("wood", "img/wood.png").
             addElement("earth", "img/earth.png").
 			
-            addElement("backgroundBoard", "img/backgroundBoard.jpg").
+            addElement("backgroundBoard", "img/backgroundBoard.jpg");
 			
-            load(function onAllAssetsLoaded(images) {
+		audioElement.load (
+		function loadAll(audios){
+			loadAudios = audios;
+			imageElement.load(function onAllAssetsLoaded(images) {
 				loadImages = images;
             },
 			function onEachLoad(index){
@@ -158,13 +190,19 @@ window.onload = function () {
 				var length = imageElement.elements.length;
 				loadedPercent = Math.round(loadedImage/length*100);
 			});
+		},
+		function loadEach(audio){
+		
+		});
+        
     }
-    function run(images) {
+    function run(images,audios) {
         CAAT.DEBUG = 1;
         console.log('thanhdeptrai');
         var director = new CAAT.Foundation.Director().initialize(CANVAS_WIDTH, CANVAS_HEIGHT, document.getElementById("canvas"));
         director.setImagesCache(images);
-		
+		for(var i=0;i<audios.length;i++) director.addAudio(audios[i].id,audios[i].path);
+		Sound.playMusic(director,"start");
 		var sceneMenu = director.createScene();
 		var sceneBattle = director.createScene();
 		var sceneMenuBattle = director.createScene();
@@ -376,7 +414,7 @@ window.onload = function () {
                 
 		        //for(var i=0;i<15;i++) unlockTower.push(i);
 
-		        battleContainer.initData(element).initialize(director, 0, [1, 0], unlockTower, 0, sceneSkillContainer, sceneMainMenuIndex, sceneMenuIndex).runTUT();	// 0: map index, skill, trụ đã unlock, level
+		        battleContainer.initData(element).initialize(director, 0, [1, 0, 2], unlockTower, 0, sceneSkillContainer, sceneMainMenuIndex, sceneMenuIndex).runTUT();	// 0: map index, skill, trụ đã unlock, level
 		        battleLoad(battleContainer);
 		    }
 		} else {
@@ -391,7 +429,7 @@ window.onload = function () {
 		    var unlockTower = user.buttressUnlock;
 		    var level = user.level;
 		    menu.initialize(director, 3);
-		    sceneMapContainer.initMap(director, battleContainer,  [1, 0], unlockTower, level, sceneSkillContainer, sceneMainMenuIndex, sceneMenuIndex, battleLoad);
+		    sceneMapContainer.initMap(director, battleContainer,  [1, 0, 2], unlockTower, level, sceneSkillContainer, sceneMainMenuIndex, sceneMenuIndex, battleLoad);
 		   // battleContainer.initialize();	// 0: map index, skill, trụ đã unlock, level
 		    //for(var i=0;i<15;i++) unlockTower.push(i);	
 		    //menu.initialize(director, 3);

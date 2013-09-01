@@ -13,6 +13,7 @@
             //this.randomIndex = loadObj.randomIndex;
 			//this.randomArray = loadObj.randomArray;
             //this.replayData = loadObj;
+			
             this.sceneSkillContainer = sceneSkillContainer;
             this.endBattle = 0;
 			this.countDownTime = Number.MAX_VALUE;
@@ -43,6 +44,8 @@
 			this.sceneTime = 0;
 			//this.scene_time=this.parent.time;
 			this.currentLevel = mapIndex;
+			
+			Sound.playMusic(director,"battle"+(1+this.randomNumber(4)));
 			
 			this.updateArray=[];
 			this.towerArray = [];
@@ -691,7 +694,7 @@
 							var showMonster = new CAAT.Monster().initialize(self, monster.type, monster.level,0,0)
 							showMonster.stopMove = true;
 							showMonster.removeChildAt(0);
-							showMonster.setLocation(circleArg[3]-5,circleArg[3]-showMonster.height/3).setScaleAnchored(1,1,0,0);
+							showMonster.setLocation(circleArg[3]-5,circleArg[3]-5).setScaleAnchored(1,1,0,0);
 							this.removeChildAt(0);
 							this.addChild(showMonster);
 						}
@@ -902,6 +905,11 @@
             if (self.currentRandomIndex == self.randomArray.length) self.currentRandomIndex = 0;
             return self.randomArray[self.currentRandomIndex];
         },
+		randomNumber: function(index){
+			var random = (this.random()*index)<<0;
+			if(random==index) random = 0;
+			return random;
+		},
 		showUpgrade : function (){
 			var self = this;
 			var tower = self.towerArray[self.selectingIndex];
@@ -1072,6 +1080,7 @@
 		    var self = this;
 		    var tower;
 			self.replayInformation("sellTower",[towerID]);
+			Sound.playSfx(self.director,"gold");
 		    for (i in this.towerArray){
 		        if (this.towerArray[i].id == towerID) {
 					self.selectingIndex = -1;
@@ -1101,6 +1110,7 @@
 		removeMonster : function(monsterID){
 			var self = this;
 			var monster = this.monsterArray[monsterID];
+			var direction = monster.direction;
 			monster.isDead = true;	
 			this.deadMonster++;
 			//Tạo ra Monster khác để làm hình mờ đi
@@ -1110,9 +1120,10 @@
 			deadMonster.alpha = 1;
             deadMonster.removeChildAt(0);
             deadMonster.setLocation(monster.positionX, monster.positionY);
+			deadMonster.updateDirection(direction);
             deadMonster.textShow(["+ "+monster.bounty,"+ "+monster.bounty],"#FF0");
 			self.mapBound.removeChild(monster);
-            
+            Sound.playSfx(self.director,"gold");
 			//Xóa con quái khỏi mảng các phần tử nào
             var currentPoint = monster.currentPoint;
             var pointId = monster.pointList[currentPoint].x * monster.currentMap.mapWidth + monster.pointList[currentPoint].y;
@@ -1169,14 +1180,16 @@
 			}
 			*/
 			var self = this;
+			Sound.playMusic(self.director,"lose");
 			for(var i=self.userSkill.length;i<this.updateArray.length;i++) this.updateArray[i].setVisible(false);
 			var blurActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).setFillStyle("#000").setGlobalAlpha(true).setAlpha(0);
-			var alphaBehavior = new CAAT.Behavior.AlphaBehavior().setValues(0, 1).setFrameTime(self.time, 2000).setCycle(false).
+			var alphaBehavior = new CAAT.Behavior.AlphaBehavior().setValues(0, 1).setFrameTime(self.time, 4500).setCycle(false).
 			addListener({
 				behaviorExpired: function(director, time) {
 					var sceneMap = self.director.getScene(self.nextScene);
 					var sceneMapContainer = sceneMap.getChildAt(0);
 					sceneMapContainer.initMap(self.director, self, self.userSkill, self.unlockTower, self.level, self.sceneSkillContainer, self.nextScene, self.prevScene, null);
+					Sound.playMusic(self.director,"map"+(1+self.randomNumber(2)));
 					self.switchToNextScene();
 				}
 			});
@@ -1199,6 +1212,10 @@
 		winBattle : function (){
 			var self = this;
 			this.endBattle = 1;
+			Sound.playMusic(self.director,"win",
+			function(){
+				Sound.playMusic(self.director,"winMelody");
+			});
 			for(var i=self.userSkill.length;i<this.updateArray.length;i++) this.updateArray[i].setVisible(false);
 			var blurActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).setFillStyle("#000").setGlobalAlpha(true).setAlpha(0);
 			this.addChild(blurActor);
@@ -1236,14 +1253,16 @@
 			self.endTime = time;
 			var x = 250, y = 170, width = 350, height = 220;
 			var starEarned = 0;
-			starEarned+= (self.currentLife/self.life*4)<<0;
-			if(starEarned==4) starEarned = 3;
+			var percentLife = self.currentLife/self.life;
+			if(percentLife>=0.3) starEarned++;
+			if(percentLife>=0.6) starEarned++;
+			if(percentLife>=0.9) starEarned++;
 			if(self.currentGold>=self.startingGold) starEarned++;
-			if(self.timeDrop>=60000) starEarned++;
+			if(self.timeDrop>=(self.waveNumber-1)*self.timePerWave/2) starEarned++;
 			
 			scoreBoard.paint = function(director,time){
 				var ctx = director.ctx;
-				if(time>self.endTime+1500) self.clickToSwitchScene = true;
+				if(time>self.endTime+starEarned*500) self.clickToSwitchScene = true;
 				else self.clickToSwitchScene = false;
 				var backgroundImage = director.getImage("backgroundBoard");
 				ctx.drawImage(backgroundImage,x,y,width,height);
@@ -1276,21 +1295,40 @@
 					ctx.fillText(text,x+width-30-measure,y+70+line*30);
 					line++;
 				}
-				var starImage = director.getImage("star");
-				for(var i=0;i<starEarned;i++) ctx.drawImage(starImage,x+width-60-i*30,y+85+(line-1)*30,30,30);
 			}
+			
 			var winFunction = function(){
 				if(self.clickToSwitchScene){
 					var sceneMap = self.director.getScene(self.nextScene);
 					var sceneMapContainer = sceneMap.getChildAt(0);
 					sceneMapContainer.initMap(self.director, self, self.userSkill, self.unlockTower, self.level+1, self.sceneSkillContainer, self.nextScene, self.prevScene, null);
 					sceneMapContainer.semiMainMap.updateWinBattle(starEarned);
+					Sound.playMusic(self.director,"map"+(1+self.randomNumber(2)));
 					self.switchToNextScene();
 				}
 			}
 			scoreBoard.mouseDown = winFunction;
 			scoreBoard.touchStart = winFunction;
 			this.addChild(scoreBoard);
+			self.playedStar = 0;
+			for(var i=0;i<starEarned;i++){
+				var starContainer = new CAAT.ActorContainer()
+											.setBounds(x+width-60-i*24,y+85+4*24,24,24)
+											.setBackgroundImage(self.director.getImage('star'),true)
+											.setScaleAnchored(1.5,1.5,0,0)
+											.setAlpha(0);
+				var alphaBehavior = new CAAT.Behavior.AlphaBehavior().setValues(0, 1).setFrameTime(time+i*500, 500).setCycle(false).
+				addListener({
+					behaviorApplied: function(director,time){
+						if((time-self.endTime)>500*self.playedStar){
+							self.playedStar++;
+							Sound.playSfx(self.director,"star");
+						}
+					}
+				});
+				starContainer.addBehavior(alphaBehavior);
+				self.addChild(starContainer);
+			}
 		},
 		winBattleSwitchScene: function(){
 			var self = this;

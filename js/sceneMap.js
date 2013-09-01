@@ -10,7 +10,7 @@
 		create: function(director) {
 			var self = this;
 			this.director = director;
-
+			
 			this.setBounds(0,0,CANVAS_WIDTH,CANVAS_HEIGHT)
 				.setFillStyle("#ccccff");
 
@@ -21,6 +21,7 @@
 			var bttSize = 80;
 			var backImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('back'), 1, 1 );
 			var backBtt = new CAAT.Button().initialize(director, backImage, 0, 0, 0, 0, function(button){
+					Sound.playMusic(director,"start");
 	            	self.director.switchToScene(self.semiMainMap.sceneMenuIndex);
 	            })
 	        	.setLocation(0, 0)

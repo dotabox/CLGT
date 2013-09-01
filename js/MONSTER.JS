@@ -75,7 +75,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 			}
 			this.bounty = monster.Bounty;
 			this.showHP = true;
-            var showHP = new CAAT.Foundation.ActorContainer().setBounds(0, 0, 50, 50);	// Hiện thanh máu và tên
+            var showHP = new CAAT.Foundation.ActorContainer().setBounds(0, -20, 50, 50);	// Hiện thanh máu và tên
             showHP.paint = function(director, time) {
 				if(self.showHP){
 					var ctx = director.ctx;
@@ -88,7 +88,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 				}
             }
 			this.selected = false;
-			var showSelected = new CAAT.Foundation.ActorContainer().setBounds(0, 0, 50, 50);
+			var showSelected = new CAAT.Foundation.ActorContainer().setBounds(0, 15, 50, 50);
 			showSelected.paint = function(director,time){
 				if(self.selected){
 					var ctx = director.ctx;
@@ -97,7 +97,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 					ctx.lineWidth = 2;
 					ctx.beginPath();
 					ctx.scale(1,0.4);
-					ctx.arc(5+MONSTER_SIZE/2,3*MONSTER_SIZE,MONSTER_SIZE/2,-Math.PI/4,5*Math.PI/4);
+					ctx.arc(5+MONSTER_SIZE/2,3*MONSTER_SIZE,MONSTER_SIZE/2,-2*Math.PI/5,7*Math.PI/5);
 					ctx.stroke();
 					ctx.closePath();
 					ctx.restore();
@@ -308,6 +308,20 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
                 self.moveComplete = false;
                 var horizontal = pointList[currentPoint + direction].y - pointList[currentPoint].y;
                 var vertical = pointList[currentPoint + direction].x - pointList[currentPoint].x;
+				switch(horizontal){
+					case 1:
+						if(self.direction!=1) self.updateDirection(1);
+						break;
+					case -1:
+						if(self.direction!=0) self.updateDirection(0);
+						break;
+					case 0:
+						if(vertical>0){
+							if(self.direction!=3) self.updateDirection(3)
+						}
+						else if(self.direction!=2) self.updateDirection(2);
+						break;
+				}
                 self.movePositionX += horizontal * TILE_SIZE;
                 self.movePositionY += vertical * TILE_SIZE;
                 var nextPointId = pointList[currentPoint + direction].x * self.currentMap.mapWidth + pointList[currentPoint + direction].y;
