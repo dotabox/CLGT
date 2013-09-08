@@ -326,8 +326,11 @@
 			self.buildButtonXYArray = [];
 			for(var i=0;i<5;i++){
 				var towerElementImage = new CAAT.Foundation.SpriteImage().initialize(self.director.getImage("towerElementIcon"+i), 1, 4 );
-				var towerImage = new CAAT.Foundation.SpriteImage().initialize(self.director.getImage("towerSprite1"), 1, 4 );
-				self.setBuildButton[i] = new CAAT.Button().initialize(self.director,towerImage,0,1,2,3);
+				var towerImage = self.director.getImage(data.Tower[i].Image);
+				var w = towerImage.width/TOWER_IMAGE_SIZE;
+				var h = towerImage.height/TOWER_IMAGE_SIZE;
+				var towerSprite = new CAAT.Foundation.SpriteImage().initialize(towerImage,h,w);
+				self.setBuildButton[i] = new CAAT.Button().initialize(self.director,towerSprite,0,0,0,0);
 				self.buildButtonArray[i] = new CAAT.Button().initialize(self.director,towerElementImage,0,1,2,3,
 				function(button) {	//down
 					if(self.sellTowerMouse) self.sellTowerFunction();
@@ -589,7 +592,8 @@
 							rect2Arg[0],rect2Arg[1],30+measure1,rect2Arg[3]);
 						this.rect1Arg[2] = 30+measure1;
 						this.rect2Arg[2] = 30+measure1;
-						ctx.drawImage(tower.image,
+						ctx.drawImage(tower.image.image,
+							0,0,TOWER_IMAGE_SIZE,TOWER_IMAGE_SIZE,
 							15,15,48,48);
 						var circleArg = this.circleArg;
 						var percent = tower.percentLevel;

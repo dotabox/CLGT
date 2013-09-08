@@ -43,6 +43,7 @@ window.onload = function () {
 			addElement("thunder3", "sound/sfx/thunder3.ogg").
 			addElement("thunder4", "sound/sfx/thunder4.ogg").
 			addElement("thunder5", "sound/sfx/thunder5.ogg").
+			addElement("thunder6", "sound/sfx/thunder6.ogg").
 			addElement("ice", "sound/sfx/ice.ogg").
 			addElement("fire", "sound/sfx/fire.ogg").
 			addElement("gold", "sound/sfx/gold.ogg").
@@ -67,7 +68,22 @@ window.onload = function () {
 			
         var imageElement = new CAAT.Module.Preloader.Preloader().
             addElement("monster1", "img/monster1.png").
+            addElement("monster2", "img/monster2.png").
+            addElement("monster3", "img/monster3.png").
+            addElement("monster4", "img/monster4.png").
+            addElement("monster5", "img/monster5.png").
+            addElement("monster6", "img/monster6.png").
+            addElement("monster7", "img/monster7.png").
+            addElement("monster8", "img/monster8.png").
+            addElement("monster9", "img/monster9.png").
+            addElement("monster10", "img/monster10.png").
+            addElement("monster11", "img/monster11.png").
+            addElement("monster12", "img/monster12.png").
+            addElement("monster13", "img/monster13.png").
             addElement("tower1", "img/Tower1.png").
+            addElement("tower3", "img/Tower3.png").
+            addElement("tower5", "img/Tower5.png").
+            addElement("tower9", "img/Tower9.png").
             addElement("towerSprite1", "img/sprite_tower.png").
             addElement("towerEarth1", "img/earth_tower.png").
             addElement("towerEarth2", "img/earth_tower2.png").

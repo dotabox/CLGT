@@ -35,7 +35,7 @@
 					var ctx = director.ctx;
 					ctx.save();
 					ctx.strokeStyle = "#0F0";
-					ctx.lineWidth = 5;
+					ctx.lineWidth = 2;
 					
 					ctx.beginPath();
 					ctx.arc(self.width/2,self.height/2,self.range/self.scaleX,0,Math.PI*2);
@@ -44,7 +44,7 @@
 					
 					ctx.beginPath();
 					ctx.scale(1,0.4);
-					ctx.arc(77,360,70,-Math.PI/4,5*Math.PI/4);
+					ctx.arc(30,150,30,-Math.PI/4,5*Math.PI/4);
 					ctx.stroke();
 					ctx.closePath();
 					ctx.restore();
@@ -74,6 +74,7 @@
 			this.damage = tower.Damage.concat();
 			this.bulletID = tower.BulletID;;
 			this.reloadTime = tower.ReloadTime;
+			this.setChangeFPS(this.reloadTime/this.frameNumber);
 			this.price = tower.Price;
 			this.element = tower.Element.concat();
 			this.resitant = tower.Resitant.concat();
@@ -119,6 +120,7 @@
 		    else
 		        self.queue = findRange(currentMap.distanceData[cell_id].queue, self.range, 2);//chi check nhung o duong di
 		    self.reloadTime = tower.ReloadTime - tower.LevelUp.RlT * level;//Tang toc ban
+			
 		    var n = 0;//biến đếm cho mảng chỉ số eff được thêm của levelUp
 		   for (key in self.infoEff) {
 			var InfoEff=self.infoEff[key].concat();
@@ -127,6 +129,7 @@
 		            n++;
 		        }
 		    }
+			this.setChangeFPS(this.reloadTime/this.frameNumber);
 		    return this;
 		},
 		upgrade: function (elementID) {
@@ -333,10 +336,11 @@
                         this.fire(target, director,time);
                         self.lastFire = time;
                     }                
-				}  
+				}
+				else self.updateState("idle");
 			} 
 			
-					
+		
             var i = 0;
             for (i = 0; i < self.bullets.length; i++) {                
                 if (self.bullets[i]) {
@@ -355,7 +359,7 @@
 			bullet.tower = self;
 			bullet.reloadTime=self.reloadTime;
 			Sound.playSfx(director,"arrow"+(1+battleContainer.randomNumber(5)));
-			
+			self.updateState("fire");
 			var scene=self.parent;
 			scene.addChild(bullet);
 			bullet.textShow=function(){

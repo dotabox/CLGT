@@ -168,7 +168,7 @@
 			Name:lang.data.UserSkill.ID1,
 			Description:lang.description.UserSkill.ID1,
 			AnimationType: "Target",
-			Sound: ["thunder1","thunder2","thunder3","thunder4","thunder5"],
+			Sound: ["thunder1","thunder2","thunder3","thunder4","thunder5","thunder6"],
 			TargetNumber: 10,
 			Duration : 5000,
 			Damage: 500,
@@ -346,7 +346,7 @@
 		ID:2,
 		Name:lang.data.Tower.ID2,
 		Description:lang.description.Tower.ID2,
-		Image: "towerEarth1",
+		Image: "tower3",
 		Damage:[25,35],
 		Element:[2],
 		Resitant:[0.75,0.5,1,2,1.5],
@@ -378,7 +378,7 @@
 		ID:4,
 		Name:lang.data.Tower.ID4,
 		Description:lang.description.Tower.ID4,
-		Image: "tower1",
+		Image: "tower5",
 		Damage:[10,14],
 		Element:[4],
 		Resitant:[2,1.5,0.75,0.5,1],
@@ -442,7 +442,7 @@
         ID: 8,
         Name:lang.data.Tower.ID8,
         Description:lang.description.Tower.ID8,
-        Image: "tower1",
+        Image: "tower9",
         Damage: [35, 35],
         Element: [0,3],
 		Resitant:[1,2,1.5,0.75,0.5],
@@ -837,7 +837,7 @@
 	{
 		ID:1,
 		Name:lang.data.Monster.ID1,
-		Image: "monster1",
+		Image: "monster2",
 		Speed:1,
 		Element:3,
 		BaseHP:400,
@@ -849,7 +849,7 @@
 	{
 		ID:2,
 		Name:lang.data.Monster.ID2,
-		Image: "monster1",
+		Image: "monster3",
 		Speed:1,
 		Element:3,
 		BaseHP:1000,	
@@ -861,7 +861,7 @@
 	},{
 		ID:3,
 		Name:lang.data.Monster.ID3,
-		Image: "monster1",
+		Image: "monster4",
 		Speed:1.25,
 		Element:4,
 		BaseHP:150,		
@@ -872,7 +872,7 @@
 	},{
 		ID:4,
 		Name:lang.data.Monster.ID4,
-		Image: "monster1",
+		Image: "monster5",
 		Speed:1.5,
 		Element:4,
 		BaseHP:400,
@@ -884,7 +884,7 @@
 	{
 		ID:5,
 		Name:lang.data.Monster.ID5,
-		Image: "monster1",
+		Image: "monster6",
 		Speed:1.75,
 		Element:4,
 		BaseHP:1000,		
@@ -897,7 +897,7 @@
 	{
 		ID:6,
 		Name:lang.data.Monster.ID6,
-		Image: "monster1",
+		Image: "monster7",
 		Speed:1.5,
 		Element:0,
 		BaseHP:150,		
@@ -909,7 +909,7 @@
 	{
 		ID:7,
 		Name:lang.data.Monster.ID7,
-		Image: "monster1",
+		Image: "monster8",
 		Speed:1.75,
 		Element:0,
 		BaseHP:400,
@@ -921,7 +921,7 @@
 	{
 		ID:8,
 		Name:lang.data.Monster.ID8,
-		Image: "monster1",
+		Image: "monster9",
 		Speed:1,
 		Element:0,
 		BaseHP:1000,		
@@ -934,7 +934,7 @@
 	{
 		ID:9,
 		Name:lang.data.Monster.ID9,
-		Image: "monster1",
+		Image: "monster10",
 		Speed:2,
 		Element:1,
 		BaseHP:150,		
@@ -946,7 +946,7 @@
 	{
 		ID:10,
 		Name:lang.data.Monster.ID10,
-		Image: "monster1",
+		Image: "monster11",
 		Speed:1.5,
 		Element:1,
 		BaseHP:400,
@@ -958,7 +958,7 @@
 	{
 		ID:11,
 		Name:lang.data.Monster.ID11,
-		Image: "monster1",
+		Image: "monster12",
 		Speed:1,
 		Element:1,
 		BaseHP:1000,		
@@ -971,7 +971,7 @@
 	{
 		ID:12,
 		Name:lang.data.Monster.ID12,
-		Image: "monster1",
+		Image: "monster13",
 		Speed:1.25,
 		Element:2,
 		BaseHP:150,
@@ -983,7 +983,7 @@
 	{
 		ID:13,
 		Name:lang.data.Monster.ID13,
-		Image: "monster1",
+		Image: "monster13",
 		Speed:1,
 		Element:2,
 		BaseHP:400,
@@ -995,7 +995,7 @@
 	{
 		ID:14,
 		Name:lang.data.Monster.ID14,
-		Image: "monster1",
+		Image: "monster13",
 		Speed:1.5,
 		Element:2,
 		BaseHP:1000,		

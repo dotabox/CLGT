@@ -310,16 +310,16 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
                 var vertical = pointList[currentPoint + direction].x - pointList[currentPoint].x;
 				switch(horizontal){
 					case 1:
-						if(self.direction!=1) self.updateDirection(1);
+						self.updateDirection(2);
 						break;
 					case -1:
-						if(self.direction!=0) self.updateDirection(0);
+						self.updateDirection(1);
 						break;
 					case 0:
 						if(vertical>0){
-							if(self.direction!=3) self.updateDirection(3)
+							self.updateDirection(0);
 						}
-						else if(self.direction!=2) self.updateDirection(2);
+						else self.updateDirection(3);
 						break;
 				}
                 self.movePositionX += horizontal * TILE_SIZE;
