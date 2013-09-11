@@ -88,7 +88,7 @@ window.onload = function () {
             addElement("towerEarth1", "img/earth_tower.png").
             addElement("towerEarth2", "img/earth_tower2.png").
             addElement("tile1", "img/tile1.png").
-            addElement("bullet1", "img/arrow1.png").            
+            addElement("bullet1", "img/bullet1.png").            
             addElement("bullet2", "img/star1.png").
             addElement("flag", "img/Flag.png").
 			addElement("star", "img/star.png").

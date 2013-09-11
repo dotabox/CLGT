@@ -64,12 +64,16 @@
 			var updatedState = (state == "idle")?0:1;
 			if(this.state != updatedState){
 				var w = this.frameNumber;
+				if(updatedState == 0){
+					this.setChangeFPS(200);
+				}
 				if(updatedState>=this.heightLength) return;
 				this.state = updatedState;
 				var animationIndex = [];
 				for(var i=0;i<w;i++) animationIndex.push((this.state+this.direction)*w+i);
 				this.setAnimationImageIndex(animationIndex);
 			}
+			
 		},
 		updateDirection : function(direction){
 			if(this.direction!=direction){
