@@ -17,8 +17,8 @@
 
 	        this.historyData = [];
 	        this.semiMapNumber = 6;
-	        this.levelPerSemiMap = 3;
-	        this.levelAtCoLoa = 5;
+	        this.levelPerSemiMap = 4;
+	        this.levelAtCoLoa = 6;
 	        this.semiMapCoLoaIndex = 0;
 	        this.maxStarPerLevel = 5;
 
@@ -35,8 +35,12 @@
         			this.historyData[i][j] = {};
         			this.historyData[i][j].isLock = true;
         			this.historyData[i][j].star = 0;
+        			this.historyData[i][j].nextUnlock = [j+1];
         		}
         		this.historyData[i][0].isLock = false;
+        		this.historyData[i][0].nextUnlock = [1, 2];
+        		this.historyData[i][1].nextUnlock = [3];
+        		this.historyData[i][2].nextUnlock = [3];
 	        }
 
 			return this;
@@ -124,6 +128,9 @@
 
 		            	// sau battle, open next flag, cho no 2 sao lam demo
 		            	setFlagIsLock((i+1 < flagNumber) ? (i+1) : i, false);
+		            	for(var f = 0; f < self.historyData[id][i].nextUnlock.length; f++) {
+		            		setFlagIsLock(self.historyData[id][i].nextUnlock[f], false);
+		            	}
 		            	self.historyData[id][i].star = 2;
 		            	addStar(this, self.historyData[id][i].star, self.maxStarPerLevel);
 		            })
@@ -131,6 +138,11 @@
 	            flagBtt[i].idInArray = i;
 	            setFlagIsLock(i, self.historyData[id][i].isLock);
 	            this.addChild(flagBtt[i]);
+			}
+			flagBtt[1].setLocation(flagBtt[1].x, flagBtt[1].y - flagImage.height);
+			flagBtt[2].setLocation(flagBtt[1].x, flagBtt[1].y + flagImage.height*2);
+			for(var i = 3; i < flagNumber; i++) {
+				flagBtt[i].setLocation(flagBtt[i].x - flagImage.width*2, flagBtt[i].y);
 			}
 
 			return this;
