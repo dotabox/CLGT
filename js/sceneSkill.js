@@ -12,8 +12,9 @@
 		skillPoint: null,
 		skillTab: null,
 		pointLeft: 0,
-		create: function(director) {
+		create: function(director, sceneIndex) {
 			var self = this;
+			this.sceneIndex = sceneIndex;
 			this.setBounds(0,0,CANVAS_WIDTH,CANVAS_HEIGHT)
 				.setFillStyle("#ccccff");
 			this.director = director;
@@ -84,8 +85,8 @@
 				function(button,ex,ey){		//up
 					self.pointLeft = self.curPoint;
 					setLevel();
-					console.log("back to menu scene");
-					self.director.switchToScene(0);
+					console.log("back to main map scene");
+					self.director.switchToScene(3);
 				})
 				.setScaleAnchored(2.5*bttSize/okImage.singleWidth, bttSize/okImage.singleHeight, 0, 0)
 				.setLocation((this.skillPoint.width - 2.5*bttSize)/2, this.skillPoint.height - bttSize);

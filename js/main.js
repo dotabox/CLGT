@@ -156,6 +156,7 @@ window.onload = function () {
             addElement("upSkill", "img/buttons/upSkill.png").
             addElement("downSkill", "img/buttons/downSkill.png").
             addElement("okIcon", "img/buttons/ok.png").
+            addElement("skillTable", "img/buttons/skillTable.jpg").
             addElement("lockIcon", "img/buttons/lock.png").
             addElement("skillIcon1", "img/buttons/kim.png").
             addElement("skillIcon2", "img/buttons/moc.png").
@@ -231,7 +232,7 @@ window.onload = function () {
 		sceneMap.addChild(sceneMapContainer);
 		var sceneGameContainer = new CAAT.SceneGameCtn().create(director);
 		sceneGame.addChild(sceneGameContainer);
-		var sceneSkillContainer = new CAAT.SceneSkill().create(director);
+		var sceneSkillContainer = new CAAT.SceneSkill().create(director, 5);
 		sceneSkill.addChild(sceneSkillContainer);
 
 		var sceneMenuIndex = 0;

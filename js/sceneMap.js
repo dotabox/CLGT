@@ -27,6 +27,14 @@
 	        	.setLocation(0, 0)
 	        	.setScaleAnchored(bttSize / backImage.singleWidth, bttSize / backImage.singleHeight, 0, 0);
 	        this.addChild(backBtt);
+
+	        var skillTableImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('skillTable'), 1, 1 );
+	        var skillTableBtt = new CAAT.Button().initialize(director, skillTableImg, 0, 0, 0, 0, function(button){
+	            	self.director.switchToScene(self.semiMainMap.sceneSkillContainer.sceneIndex);
+	            })
+	        	.setLocation(bttSize, CANVAS_HEIGHT - bttSize)
+	        	.setScaleAnchored(bttSize / skillTableImg.singleWidth, bttSize / skillTableImg.singleHeight, 0, 0);
+	        this.addChild(skillTableBtt);
 			
 			var areaButtonSize = 150;
 			var castleImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('castle'), 1, 1 );
