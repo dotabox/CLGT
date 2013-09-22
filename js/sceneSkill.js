@@ -12,9 +12,9 @@
 		skillPoint: null,
 		skillTab: null,
 		pointLeft: 0,
-		create: function(director, sceneIndex) {
+		create: function(director, sIndex, sMain) {
 			var self = this;
-			this.sceneIndex = sceneIndex;
+			this.sceneIndex = sIndex;
 			this.setBounds(0,0,CANVAS_WIDTH,CANVAS_HEIGHT)
 				.setFillStyle("#ccccff");
 			this.director = director;
@@ -30,6 +30,7 @@
 			this.addChild(this.skillInfo);
 			this.addChild(this.skillPoint);
 			this.addChild(this.skillTab);
+			this.curPoint = this.pointLeft = 0;
 
 			var bttSize = 50;
 			var upSkillImage = new CAAT.Foundation.SpriteImage().initialize(this.director.getImage("upSkill"), 1, 1);
@@ -86,6 +87,7 @@
 					self.pointLeft = self.curPoint;
 					setLevel();
 					console.log("back to main map scene");
+					sMain.updateSkillPoint();
 					self.director.switchToScene(3);
 				})
 				.setScaleAnchored(2.5*bttSize/okImage.singleWidth, bttSize/okImage.singleHeight, 0, 0)

@@ -35,6 +35,18 @@
 	        	.setLocation(bttSize, CANVAS_HEIGHT - bttSize)
 	        	.setScaleAnchored(bttSize / skillTableImg.singleWidth, bttSize / skillTableImg.singleHeight, 0, 0);
 	        this.addChild(skillTableBtt);
+
+	        var skillPointInfo = new CAAT.Foundation.UI.TextActor()
+                .setFont('30px Arial')
+                .setSize(bttSize, bttSize)
+                .setTextFillStyle('#333')
+                .setText(""+0)
+                .setLocation(2*bttSize, CANVAS_HEIGHT - bttSize);
+            this.addChild(skillPointInfo);
+
+            this.updateSkillPoint = function() {
+            	skillPointInfo.setText(""+self.semiMainMap.sceneSkillContainer.pointLeft);
+            }
 			
 			var areaButtonSize = 150;
 			var castleImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('castle'), 1, 1 );

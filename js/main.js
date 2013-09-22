@@ -230,10 +230,10 @@ window.onload = function () {
 		
 		var sceneMapContainer = new CAAT.SceneMapCtn().create(director);
 		sceneMap.addChild(sceneMapContainer);
+		var sceneSkillContainer = new CAAT.SceneSkill().create(director, 5, sceneMapContainer);
+		sceneSkill.addChild(sceneSkillContainer);
 		var sceneGameContainer = new CAAT.SceneGameCtn().create(director);
 		sceneGame.addChild(sceneGameContainer);
-		var sceneSkillContainer = new CAAT.SceneSkill().create(director, 5);
-		sceneSkill.addChild(sceneSkillContainer);
 
 		var sceneMenuIndex = 0;
 		var sceneBattleIndex = 1;
