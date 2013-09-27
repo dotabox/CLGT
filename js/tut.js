@@ -7,6 +7,7 @@
 	var actorMain = new CAAT.Foundation.ActorContainer();
 	var numberTUT=0;
 	var _next=false;
+	var elementID;
 	CAAT.TUT.prototype = {
 	    blur: function () {
 	        actorMain.
@@ -113,7 +114,12 @@
 			case 0:
 				var actor=new CAAT.Foundation.ActorContainer().setSize(50,50).setPosition(50,50)
 									.setFillStyle("#f0f").enableEvents(true);			
-				
+				//Ngươi đã chọn _ Kim: hiện thân của kim loại, cứng rắn, mạnh mẽ ( tăng sát thương ).
+				//_ Mộc: hiện thân của cây cối, thực vật, tràn đầy sức sống.(Giảm phòng thủ đối phương).
+				//_ Thủy: hiện thân của nước, mềm mại, hàn lạnh, (Giảm tốc độ di chuyển).
+				//_ Hỏa: hiện thân của lửa, ánh sáng, (Thiêu đốt đối phương).
+				//_ Thổ: hiện thân của đất mẹ, (Gây sát thương trên phạm vi hẹp).
+				//Hãy luyện tập thật tốt để sẵn sàng trừ hại cho dân
 				_this.addChild(actor);
 				_this.highlight(actor);
 				_next=true;
@@ -248,7 +254,7 @@
 		},
 		initData: function (id) {
 		    var a = [6, 9, 12, 0, 3];// a[0] Kim a[1] Moc a[2] Tho a[3] Thuy a[4]Hoa
-		    var id;
+		    elementID=id;
 		    var a1,a2,a3,a4;
 		    switch (id) {
 		        case 0: a1 = [[a[1], 2, 0]];

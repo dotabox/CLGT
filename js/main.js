@@ -242,7 +242,14 @@ window.onload = function () {
 		var sceneSkillIndex = 5;
         //load user data
 		var user = new CAAT.User().init(0, 0, 1, 0, 0, 0, [0,1,2,3,4,5,6,7,8,9,10], []);
-		
+		//load map đã qua
+		var numMap=19;
+		var UserMaps=[];
+		for (i=0;i<numMap;i++){
+			var m = new CAAT.InfoUserMap().init(i, 0, 0, 0);//(mapID, highscore, star, times)
+			UserMaps.push(m);
+		}
+			
 		//var battleContainer = new CAAT.BattleContainer().initialize(director,1,"",8,50,200,null, sceneMenuIndex);
 		//sceneBattle.addChild(battleContainer);
 		var menu = new CAAT.MenuActor().initialize(director, sceneBattleIndex);

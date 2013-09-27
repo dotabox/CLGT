@@ -27,9 +27,7 @@
         return (this);
     }
     CAAT.InfoUserMap.prototype = {
-        init: function (id, userID, mapID, highscore, star, times) {
-            this.id = id;
-            this.userID = userID;
+        init: function (mapID, highscore, star, times) {
             this.mapID = mapID;
             this.highscore = highscore;
             this.star = star;
