@@ -52,7 +52,7 @@
 					break;
 				case 2:
 					var skill = data.UserSkill[argTooltip];
-					this.headText += skill.Name[LANGUAGE]+"\n";
+					this.headText += skill.Name[LANGUAGE];
 					this.text += "\n\n"+["Thời gian hồi: ","Cooldown: "][LANGUAGE] + ((skill.CoolDown/1000)<<0) +[" giây.",[" second."]][LANGUAGE]+ "\n";
 					this.text += skill.Description[LANGUAGE];
 					break;

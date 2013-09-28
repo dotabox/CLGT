@@ -45,7 +45,10 @@
 					if(!button.AABB.contains(ex,ey)) return;
 					switch(index){
 						case 0:
-							var text = "Đã làm cái này đ' đâu";
+							self.switchToPrevScene();
+							self.battleContainer.parent.setPaused(false);
+							self.battleContainer.stopCacheAsBitmap();
+							self.battleContainer.restart();
 							break;
 						case 1:
 							var option = new CAAT.OptionContainer().initialize(director,"",true);
@@ -57,11 +60,16 @@
 							self.addChild(option);
 							break;
 						case 2:
-							var text = "Có map đ' đâu mà về";
+							if(self.battleContainer.isStart) self.battleContainer.isStart();
+							self.battleContainer.stopCacheAsBitmap();
+							//self.battleContainer.endBattle = -1;
+							Sound.playMusic(self.director,"map"+(1+self.battleContainer.randomNumber(2)));
+							self.director.switchToScene(3);
 							break;
 						case 3:
 							self.battleContainer.stopCacheAsBitmap();
-							self.battleContainer.endBattle = -1;
+							//self.battleContainer.endBattle = -1;
+							Sound.playMusic(director,"start");
 							self.director.switchToScene(0);
 							break;
 						case 4:
@@ -70,7 +78,7 @@
 							self.battleContainer.stopCacheAsBitmap();
 							break;
 					}
-					if(text) self.textShow([text,text],"#0F0");
+					//if(text) self.textShow([text,text],"#0F0");
 				})
 					.setLocation((CANVAS_WIDTH-menuListWidth)/2,(CANVAS_HEIGHT-menuListHeight*5-50)/2+ (menuListHeight+10)*i)
 					.setScaleAnchored(menuListWidth/menuListImage.singleWidth,menuListHeight/menuListImage.singleHeight,0,0);

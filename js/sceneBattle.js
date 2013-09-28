@@ -13,8 +13,17 @@
             //this.randomIndex = loadObj.randomIndex;
 			//this.randomArray = loadObj.randomArray;
             //this.replayData = loadObj;
+			
             this.sceneSkillContainer = sceneSkillContainer;
             this.endBattle = 0;
+			this.countDownTime = Number.MAX_VALUE;
+			this.showStartText = false;
+			this.startText = "";
+			this.timePerWave = 30000;
+			this.timeDrop = 0; //thời gian bỏ qua để vào wave mới
+			this.currentWave = 0;
+			this.action_number = 0;//bien so thu tu su kien khi load replay
+			
 			this.randomArray = [];
             var i = 5000;
 			this.randomIndex = (Math.random()*(i-1))<<0;
@@ -36,9 +45,12 @@
 			//this.scene_time=this.parent.time;
 			this.currentLevel = mapIndex;
 			
+			Sound.playMusic(director,"battle"+(1+this.randomNumber(4)));
+			
 			this.updateArray=[];
 			this.towerArray = [];
 			this.unlockTower = unlockTower.concat();
+			this.level = level;
 			this.monsterArray = [];
 			this.addedMonster = 0;
 			this.addedMonsterInWave = 0;
@@ -47,6 +59,7 @@
 			var miniMapSize = this.miniMapSize;
 			var currentLevel = mapIndex;
 			this.mapData = data.Map[currentLevel];
+			if(mapIndex!=0) new CAAT.SyncWave().init(director, this, mapIndex, level, 2, [4, 4, 4, 4, 4, 4, 4, 4]).create();
 			var mapData = this.mapData;
 			this.life = mapData.Life;
 			this.currentLife = this.life;
@@ -115,7 +128,7 @@
 				self.clickNextWave = true;
 				var pastTime = self.timePerWave - self.startAddMonsterWaveTime;
 				self.timeDrop += pastTime;
-				var gold = Math.ceil(pastTime/100);
+				var gold = Math.ceil(pastTime/200);
 				self.currentGold+= gold;
 				var showText = new CAAT.DamageShow().initialize("+"+gold,this.x,this.y+self.buttonSize/2,"#FF0",self,30);
 				self.addChild(showText);
@@ -131,7 +144,7 @@
 			this.menuFunction = function(){
 				
 				self.cacheAsBitmap(self.time,CAAT.Foundation.Actor.CACHE_DEEP);
-				if (self.paused) self.paused();
+				pausedFunction(director,self,director.getScene(2));
 				
 			}
 			this.menuButton = new CAAT.Button().initialize(this.director,menuImage,0,1,1,0,this.menuFunction)
@@ -148,6 +161,7 @@
 				_this.isTimePaused=!_this.isTimePaused;
 				
 			}
+			self.pausefunc = pausefunc;
 			this.pauseButton = new CAAT.Button().initialize(this.director,pauseImage,0,0,0,0,pausefunc)
 
 				.setLocation((CANVAS_WIDTH-menuWidth-buttonSize-30),0)
@@ -312,8 +326,11 @@
 			self.buildButtonXYArray = [];
 			for(var i=0;i<5;i++){
 				var towerElementImage = new CAAT.Foundation.SpriteImage().initialize(self.director.getImage("towerElementIcon"+i), 1, 4 );
-				var towerImage = new CAAT.Foundation.SpriteImage().initialize(self.director.getImage("towerSprite1"), 1, 4 );
-				self.setBuildButton[i] = new CAAT.Button().initialize(self.director,towerImage,0,1,2,3);
+				var towerImage = self.director.getImage(data.Tower[i].Image);
+				var w = towerImage.width/TOWER_IMAGE_SIZE;
+				var h = towerImage.height/TOWER_IMAGE_SIZE;
+				var towerSprite = new CAAT.Foundation.SpriteImage().initialize(towerImage,h,w);
+				self.setBuildButton[i] = new CAAT.Button().initialize(self.director,towerSprite,0,0,0,0);
 				self.buildButtonArray[i] = new CAAT.Button().initialize(self.director,towerElementImage,0,1,2,3,
 				function(button) {	//down
 					if(self.sellTowerMouse) self.sellTowerFunction();
@@ -329,7 +346,7 @@
 					}
 				},
 				function(button,ex,ey){	//drag
-				
+					self.draggingBuild  = true;
 					var x = ex;
 					var y = ey;
 					_mtMove(self, x, y);
@@ -338,6 +355,7 @@
 					var x = ex ;
 					var y = ey;
 					_btUp(self, x, y);
+					self.draggingBuild = false;
 				},
 				function(){
 					var index = self.buildButtonArray.indexOf(this);
@@ -574,7 +592,8 @@
 							rect2Arg[0],rect2Arg[1],30+measure1,rect2Arg[3]);
 						this.rect1Arg[2] = 30+measure1;
 						this.rect2Arg[2] = 30+measure1;
-						ctx.drawImage(tower.image,
+						ctx.drawImage(tower.image.image,
+							0,0,TOWER_IMAGE_SIZE,TOWER_IMAGE_SIZE,
 							15,15,48,48);
 						var circleArg = this.circleArg;
 						var percent = tower.percentLevel;
@@ -679,7 +698,7 @@
 							var showMonster = new CAAT.Monster().initialize(self, monster.type, monster.level,0,0)
 							showMonster.stopMove = true;
 							showMonster.removeChildAt(0);
-							showMonster.setLocation(circleArg[3]-5,circleArg[3]-showMonster.height/3).setScaleAnchored(1,1,0,0);
+							showMonster.setLocation(circleArg[3]-5,circleArg[3]-5).setScaleAnchored(1,1,0,0);
 							this.removeChildAt(0);
 							this.addChild(showMonster);
 						}
@@ -801,9 +820,6 @@
 			
 			var mapBound = this.mapBound;
 			
-			
-			
-			
             return this;
         },
         replayInformation: function (actionType, actionArg) {
@@ -864,7 +880,6 @@
 				var callback = function(animation){
 					if(!animation.isEnd){
 						animation.isEnd = true;
-						console.log("dffd");
 						if(animation.animationIndex == 1) {
 							var cloudActor = animation.cloudActor;
 							var alphaBehavior = new CAAT.Behavior.AlphaBehavior().setValues(cloudActor.getChildAt(0).alpha, 0).setDelayTime(0, 1000).setCycle(false).
@@ -894,6 +909,11 @@
             if (self.currentRandomIndex == self.randomArray.length) self.currentRandomIndex = 0;
             return self.randomArray[self.currentRandomIndex];
         },
+		randomNumber: function(index){
+			var random = (this.random()*index)<<0;
+			if(random==index) random = 0;
+			return random;
+		},
 		showUpgrade : function (){
 			var self = this;
 			var tower = self.towerArray[self.selectingIndex];
@@ -978,7 +998,7 @@
 				ctx.closePath();
 				ctx.restore();
 			}
-			self.setBuildIcon.addChild(showSelected);
+			if(!self.setBuildIcon.getChildAt(0))self.setBuildIcon.addChild(showSelected);
 			self.setBuildIcon.alpha = 0.5;
 			
 			self.redBuildIcon = new CAAT.Foundation.Actor().
@@ -986,9 +1006,9 @@
 				setSize(self.setBuildIcon.width,self.setBuildIcon.height).
 				setLocation(0,0).
 				setAlpha(0);
-			self.setBuildIcon.addChild(self.redBuildIcon);
-
-			self.addChild(self.setBuildIcon);
+			if(!self.setBuildIcon.getChildAt(1))self.setBuildIcon.addChild(self.redBuildIcon);
+			
+			if(!self.setBuildIcon.parent)self.addChild(self.setBuildIcon);
 			self.curBuildType = type;
 
 		},
@@ -1064,6 +1084,7 @@
 		    var self = this;
 		    var tower;
 			self.replayInformation("sellTower",[towerID]);
+			Sound.playSfx(self.director,"gold");
 		    for (i in this.towerArray){
 		        if (this.towerArray[i].id == towerID) {
 					self.selectingIndex = -1;
@@ -1093,6 +1114,7 @@
 		removeMonster : function(monsterID){
 			var self = this;
 			var monster = this.monsterArray[monsterID];
+			var direction = monster.direction;
 			monster.isDead = true;	
 			this.deadMonster++;
 			//Tạo ra Monster khác để làm hình mờ đi
@@ -1102,9 +1124,10 @@
 			deadMonster.alpha = 1;
             deadMonster.removeChildAt(0);
             deadMonster.setLocation(monster.positionX, monster.positionY);
+			deadMonster.updateDirection(direction);
             deadMonster.textShow(["+ "+monster.bounty,"+ "+monster.bounty],"#FF0");
 			self.mapBound.removeChild(monster);
-            
+            Sound.playSfx(self.director,"gold");
 			//Xóa con quái khỏi mảng các phần tử nào
             var currentPoint = monster.currentPoint;
             var pointId = monster.pointList[currentPoint].x * monster.currentMap.mapWidth + monster.pointList[currentPoint].y;
@@ -1150,6 +1173,7 @@
 			}
 		},
 		lostBattle : function (){
+			/*
 			for (var i = 0; i < this.towerArray.length; i++) {
 				this.mapBound.removeChild(this.towerArray[i]);
 			}
@@ -1158,21 +1182,163 @@
 					this.mapBound.removeChild(this.monsterArray[i]);
 				}
 			}
+			*/
+			var self = this;
+			Sound.playMusic(self.director,"lose");
+			for(var i=self.userSkill.length;i<this.updateArray.length;i++) this.updateArray[i].setVisible(false);
+			var blurActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).setFillStyle("#000").setGlobalAlpha(true).setAlpha(0);
+			var alphaBehavior = new CAAT.Behavior.AlphaBehavior().setValues(0, 1).setFrameTime(self.time, 4500).setCycle(false).
+			addListener({
+				behaviorExpired: function(director, time) {
+					var sceneMap = self.director.getScene(self.nextScene);
+					var sceneMapContainer = sceneMap.getChildAt(0);
+					sceneMapContainer.initMap(self.director, self, self.userSkill, self.unlockTower, self.level, self.sceneSkillContainer, self.nextScene, self.prevScene, null);
+					Sound.playMusic(self.director,"map"+(1+self.randomNumber(2)));
+					self.switchToNextScene();
+				}
+			});
+			blurActor.addBehavior(alphaBehavior);
+			
+			var lostText = new CAAT.Foundation.ActorContainer().setLocation(300,this.height/2);
+			lostText.paint = function(director,time){
+				var ctx = director.ctx;
+				ctx.fillStyle = "#F00";
+				ctx.font = "50px Times New Roman";
+				ctx.fillText("YOU LOST",0,0);
+			}
+			var scaleBehavior = new CAAT.Behavior.ScaleBehavior().setValues(0.2,1,0.2,1).setFrameTime(self.time, 2000);
+			lostText.addBehavior(scaleBehavior);
+			this.addChild(blurActor);
+			this.addChild(lostText);
 			this.endBattle = -1;
-			//
-			this.switchToNextScene();
+			
 		},
 		winBattle : function (){
+			var self = this;
 			this.endBattle = 1;
-			this.switchToNextScene();
+			Sound.playMusic(self.director,"win",
+			function(){
+				Sound.playMusic(self.director,"winMelody");
+			});
+			for(var i=self.userSkill.length;i<this.updateArray.length;i++) this.updateArray[i].setVisible(false);
+			var blurActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).setFillStyle("#000").setGlobalAlpha(true).setAlpha(0);
+			this.addChild(blurActor);
+			var winText = new CAAT.Foundation.ActorContainer().setLocation(300,this.height/2);
+			winText.paint = function(director,time){
+				var ctx = director.ctx;
+				ctx.fillStyle = "#F00";
+				ctx.font = "50px Times New Roman";
+				ctx.fillText("YOU WIN",0,0);
+			}
+			var scaleBehavior = new CAAT.Behavior.ScaleBehavior().setValues(0.2,1,0.2,1).setFrameTime(self.time, 1000).
+			addListener({
+				behaviorExpired: function(director, time) {
+					winText.emptyBehaviorList();
+					var path= new CAAT.PathUtil.LinearPath().
+					setInitialPosition(winText.x,winText.y).
+					setFinalPosition(300,150);
+					var pathBehavior= new CAAT.PathBehavior().setPath( path ).setFrameTime(time,500).addListener({
+						behaviorExpired: function(director,time){
+							winText.emptyBehaviorList();
+							self.showScoreBoard(time);
+						}
+					});
+					winText.addBehavior(pathBehavior);
+				}
+			});
+			
+			winText.addBehavior(scaleBehavior);
+			this.addChild(winText);
+			
 		},
-		countDownTime : Number.MAX_VALUE,
-		showStartText : false,
-		startText : "",
-		timePerWave : 15000,
-		timeDrop: 0, //thời gian bỏ qua để vào wave mới
-		currentWave: 0,
-        action_number:0,//bien so thu tu su kien khi load replay
+		showScoreBoard: function(time){
+			var self = this;
+			var scoreBoard = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).enableEvents(true);
+			self.endTime = time;
+			var x = 250, y = 170, width = 350, height = 220;
+			var starEarned = 0;
+			var percentLife = self.currentLife/self.life;
+			if(percentLife>=0.3) starEarned++;
+			if(percentLife>=0.6) starEarned++;
+			if(percentLife>=0.9) starEarned++;
+			if(self.currentGold>=self.startingGold) starEarned++;
+			if(self.timeDrop>=(self.waveNumber-1)*self.timePerWave/2) starEarned++;
+			
+			scoreBoard.paint = function(director,time){
+				var ctx = director.ctx;
+				if(time>self.endTime+starEarned*500) self.clickToSwitchScene = true;
+				else self.clickToSwitchScene = false;
+				var backgroundImage = director.getImage("backgroundBoard");
+				ctx.drawImage(backgroundImage,x,y,width,height);
+				ctx.fillStyle = "#F08";
+				ctx.font = "30px Times New Roman";
+				var headText = lang.statistic.head[LANGUAGE];
+				ctx.fillText(headText,x+(width-ctx.measureText(headText).width)/2,y+30);
+				ctx.font = "25px Times New Roman";
+				var line = 0;
+				for(key in lang.statistic) {
+					if(key=="head") continue;
+					var text = lang.statistic[key][LANGUAGE];
+					ctx.fillText(text,x+20,y+70+line*30);
+					var text = "";
+					switch(key){
+						case "line1":
+							text = self.monsterArray.length;
+							break;
+						case "line2":
+							text = self.currentLife+"/"+self.life;
+							break;
+						case "line3":
+							text = self.currentGold;
+							break;
+						case "line4":
+							text = (self.timeDrop/1000)<<0;
+							break;
+					}
+					var measure = ctx.measureText(text).width;
+					ctx.fillText(text,x+width-30-measure,y+70+line*30);
+					line++;
+				}
+			}
+			
+			var winFunction = function(){
+				if(self.clickToSwitchScene){
+					var sceneMap = self.director.getScene(self.nextScene);
+					var sceneMapContainer = sceneMap.getChildAt(0);
+					sceneMapContainer.initMap(self.director, self, self.userSkill, self.unlockTower, self.level+1, self.sceneSkillContainer, self.nextScene, self.prevScene, null);
+					sceneMapContainer.semiMainMap.updateWinBattle(starEarned);
+					Sound.playMusic(self.director,"map"+(1+self.randomNumber(2)));
+					self.switchToNextScene();
+				}
+			}
+			scoreBoard.mouseDown = winFunction;
+			scoreBoard.touchStart = winFunction;
+			this.addChild(scoreBoard);
+			self.playedStar = 0;
+			for(var i=0;i<starEarned;i++){
+				var starContainer = new CAAT.ActorContainer()
+											.setBounds(x+width-60-i*24,y+85+4*24,24,24)
+											.setBackgroundImage(self.director.getImage('star'),true)
+											.setScaleAnchored(1.5,1.5,0,0)
+											.setAlpha(0);
+				var alphaBehavior = new CAAT.Behavior.AlphaBehavior().setValues(0, 1).setFrameTime(time+i*500, 500).setCycle(false).
+				addListener({
+					behaviorApplied: function(director,time){
+						if((time-self.endTime)>500*self.playedStar){
+							self.playedStar++;
+							Sound.playSfx(self.director,"star");
+						}
+					}
+				});
+				starContainer.addBehavior(alphaBehavior);
+				self.addChild(starContainer);
+			}
+		},
+		winBattleSwitchScene: function(){
+			var self = this;
+			console.log(self);
+			
+		},
 		paint : function (director, time){
 			var self=this;
 			var elapsedTime = self.sceneTime;
@@ -1247,8 +1413,6 @@
 		///*
 			var self = this;
 			self.sceneTime = time;
-			if((time>=self.countDownTime)&&(time%300==0)) self.currentGold++;
-			
 		    ///*
 			if (self.loadingRep) {
 			    if (loadObj.actionData.length>self.action_number&&loadObj.actionData[self.action_number].time == time) {
@@ -1260,6 +1424,7 @@
 			//*/
 			
 			if(this.endBattle==0){	//Update nếu chưa kết thúc trận 
+				if((time>=self.countDownTime)&&(time%300==0)) self.currentGold++;
 				for (var i = 0; i < this.updateArray.length; i++) {
 					this.updateArray[i].update(director,time);
 				}
@@ -1275,6 +1440,14 @@
 						monster.update(director,time);
 						monster.setLocation(monster.positionX,monster.positionY);
 					}
+				}
+				
+				if(self.directCameraObj){
+					var selectedObj;
+					(self.selectingType==0)?selectedObj = self.towerArray[self.selectingIndex]:selectedObj = self.monsterArray[self.selectingIndex];
+					var mouseX = self.minimapPanel.x+self.miniMapSize*selectedObj.x/self.currentMap.width;
+					var mouseY = self.minimapPanel.y+self.miniMapSize*selectedObj.y/self.currentMap.height;
+					self.setViewportTo(mouseX,mouseY);
 				}
 				var elapsedTime = time;
 				if(elapsedTime>=self.countDownTime){
@@ -1325,38 +1498,26 @@
         if ((self.minimapPanel.parent)&&(self.minimapPanel.AABB.contains(ex, ey))) {
             self.setViewportTo(ex, ey);
             self.isDrag = true;
-            self.last.x = ex;
-            self.last.y = ey;
-
         }
-
+		if((self.selectingIndex!=-1)&&(self.checkMouseInCircle(ex,ey,[self.infomationBar.circleArg[0],self.infomationBar.circleArg[1],self.infomationBar.circleArg[2]+self.infomationBar.circleArg[3]/2]))){
+			self.directCameraObj = true;
+		}
         if (self.mapPanel.AABB.contains(ex, ey)) {
             self.isDrag = true;
-            self.last.x = ex;
+			self.startDragMouseX = ex;
+			self.startDragMouseY = ey;
+        }
+		if(self.isDrag){
+			self.last.x = ex;
             self.last.y = ey;
-        }
-		/*
-        if(self.skillPanel.AABB.contains(ex, ey)) {
-	        if(self.skillBtt_1.AABB.contains(ex, ey)) {
-	    		self.skillBtt_1.mouseDown();
-	    	}
-	    	else if(self.skillBtt_2.AABB.contains(ex, ey)) {
-	    		self.skillBtt_2.mouseDown();
-	    	}
-    	}
-        if (self.controlPanel.settingbutton.AABB.contains(ex, ey)) {
-            self.controlPanel.clickSttBtt();
-        }
-        else {
-            for (var i = 0; i < self.controlPanel.chooseTowers.length; i++) {
-                if (self.controlPanel.chooseTowers[i].AABB.contains(ex, ey)) {
-
-                }
-            }
-        }
-		//*/
+		}
     };
     var _mtDrag = function (self, ex, ey) {
+		if(self.directCameraObj){
+			if(!((self.selectingIndex!=-1)&&(self.checkMouseInCircle(ex,ey,[self.infomationBar.circleArg[0],self.infomationBar.circleArg[1],self.infomationBar.circleArg[2]+self.infomationBar.circleArg[3]/2])))){
+				self.directCameraObj = false;
+			}
+		}
         if ((self.minimapPanel.parent)&&(self.minimapPanel.AABB.contains(ex, ey))) {
             self.setViewportTo(ex, ey);
         }
@@ -1364,7 +1525,6 @@
             if (self.isDrag) {
                 var dx = ex - self.last.x;
                 var dy = ey - self.last.y;
-
                 if ((self.mapBound.x + dx < 0) && (self.mapBound.x + dx > -self.currentMap.mapWidth * TILE_SIZE + CANVAS_WIDTH)) {
                     self.sumdx -= dx;
                     self.mapBound.setLocation(self.mapBound.x + dx, self.mapBound.y);
@@ -1379,7 +1539,7 @@
                 self.last.x = ex;
                 self.last.y = ey;
             }
-        }        
+        }
     };
     var _mtMove = function (self, ex, ey) {
 		if(self.tooltip.positionIndex!=0) self.tooltip.setPosition(0);
@@ -1430,44 +1590,45 @@
     }
     var _btUp = function (self, ex, ey) {
         
-			for(var i=0;i<self.buildButtonArray.length;i++){
-				if(self.buildButtonArray[i].AABB.contains(ex,ey)) {
-					
-					return;
-				}
+		for(var i=0;i<self.buildButtonArray.length;i++){
+			if(self.buildButtonArray[i].AABB.contains(ex,ey)) {
+				
+				return;
 			}
-            self.isDrag = false;
-            if (self.isSetBuild && self.mapPanel.AABB.contains(ex, ey)) {
-                // check can build ?
+		}
+		self.isDrag = false;
+		if(self.draggingBuild||((self.startDragMouseX==self.last.x)&&(self.startDragMouseY==self.last.y))){
+			if (self.isSetBuild && self.mapPanel.AABB.contains(ex, ey)) {
+				// check can build ?
 				if(self.checkMouseInCircle(ex,ey,[self.width,self.height,self.buildCircle.radius])) {
 					self.unShowSetBuildIcon();
 					return;
 				}
-                var posx = Math.floor(((ex - self.mapBound.x) / TOWER_SIZE) >> 0) * TOWER_SIZE;
-                var posy = Math.floor(((ey - self.mapBound.y) / TOWER_SIZE) >> 0) * TOWER_SIZE;
-                self.towerID++;
-                if (self.canbuild) {
-                    
-                    if (self.currentGold < data.Tower[self.curBuildType].Price) {
-                        self.unShowSetBuildIcon();
-                    }
-                    else {
-                        var towerBuy = new CAAT.Tower().initialize(self, self.curBuildType, 0, posx, posy, self.towerID);
-                        self.currentGold -= towerBuy.price;
-                        self.mapBound.addChild(towerBuy);
-                        self.towerArray.push(towerBuy);
+				var posx = Math.floor(((ex - self.mapBound.x) / TOWER_SIZE) >> 0) * TOWER_SIZE;
+				var posy = Math.floor(((ey - self.mapBound.y) / TOWER_SIZE) >> 0) * TOWER_SIZE;
+				self.towerID++;
+				if (self.canbuild) {
+					
+					if (self.currentGold < data.Tower[self.curBuildType].Price) {
+						self.unShowSetBuildIcon();
+					}
+					else {
+						var towerBuy = new CAAT.Tower().initialize(self, self.curBuildType, 0, posx, posy, self.towerID);
+						self.currentGold -= towerBuy.price;
+						self.mapBound.addChild(towerBuy);
+						self.towerArray.push(towerBuy);
 						self.replayInformation("buildTower",[self.curBuildType,0,posx,posy,self.towerID]);
-                        self.unShowSetBuildIcon();
-                    }
-                }
-			
-        }
+						self.unShowSetBuildIcon();
+					}
+				}
+			}
+		}
     }
     var _mtUp = function (self,ex,ey) {
         var monsterArray = self.monsterArray;
         var towerArray = self.towerArray;
         var clickedOnTower = false;
-        
+        self.directCameraObj = false;
         for (var i = 0; i < towerArray.length; i++) {
             if (towerArray[i].AABB.contains(ex, ey)) {
 				if(self.sellTowerMouse){
@@ -1513,74 +1674,14 @@
         }
         
     }
-    var animate=function (director, time,sceneTime) {
-				var sc=                         CAAT.Foundation.ActorContainer.superclass;
-				var sc_animate=                 sc.animate;
-				var __CD =                      CAAT.Foundation.Actor.CACHE_DEEP;
-				//time=arguments[2]||0; 
-                if (!this.visible) {
-                    return false;
-                }
-
-                this.activeChildren = [];
-                var last = null;
-				
-				for (i = 0; i < this.behaviorList.length; i++) {
-                    this.behaviorList[i].apply(time, this);
-                }
-				
-                if (false === sc_animate.call(this, director, time)) {
-                    return false;
-                }
-
-                if (this.cached === __CD) {
-                    return true;
-                }
-
-                this.__validateLayout();
-                CAAT.currentDirector.inValidation = false;
-
-                var i, l;
-
-                /**
-                 * Incluir los actores pendientes.
-                 * El momento es ahora, antes de procesar ninguno del contenedor.
-                 */
-                var pcl = this.pendingChildrenList;
-                for (i = 0; i < pcl.length; i++) {
-                    var child = pcl[i];
-                    this.addChildImmediately(child.child, child.constraint);
-                }
-
-                this.pendingChildrenList = [];
-                var markDelete = [];
-
-                var cl = this.childrenList;
-                this.size_active = 1;
-                this.size_total = 1;
-                for (i = 0; i < cl.length; i++) {
-                    var actor = cl[i];
-                    actor.time = time;
-                    this.size_total += actor.size_total;
-                    if (actor.animate(director, time)) {
-                        this.activeChildren.push(actor);
-                        this.size_active += actor.size_active;
-                    } else {
-                        if (actor.expired && actor.discardable) {
-                            markDelete.push(actor);
-                        }
-                    }
-                }
-
-                for (i = 0, l = markDelete.length; i < l; i++) {
-                    var md = markDelete[i];
-                    md.destroy(time);
-                    if (director.dirtyRectsEnabled) {
-                        director.addDirtyRect(md.AABB);
-                    }
-                }
-
-                return true;
-            };
+    
+	var pausedFunction = function (director, battleContainer, sceneMenuBattle) {
+        var sceneBattleIndex = 1;
+        var sceneMenuBattleIndex = 2;
+        director.switchToScene(sceneMenuBattleIndex);
+        menuBattleContainer = new CAAT.MenuBattleContainer().initialize(battleContainer, null, sceneBattleIndex);
+        sceneMenuBattle.emptyChildren();
+        sceneMenuBattle.addChild(menuBattleContainer);
+    }
     extend(CAAT.BattleContainer, CAAT.SceneActor);
 })();

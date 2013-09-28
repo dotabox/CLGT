@@ -6516,7 +6516,7 @@ CAAT.Module({
                 if (null !== audio) {
 
                     audio.src = this.__getAudioUrl(url);
-                    console.log("Loading audio: "+audio.src);
+                    //console.log("Loading audio: "+audio.src);
                     audio.preload = "auto";
                     audio.load();
                     if (endplaying_callback) {

@@ -41,7 +41,8 @@
 			this.scrollSfx = new CAAT.Foundation.ActorContainer().setBounds(this.startScroll,115,this.scrollLength,50).enableEvents(false);
 			this.scrollMusic = new CAAT.Foundation.ActorContainer().setBounds(this.startScroll,175,this.scrollLength,50).enableEvents(false);
 			this.scrollSpeed = new CAAT.Foundation.ActorContainer().setBounds(this.startScroll+(GAME_SPEED-1)*this.scrollLength,245,20,15).enableEvents(false);
-			this.scrollSpeed.setFillStyle((inBattle)?"#CCC":"#F80");
+			//this.scrollSpeed.setFillStyle((inBattle)?"#CCC":"#F80");
+			this.scrollSpeed.setFillStyle("#F80");
 			this.addChild(this.scrollSfx);
 			this.addChild(this.scrollMusic);
 			this.addChild(this.scrollSpeed);
@@ -87,8 +88,8 @@
 				if(this.scrollBar[i].AABB.contains(ex+this.x,ey+this.y)){
 					this.scrolling = i;
 					this.lastX = ex;
-					if(i==0) SFX_VOLUME = Math.round(100*(ex-this.startScroll)/this.scrollLength);
-					if(i==1) MUSIC_VOLUME = Math.round(100*(ex-this.startScroll)/this.scrollLength);
+					if(i==0) Sound.setSfxVolume(this.director,Math.round(100*(ex-this.startScroll)/this.scrollLength));
+					if(i==1) Sound.setMusicVolume(this.director,Math.round(100*(ex-this.startScroll)/this.scrollLength));
 					break;
 				}
 			}
@@ -98,10 +99,10 @@
 			if(this.scrolling!=-1){
 				switch(this.scrolling){
 					case 0:
-						if((ex>=this.startScroll)&&(ex<=this.stopScroll))SFX_VOLUME = Math.round(100*(ex-this.startScroll)/this.scrollLength);
+						if((ex>=this.startScroll)&&(ex<=this.stopScroll)) Sound.setSfxVolume(this.director,Math.round(100*(ex-this.startScroll)/this.scrollLength));
 						break;
 					case 1:
-						if((ex>=this.startScroll)&&(ex<=this.stopScroll))MUSIC_VOLUME = Math.round(100*(ex-this.startScroll)/this.scrollLength);
+						if((ex>=this.startScroll)&&(ex<=this.stopScroll)) Sound.setMusicVolume(this.director,Math.round(100*(ex-this.startScroll)/this.scrollLength));
 						break;
 					case 2:
 //						if(this.inBattle) break;

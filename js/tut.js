@@ -25,11 +25,10 @@
 		highlight: function (actor) {
 		    var self = this;
 		    this.blur();
-		    this.setZOrder(this.menuButton, Number.MAX_VALUE);
+		    //this.setZOrder(this.menuButton, Number.MAX_VALUE);
 		    this.setZOrder(actor, Number.MAX_VALUE);
 			var ax=actor.x, ay=actor.y, aw=actor.width, ah=actor.height;
 			if (arguments[1]&&arguments[2]) {ax=arguments[1], ay=arguments[2], aw=arguments[3], ah=arguments[4];}
-			
 		    var hidenButton = new CAAT.Foundation.ActorContainer()
                                     .setSize(aw, ah)
 									.setLocation(ax,ay)

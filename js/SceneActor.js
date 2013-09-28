@@ -98,6 +98,9 @@
                     case 0:
                         console.log('start');
                         self.switchToNextScene();
+						var randomSound = (1+(Math.random()*2)<<0);
+						if(randomSound==3) randomSound = 1;
+						Sound.playMusic(self.director,"map"+randomSound);
                         break;
                         /* Unlock */
                     case 1:
@@ -125,6 +128,7 @@
                         console.log('credits');
                         self.isDim = true;
                         self.disableButton();
+						Sound.playMusic(self.director,"credits");
                         var credits = [
                             "PROGRAM\n" +
                             "       Nguyễn Hoàng Tú\n\n" +
@@ -144,10 +148,15 @@
                             "       Nguyễn Thanh Tùng\n"+
                             "       Đinh Hoàng Anh",
                             "MUSIC\n" +
-                            "       Nguyễn Quang Vũ",
+                            "       Nguyễn Quang Vũ\n"+
+                            "       Golden Sun Dark Dawn\n"+
+                            "       Fire Emblem 7\n"+
+                            "       Age Of Mythology\n"+
+                            "       Nền RPG của Tú đa\n",
                             "       SPECIAL THANK\n\n"+
                             "       Girl at Cafe Cốm :v\n\n\n"+
                             "For help us complete this games!",
+							"\n\n"+
                             "       Bring to you by BKGM\n\n"+
                             "      THANK FOR PLAYING!"
                         ];
@@ -156,6 +165,7 @@
                         creditActor.setFn(function () {
                             self.isDim = false;
                             self.enableButton();
+							Sound.playMusic(self.director,"start");
                             self.removeChild(this);
                         });
                         self.addChild(creditActor);
@@ -188,7 +198,7 @@
             this.fn = fn;
             this.setBackgroundImage(director.getImage("credits_bg"));
             
-            var fadeBehavior = new CAAT.AlphaBehavior().setValues(0, 1).setFrameTime(director.time, 500).
+            var fadeBehavior = new CAAT.AlphaBehavior().setValues(0, 1).setFrameTime(director.currentScene.time, 500).
                 addListener({
                     behaviorExpired: function (behavior, time, actor) {
                         actor.emptyBehaviorList();
@@ -206,7 +216,7 @@
                                     self.currentCredit++;
                                     if (self.currentCredit < self.numberCredits) {
                                         actor.setText(credits[self.currentCredit]);
-                                        behavior.setFrameTime(director.time, 3000);
+                                        behavior.setFrameTime(time, 3000);
                                         actor.addBehavior(behavior);
                                     } else {
                                         self.actionComplete();
@@ -481,7 +491,7 @@
                     if (power <= 0) {
                         self.enableEvents(true);
                         self.setPosition(lastX, lastY);
-                        self.removeBehaviour(behavior);
+                        self.removeBehaviorById(0);
                     } else {
                         self.offsetX = Math.sin(elapsedTime * xrate) * power;
                         self.offsetY = Math.sin(elapsedTime * yrate) * power + Math.cos(elapsedTime * yrate) * power;

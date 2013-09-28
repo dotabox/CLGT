@@ -1,57 +1,10 @@
 ﻿data={
 	Map:[{
-		Wave:[
-				[
-					[0,3,0],		//quái có id 0: số lượng 3 con, đi vào từ cổng 0 (map hiện tại có 2 cổng)
-					[1,3,0],
-					[0,5,0]
-				],
-				[
-					[1,3,0],
-					[2,1,0],
-					[4,3,0],
-					[4,3,0],
-				],
-				[
-					[3,4,0],
-					[1,4,0],
-					[5,1,0]
-				],
-				[
-					[6,3,0],
-					[7,3,0],
-					[8,1,0]
-				],
-				[
-					[9,3,0],
-					[10,3,0],
-					[11,1,0]
-				],
-				[
-					[12,3,0],
-					[13,3,0],
-					[14,1,0]
-				],
-				[
-					[2,1,0],
-					[5,1,0],
-					[8,1,0],
-					[11,1,0],
-					[14,1,0],
-				],
-				[
-					[2,1,0],
-					[2,1,0],
-					[5,1,0],
-					[5,1,0],
-					[8,1,0],
-					[8,1,0],
-					[11,1,0],
-					[11,1,0],
-					[14,1,0],
-					[14,1,0],
-				],
+		WaveNumber: 8,
+		Wave:[//quái có id 0: số lượng 3 con, đi vào từ cổng 0 (map hiện tại có 2 cổng)
+				
 			],
+		WavePoint: [5,10,15,20,30,40,50,60],
 		Life: 50,
 		Gold: 300,
 		Level:0,
@@ -82,59 +35,11 @@
 				 [0 ,0 ,0 ,10 ,0 ,0 ,0 ,0 ,0 ,0,0,0,0],
 			]
 	},{
+		WaveNumber: 1,//quái có id 0: số lượng 3 con, đi vào từ cổng 0 (map hiện tại có 2 cổng)
 		Wave:[
-				[
-					[0,3,0],		//quái có id 0: số lượng 3 con, đi vào từ cổng 0 (map hiện tại có 2 cổng)
-					[1,3,1],
-					[0,5,0]
-				],
-				[
-					[1,3,0],
-					[2,1,1],
-					[4,3,1],
-					[4,3,0],
-				],
-				[
-					[3,4,0],
-					[1,4,1],
-					[5,1,0]
-				],
-				[
-					[6,3,0],
-					[7,3,1],
-					[8,1,0]
-				],
-				[
-					[9,3,0],
-					[10,3,1],
-					[11,1,0]
-				],
-				[
-					[12,3,0],
-					[13,3,1],
-					[14,1,0]
-				],
-				[
-					[2,1,0],
-					[5,1,1],
-					[8,1,0],
-					[11,1,1],
-					[14,1,1],
-				],
-				[
-					[2,1,0],
-					[2,1,1],
-					[5,1,0],
-					[5,1,1],
-					[8,1,1],
-					[8,1,0],
-					[11,1,0],
-					[11,1,1],
-					[14,1,0],
-					[14,1,1],
-				],
 			],
-		Life: 50,
+		WavePoint: [5,10,15,20,30,40,50,60],
+		Life: 1,
 		Gold: 300,
 		Level:0,
 		Tile:"tile1",
@@ -210,6 +115,7 @@
 			Name:lang.data.UserSkill.ID0,
 			Description:lang.description.UserSkill.ID0,
 			AnimationType: "AOE",
+			Sound: "fire",
 			Damage: 500,
 			EffectID:[1],
 			InfoEff:[[70,100,5000]],
@@ -262,6 +168,7 @@
 			Name:lang.data.UserSkill.ID1,
 			Description:lang.description.UserSkill.ID1,
 			AnimationType: "Target",
+			Sound: ["thunder1","thunder2","thunder3","thunder4","thunder5","thunder6"],
 			TargetNumber: 10,
 			Duration : 5000,
 			Damage: 500,
@@ -319,6 +226,7 @@
 			Description:lang.description.UserSkill.ID2,
 			AnimationType: "AOE",
 			Damage: 700,
+			Sound: "ice",
 			EffectID:[6],
 			InfoEff:[[100,0.5,2000,5000]],
 			CoolDown: 12000,
@@ -438,7 +346,7 @@
 		ID:2,
 		Name:lang.data.Tower.ID2,
 		Description:lang.description.Tower.ID2,
-		Image: "towerEarth1",
+		Image: "tower3",
 		Damage:[25,35],
 		Element:[2],
 		Resitant:[0.75,0.5,1,2,1.5],
@@ -470,7 +378,7 @@
 		ID:4,
 		Name:lang.data.Tower.ID4,
 		Description:lang.description.Tower.ID4,
-		Image: "tower1",
+		Image: "tower5",
 		Damage:[10,14],
 		Element:[4],
 		Resitant:[2,1.5,0.75,0.5,1],
@@ -534,7 +442,7 @@
         ID: 8,
         Name:lang.data.Tower.ID8,
         Description:lang.description.Tower.ID8,
-        Image: "tower1",
+        Image: "tower9",
         Damage: [35, 35],
         Element: [0,3],
 		Resitant:[1,2,1.5,0.75,0.5],
@@ -711,7 +619,7 @@
         Name:lang.data.Tower.ID19,
         Description:lang.description.Tower.ID19,
         Image: "tower1",
-        Damage: [10, 10],
+        Damage: [100, 100],
         Element: [4,4],
 		Resitant:[2,1.5,0.75,0.5,1],
         EffectID: [1],
@@ -720,7 +628,7 @@
 		LevelUp:{Dmg:10,Ran:0.1,RlT:10,Eff:[0,30,200]},
         Range: 5,
         ReloadTime: 300,
-        Price: 400,
+        Price: 300,
     }
 	
 	],
@@ -871,8 +779,8 @@
 	{
 		ID:19,
 		Name:["Sét","Lightning"],
-		Image: "lightning",	
-		Typebullet: 0,
+		Image: "bullet2",	
+		Typebullet: 1,
 		Speed:8
 		
 	}
@@ -929,10 +837,10 @@
 	{
 		ID:1,
 		Name:lang.data.Monster.ID1,
-		Image: "monster1",
+		Image: "monster2",
 		Speed:1,
 		Element:3,
-		BaseHP:150,		
+		BaseHP:400,
 		Bounty:20,
 		Skill: 1,
 		Armor: 4,
@@ -941,7 +849,7 @@
 	{
 		ID:2,
 		Name:lang.data.Monster.ID2,
-		Image: "monster1",
+		Image: "monster3",
 		Speed:1,
 		Element:3,
 		BaseHP:1000,	
@@ -953,7 +861,7 @@
 	},{
 		ID:3,
 		Name:lang.data.Monster.ID3,
-		Image: "monster1",
+		Image: "monster4",
 		Speed:1.25,
 		Element:4,
 		BaseHP:150,		
@@ -964,10 +872,10 @@
 	},{
 		ID:4,
 		Name:lang.data.Monster.ID4,
-		Image: "monster1",
+		Image: "monster5",
 		Speed:1.5,
 		Element:4,
-		BaseHP:150,		
+		BaseHP:400,
 		Bounty:20,
 		Skill: 0,
 		Armor: 20,
@@ -976,7 +884,7 @@
 	{
 		ID:5,
 		Name:lang.data.Monster.ID5,
-		Image: "monster1",
+		Image: "monster6",
 		Speed:1.75,
 		Element:4,
 		BaseHP:1000,		
@@ -989,7 +897,7 @@
 	{
 		ID:6,
 		Name:lang.data.Monster.ID6,
-		Image: "monster1",
+		Image: "monster7",
 		Speed:1.5,
 		Element:0,
 		BaseHP:150,		
@@ -1001,10 +909,10 @@
 	{
 		ID:7,
 		Name:lang.data.Monster.ID7,
-		Image: "monster1",
+		Image: "monster8",
 		Speed:1.75,
 		Element:0,
-		BaseHP:150,		
+		BaseHP:400,
 		Bounty:20,
 		Skill: 4,
 		Armor: 0.2,
@@ -1013,7 +921,7 @@
 	{
 		ID:8,
 		Name:lang.data.Monster.ID8,
-		Image: "monster1",
+		Image: "monster9",
 		Speed:1,
 		Element:0,
 		BaseHP:1000,		
@@ -1026,7 +934,7 @@
 	{
 		ID:9,
 		Name:lang.data.Monster.ID9,
-		Image: "monster1",
+		Image: "monster10",
 		Speed:2,
 		Element:1,
 		BaseHP:150,		
@@ -1038,10 +946,10 @@
 	{
 		ID:10,
 		Name:lang.data.Monster.ID10,
-		Image: "monster1",
+		Image: "monster11",
 		Speed:1.5,
 		Element:1,
-		BaseHP:150,		
+		BaseHP:400,
 		Bounty:20,
 		Skill: 2,
 		Armor: 3.5,
@@ -1050,7 +958,7 @@
 	{
 		ID:11,
 		Name:lang.data.Monster.ID11,
-		Image: "monster1",
+		Image: "monster12",
 		Speed:1,
 		Element:1,
 		BaseHP:1000,		
@@ -1063,10 +971,10 @@
 	{
 		ID:12,
 		Name:lang.data.Monster.ID12,
-		Image: "monster1",
+		Image: "monster13",
 		Speed:1.25,
 		Element:2,
-		BaseHP:150,		
+		BaseHP:150,
 		Bounty:10,
 		Skill: 4,
 		Armor: -5,
@@ -1075,10 +983,10 @@
 	{
 		ID:13,
 		Name:lang.data.Monster.ID13,
-		Image: "monster1",
+		Image: "monster13",
 		Speed:1,
 		Element:2,
-		BaseHP:150,		
+		BaseHP:400,
 		Bounty:20,
 		Skill: 3,
 		Armor: 6,
@@ -1087,7 +995,7 @@
 	{
 		ID:14,
 		Name:lang.data.Monster.ID14,
-		Image: "monster1",
+		Image: "monster13",
 		Speed:1.5,
 		Element:2,
 		BaseHP:1000,		

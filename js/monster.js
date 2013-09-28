@@ -35,8 +35,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
             this.name = monster.Name;
 			this.calculateArmor(monster.Armor);
 			this.xp=battleContainer.tableXP.Gained[level];
-			this.hp = ((monster.BaseHP * Math.pow(1.3, level)) * (battleContainer.random() * 0.1 + 0.95)) >> 0;
-            this.currentHP = (this.hp); //*(Math.random()/2+0.5))>>0;
+			this.levelUp(level);
             this.element = monster.Element;
             if (monster.isBoss) this.isBoss = true;		
             this.speed = monster.Speed;
@@ -76,7 +75,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 			}
 			this.bounty = monster.Bounty;
 			this.showHP = true;
-            var showHP = new CAAT.Foundation.ActorContainer().setBounds(0, 0, 50, 50);	// Hiện thanh máu và tên
+            var showHP = new CAAT.Foundation.ActorContainer().setBounds(0, -20, 50, 50);	// Hiện thanh máu và tên
             showHP.paint = function(director, time) {
 				if(self.showHP){
 					var ctx = director.ctx;
@@ -89,7 +88,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 				}
             }
 			this.selected = false;
-			var showSelected = new CAAT.Foundation.ActorContainer().setBounds(0, 0, 50, 50);
+			var showSelected = new CAAT.Foundation.ActorContainer().setBounds(0, 15, 50, 50);
 			showSelected.paint = function(director,time){
 				if(self.selected){
 					var ctx = director.ctx;
@@ -98,7 +97,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 					ctx.lineWidth = 2;
 					ctx.beginPath();
 					ctx.scale(1,0.4);
-					ctx.arc(5+MONSTER_SIZE/2,3*MONSTER_SIZE,MONSTER_SIZE/2,-Math.PI/4,5*Math.PI/4);
+					ctx.arc(5+MONSTER_SIZE/2,3*MONSTER_SIZE,MONSTER_SIZE/2,-2*Math.PI/5,7*Math.PI/5);
 					ctx.stroke();
 					ctx.closePath();
 					ctx.restore();
@@ -108,6 +107,13 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
             this.addChild(showHP);
             return this;
         },
+		levelUp: function(level){
+			this.level = level;
+			if(this.currentHP) this.percentHp = this.currentHP/this.hp;
+			else this.percentHp = 1;
+			this.hp = ((data.Monster[this.type].BaseHP*(1+(level-1)*0.3)) * (this.battleContainer.random() * 0.1 + 0.95)) >> 0;
+			this.currentHP = this.hp*this.percentHp;
+		},
 		textShow: function(texts,color){ 		//Hàm hiện chữ (ví dụ Miss, Immunity) và hiện dam
 			var text = texts[LANGUAGE];
 			var showText = new CAAT.DamageShow().initialize(text,0,0,color,this.battleContainer);
@@ -302,6 +308,20 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
                 self.moveComplete = false;
                 var horizontal = pointList[currentPoint + direction].y - pointList[currentPoint].y;
                 var vertical = pointList[currentPoint + direction].x - pointList[currentPoint].x;
+				switch(horizontal){
+					case 1:
+						self.updateDirection(2);
+						break;
+					case -1:
+						self.updateDirection(1);
+						break;
+					case 0:
+						if(vertical>0){
+							self.updateDirection(0);
+						}
+						else self.updateDirection(3);
+						break;
+				}
                 self.movePositionX += horizontal * TILE_SIZE;
                 self.movePositionY += vertical * TILE_SIZE;
                 var nextPointId = pointList[currentPoint + direction].x * self.currentMap.mapWidth + pointList[currentPoint + direction].y;
@@ -309,7 +329,9 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
             }
 			// Hết đường rồi
             else {
+				this.levelUp(this.level+1);
                 this.battleContainer.currentLife--;
+				if(self.isBoss) this.battleContainer.currentLife-=2;
                 if (this.battleContainer.currentLife< 1) {
 					//Nếu hết mạng thì thua cmnđ
                     this.battleContainer.lostBattle();

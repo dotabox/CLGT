@@ -9,6 +9,7 @@
 			var self = this;
 			this.battleContainer = battleContainer
 			var director = battleContainer.director;
+			this.director = director;
 			this.startTime = battleContainer.sceneTime;
 			this.lastTime = this.startTime;
 			this.animationIndex = animationIndex;
@@ -20,6 +21,7 @@
 			var skillData = data.UserSkill[animationIndex];
 			this.skillData = skillData;
 			var skillRange = self.skillData.Range;
+			self.sound = skillData.Sound;
 			this.queue = this.findRange(currentMap.distanceData[self.cellId].queue,skillRange*TILE_SIZE,2);
 			
 			var skillAnimation = skillData.Animation;
@@ -167,6 +169,7 @@
 				if(frameIndex == (2*self.data.length/3)>>0){
 					if(!self.takeDmg){
 						self.takeDmg = true;
+						Sound.playSfx(self.director,self.sound);
 						var currentMap = self.battleContainer.currentMap;
 						var queue = self.queue;
 						var arrayTarget = [];
@@ -199,10 +202,8 @@
 			else{
 				var frameIndex = self.frameIndex.concat();
 				var frameAnimationIndex = self.frameAnimationIndex.concat();
-				
-				
-				
 				for(var index = 0;index < frameIndex.length; index++){
+					if(index<frameIndex.length-1) continue
 					if(frameIndex[index]>=self.data[frameAnimationIndex[index]].length) continue;
 					var animationFrame = self.data[frameAnimationIndex[index]][frameIndex[index]].concat();
 					var monster = self.battleContainer.monsterArray[self.targetArray[index]];
@@ -269,6 +270,7 @@
 						self.frameAnimationIndex.push(randomNumber);
 						self.frameIndex.push(0);
 						self.targetArray.push(foundedID);
+						Sound.playSfx(self.director,self.sound[self.battleContainer.randomNumber(self.sound.length)]);
 					}
 				}
 				if(self.frameIndex.length>self.skillData.TargetNumber) {
