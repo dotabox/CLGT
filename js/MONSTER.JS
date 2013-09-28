@@ -20,11 +20,11 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 			this.currentMap = currentMap;
 			this.startPoint = startPoint;
             var pointList = currentMap.pointList[startPoint];		//Danh sách các ô trong đường đi của quái
-			this.currentWave = currentWave 							// Wave hiện tại của con quái này
+			this.currentWave = currentWave;							// Wave hiện tại của con quái này
 			this.moveDirection = 1; // 1: forward, -1: backward;
             this.id = id;
-            this.startX = pointList[0].y * TILE_SIZE + battleContainer.random() * (TILE_SIZE - MONSTER_SIZE);
-            this.startY = pointList[0].x * TILE_SIZE + battleContainer.random() * (TILE_SIZE - MONSTER_SIZE);
+            this.startX = pointList[0].y * TILE_SIZE_FOR_DRAWING + battleContainer.random() * (TILE_SIZE_FOR_DRAWING - MONSTER_SIZE);
+            this.startY = pointList[0].x * TILE_SIZE_FOR_DRAWING + battleContainer.random() * (TILE_SIZE_FOR_DRAWING - MONSTER_SIZE);
             this.pointList = pointList;
             this.currentPoint = 0;
             this.type = type;
@@ -286,7 +286,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
             var self = this;
             var pointList = self.pointList;
             var currentPoint = self.currentPoint;
-            var pointId = pointList[currentPoint].x * self.currentMap.mapWidth + pointList[currentPoint].y;
+			var pointId = (pointList[currentPoint].x/2 <<0)* self.currentMap.mapWidthCollision + (pointList[currentPoint].y/2)<<0;
             return pointId;
         },
         moveOnPath: function() {	//Hàm di chuyển theo đường chạy
@@ -294,8 +294,9 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
             var pointList = self.pointList;
             var currentPoint = self.currentPoint;
 			//Update mảng chứa vị trí và khoảng cách của tất cả
-            var pointId = pointList[currentPoint].x * self.currentMap.mapWidth + pointList[currentPoint].y;
-            var index = self.currentMap.distanceData[pointId].currentMonster.indexOf(self.id);
+            var pointId = (pointList[currentPoint].x/2 <<0)* self.currentMap.mapWidthCollision + (pointList[currentPoint].y/2)<<0;
+			//console.log(pointId+" "+self.currentMap.distanceData.length);
+			var index = self.currentMap.distanceData[pointId].currentMonster.indexOf(self.id);
             if (index != -1) self.currentMap.distanceData[pointId].currentMonster.splice(index, 1);
             //console.log(pointId);
 			var direction = self.moveDirection;
@@ -322,10 +323,10 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 						else self.updateDirection(3);
 						break;
 				}
-                self.movePositionX += horizontal * TILE_SIZE;
-                self.movePositionY += vertical * TILE_SIZE;
-                var nextPointId = pointList[currentPoint + direction].x * self.currentMap.mapWidth + pointList[currentPoint + direction].y;
-                self.currentMap.distanceData[nextPointId].currentMonster.push(self.id);
+                self.movePositionX += horizontal * TILE_SIZE_FOR_DRAWING;
+                self.movePositionY += vertical * TILE_SIZE_FOR_DRAWING;
+                var nextPointId = (pointList[currentPoint + direction].x/2<<0) * self.currentMap.mapWidthCollision + (pointList[currentPoint + direction].y/2<<0);
+				self.currentMap.distanceData[nextPointId].currentMonster.push(self.id);
             }
 			// Hết đường rồi
             else {

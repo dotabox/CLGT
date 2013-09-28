@@ -118,7 +118,8 @@
 		            	i = this.idInArray;
 						
 				        // call battle container
-		            	self.mapindex = 1;
+		            	self.mapindex = 1+(Math.random()*4)<<0;
+						if(self.mapindex>=5) self.mapindex = 4;
 		            	self.initMap(director);
 		            	director.switchToScene(1);
 						

@@ -88,7 +88,16 @@ window.onload = function () {
             addElement("towerEarth1", "img/earth_tower.png").
             addElement("towerEarth2", "img/earth_tower2.png").
             addElement("tile1", "img/tile1.png").
-            addElement("bullet1", "img/bullet1.png").            
+            addElement("tile2", "img/tile2.png").
+            addElement("tile3", "img/tile3.png").
+            addElement("tile4", "img/tile4.png").
+            addElement("tile5", "img/tile5.png").
+            addElement("tile6", "img/tile6.png").
+            addElement("tile7", "img/tile7.png").
+            addElement("tile8", "img/tile8.png").
+            addElement("tile12", "img/tile12.png").
+            addElement("bulletArrow", "img/arrow1.png").
+            addElement("bullet1", "img/bullet1.png").        
             addElement("bullet2", "img/star1.png").
             addElement("flag", "img/Flag.png").
 			addElement("star", "img/star.png").

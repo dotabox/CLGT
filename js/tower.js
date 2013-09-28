@@ -11,18 +11,17 @@
 		target:null,
 		bonusDmg:0,
 		bonusSpeed:1,
-		initialize: function(battleContainer,type,EXP,x, y,id){
+		initialize: function(battleContainer,type,EXP,x, y,id,isUltimateTower){
 			var self = this;
 			this.x = x;
 			this.y = y;
 			this.type = type;
 			this.id = id;
 			this.director = battleContainer.director;
-			this.battleContainer = battleContainer;
-			
+			this.battleContainer = battleContainer; 
 			var currentMap = battleContainer.currentMap;
 			this.currentMap = currentMap;
-			var cell_id = ((x / TILE_SIZE >> 0) + currentMap.mapWidth * (y / TILE_SIZE >> 0));
+			var cell_id = ((x / TILE_SIZE >> 0) + currentMap.mapWidthCollision * (y / TILE_SIZE >> 0));
 			this.cell_id = cell_id;
 			this.level = 0;
 			this.resetType(type);
@@ -57,6 +56,15 @@
 				this.addChild(this.greyActor);
 			}
 			self.calBonus();
+			if(isUltimateTower){
+				self.isUltimateTower = true;
+				self.damage = [100000,100000];
+				self.setVisible(false);
+				self.range = 0;
+				self.effect = [];
+				self.queue = [];
+			}
+			
 			return this;
 			
 		},
@@ -88,6 +96,7 @@
 			this.levelUp(this.level);	
 		},
 		getXP: function (XP) {
+			if(this.isUltimateTower) return;
 		    this.EXP += XP; //Nhận thêm EXP
 		    for (i=0;i<this.battleContainer.tableXP.Required.length;i++){
 		        if (this.EXP < this.battleContainer.tableXP.Required[i]) {
@@ -110,7 +119,7 @@
 		    var self = this;
 		    var currentMap = self.battleContainer.currentMap;
 		    var tower = data.Tower[self.type];
-		    var cell_id = ((self.x / TILE_SIZE >> 0) + currentMap.mapWidth * (self.y / TILE_SIZE >> 0));
+		    var cell_id = ((self.x / TILE_SIZE >> 0) + currentMap.mapWidthCollision * (self.y / TILE_SIZE >> 0));
 		    self.damage = [tower.Damage[0] + tower.LevelUp.Dmg * level, tower.Damage[1] + tower.LevelUp.Dmg * level];//Tang dmg
 			
 		    self.range = (tower.Range + tower.LevelUp.Ran*level) * TILE_SIZE >> 0;//Tang range
@@ -186,7 +195,7 @@
 		calBonus : function (){ //tinh bonus
 			var self=this;
 			var currentMap = self.battleContainer.currentMap;
-			var cell_id = ((self.x / TILE_SIZE >> 0) + currentMap.mapWidth * (self.y / TILE_SIZE >> 0));
+			var cell_id = ((self.x / TILE_SIZE >> 0) + currentMap.mapWidthCollision * (self.y / TILE_SIZE >> 0));
 			var _cell=currentMap.distanceData[cell_id];
 			if (_cell.bonusDmg.length>0) self.bonusDmg= _cell.bonusDmg[0][0]*(self.damage[0]+tower.self[1])/200+_cell.bonusDmg[0][1];
 			if (_cell.bonusSpeed.length>0) self.bonusSpeed= _cell.bonusSpeed[0];
@@ -207,7 +216,7 @@
 			this.disabled = false;
 			this.greyActor.setAlpha(0);
 		    var currentMap = self.battleContainer.currentMap;
-		    var cell_id = ((self.x / TILE_SIZE >> 0) + currentMap.mapWidth * (self.y / TILE_SIZE >> 0));
+		    var cell_id = ((self.x / TILE_SIZE >> 0) + currentMap.mapWidthCollision * (self.y / TILE_SIZE >> 0));
 		    if (!this.infoEff.ID9 && !this.infoEff.ID10)
 		        this.queue = findRange(currentMap.distanceData[cell_id].queue, self.range, 2);//chi check nhung o duong di
 		    return this;
@@ -337,7 +346,7 @@
                         self.lastFire = time;
                     }                
 				}
-				else self.updateState("idle");
+				else self.updateState("idle",this.reloadTime/this.frameNumber);
 			} 
 			
 		
@@ -356,18 +365,18 @@
 			var currentMap = this.battleContainer.currentMap;
 			var monsterArray = this.battleContainer.monsterArray;
 			var bullet = new CAAT.Bullet().initialize(director, self.type, self.x + TOWER_SIZE / 2, self.y, battleContainer);
+			if(self.isUltimateTower) bullet.speed = 5*TILE_SIZE;
 			bullet.tower = self;
 			bullet.reloadTime=self.reloadTime;
 			Sound.playSfx(director,"arrow"+(1+battleContainer.randomNumber(5)));
-			self.updateState("fire");
-			var scene=self.parent;
+			self.updateState("fire",this.reloadTime/this.frameNumber);
+			var scene= self.parent;
 			scene.addChild(bullet);
 			bullet.textShow=function(){
 				var text=(bullet.lastDmg<<0)+"";
 				self.textShow([text,text],"#F00");
 			}
 			bullet.isEnd=function(time){
-				
 			    if (bullet.infoEff.ID24) {// nếu eff là chain
 			        var cell_id = bullet.target.getCurrentCell();// tìm vị trí theo ô của con quái vừa bắn trúng
 					bullet.targetForEffect24.push(bullet.target.id);

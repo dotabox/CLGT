@@ -1,24 +1,23 @@
 ﻿(function () {
     CAAT.DEBUG_VIEWPORT = 1;
     CAAT.MiniMap = function () {
-        CAAT.TileMap.superclass.constructor.call(this);
+        CAAT.MiniMap.superclass.constructor.call(this);
         return this;
     };
 
     CAAT.MiniMap.prototype = {
         canvas: null,
         ctx: null,
-        name: '',
-        create: function (name, tileImage, data, battleContainer,isMinimap) {
+        create: function (data, battleContainer,isMinimap) {
 			var self = this;
 			this.battleContainer = battleContainer;
+			this.director = battleContainer.director;
             this.tileSize = TILE_SIZE;
-			this.tileImage = tileImage;
-            this.tileImages = new CAAT.SpriteImage().initialize(tileImage, tileImage.height / TILE_SIZE_FOR_DRAWING, tileImage.width / TILE_SIZE_FOR_DRAWING);
             this.name = name;
             this.data = data;
-            this.mapHeight = this.data.length;
-            this.mapWidth = this.data[0].length;
+            this.mapHeight = this.data[0].length;
+            this.mapWidth = this.data[0][0].length;
+			this.layerNumber = data.length;
             this.viewportX = 0;
 			this.viewportY = 0;
 			this.viewportWidth = CANVAS_WIDTH/this.tileSize;
@@ -36,7 +35,8 @@
 		firstPaint: true,
 		firstTime: true,
         paint: function (director, time) {
-            CAAT.TileMap.superclass.paint.call(this, director, time);
+            CAAT.MiniMap.superclass.paint.call(this, director, time);
+			
 			var ctx = director.ctx;
 			var self = this;
 			
@@ -53,10 +53,10 @@
 			var rectX,rectY,rectWidth,rectHeight;
 			
 			
-			rectX = startCol*TILE_SIZE_FOR_DRAWING;
-			rectY = startRow*TILE_SIZE_FOR_DRAWING;
-			rectWidth = col*TILE_SIZE_FOR_DRAWING;
-			rectHeight = row*TILE_SIZE_FOR_DRAWING;
+			rectX = startCol*TILE_SIZE;
+			rectY = startRow*TILE_SIZE;
+			rectWidth = col*TILE_SIZE;
+			rectHeight = row*TILE_SIZE;
 			startRow = 0;
 			startCol = 0;
 			row = this.mapHeight;
@@ -70,22 +70,21 @@
 				this.startTime = time;
 			}
 			if(time<this.startTime+1){
-				for (var i = startRow; i <= startRow+row+1; i++) {
-					for (var j = startCol; j <= startCol+col+1; j++) {
-						if (j >= this.mapWidth || i >= this.mapHeight) continue;
-						if (this.data[i][j] != -1) {
-							this.tileImages.paintTile(ctx, 0, (j) * TILE_SIZE_FOR_DRAWING, (i) * TILE_SIZE_FOR_DRAWING); 
-							this.tileImages.paintTile(ctx, this.data[i][j], (j) * TILE_SIZE_FOR_DRAWING, (i) * TILE_SIZE_FOR_DRAWING); 
-							/*
-							this.tileImages.paintTile(ctx, this.data[i][j], (j) * TILE_SIZE, (i) * TILE_SIZE); 
-							this.tileImages.paintTile(ctx, this.data[i][j], (j) * TILE_SIZE+TILE_SIZE_FOR_DRAWING, (i) * TILE_SIZE); 
-							this.tileImages.paintTile(ctx, this.data[i][j], (j) * TILE_SIZE, (i) * TILE_SIZE+TILE_SIZE_FOR_DRAWING); 
-							this.tileImages.paintTile(ctx, this.data[i][j], (j) * TILE_SIZE+TILE_SIZE_FOR_DRAWING, (i) * TILE_SIZE+TILE_SIZE_FOR_DRAWING); 
-							//*/
+				var data = this.data;
+				for(var layerIndex = 0;layerIndex<this.layerNumber;layerIndex++){
+					var mapData = data[layerIndex];
+					for(var i=0;i<mapData.length;i++){
+						for (var j=0;j<mapData[i].length;j++){
+							var tileSet = this.director.getImage("tile"+(mapData[i][j][0]+1));
+							var tileImages = new CAAT.SpriteImage().initialize(tileSet, tileSet.height / TILE_SIZE_FOR_DRAWING, tileSet.width / TILE_SIZE_FOR_DRAWING);
+							tileImages.paintTile(ctx,mapData[i][j][1],j*TILE_SIZE_FOR_DRAWING,i*TILE_SIZE_FOR_DRAWING);
 						}
 					}
 				}
 				
+				ctx.strokeStyle = "#0FF";
+				ctx.lineWidth = 10;
+				ctx.strokeRect(10,10,this.width-20,this.height-20);
 			}
 			else if(this.firstPaint){
 				this.firstPaint = false;
@@ -105,23 +104,24 @@
 								selectedType = 1;
 								selected = i;
 							}
-							ctx.fillRect(monsterArray[i].x*TILE_SIZE_FOR_DRAWING/TILE_SIZE,monsterArray[i].y*TILE_SIZE_FOR_DRAWING/TILE_SIZE,20,20);
+							ctx.fillRect(monsterArray[i].x,monsterArray[i].y,20,20);
 						}
 					}
 				}
 				var towerArray = this.battleContainer.towerArray;
 				for(var i=0;i<towerArray.length;i++){
+					if(towerArray[i].isUltimateTower) continue;
 					ctx.fillStyle = "#0F0";
 					if(towerArray[i].selected) {
 						selectedType = 0;
 						selected = i;
 					}
-					ctx.fillRect(towerArray[i].x*TILE_SIZE_FOR_DRAWING/TILE_SIZE,towerArray[i].y*TILE_SIZE_FOR_DRAWING/TILE_SIZE,25,25);
+					ctx.fillRect(towerArray[i].x,towerArray[i].y,25,25);
 				}
 				if(typeof selected!= "undefined"){
 					ctx.fillStyle = "#FFF";
-					if(selectedType == 0) ctx.fillRect(towerArray[selected].x*TILE_SIZE_FOR_DRAWING/TILE_SIZE,towerArray[selected].y*TILE_SIZE_FOR_DRAWING/TILE_SIZE,25,25);
-					else ctx.fillRect(monsterArray[selected].x*TILE_SIZE_FOR_DRAWING/TILE_SIZE,monsterArray[selected].y*TILE_SIZE_FOR_DRAWING/TILE_SIZE,20,20);
+					if(selectedType == 0) ctx.fillRect(towerArray[selected].x,towerArray[selected].y,25,25);
+					else ctx.fillRect(monsterArray[selected].x,monsterArray[selected].y,20,20);
 				}
 				ctx.strokeStyle = "#FFF";
 				ctx.lineWidth = 2;

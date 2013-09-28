@@ -17,7 +17,7 @@
 			var cellX = (positionX/TILE_SIZE)>>0;
 			var cellY = (positionY/TILE_SIZE)>>0;
 			var currentMap = self.battleContainer.currentMap;
-			this.cellId = cellX + currentMap.mapWidth*cellY;
+			this.cellId = cellX + currentMap.mapWidthCollision*cellY;
 			var skillData = data.UserSkill[animationIndex];
 			this.skillData = skillData;
 			var skillRange = self.skillData.Range;

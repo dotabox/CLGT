@@ -13,7 +13,6 @@
             //this.randomIndex = loadObj.randomIndex;
 			//this.randomArray = loadObj.randomArray;
             //this.replayData = loadObj;
-			
             this.sceneSkillContainer = sceneSkillContainer;
             this.endBattle = 0;
 			this.countDownTime = Number.MAX_VALUE;
@@ -59,22 +58,23 @@
 			var miniMapSize = this.miniMapSize;
 			var currentLevel = mapIndex;
 			this.mapData = data.Map[currentLevel];
-			if(mapIndex!=0) new CAAT.SyncWave().init(director, this, mapIndex, level, 2, [4, 4, 4, 4, 4, 4, 4, 4]).create();
+			
 			var mapData = this.mapData;
 			this.life = mapData.Life;
 			this.currentLife = this.life;
 			this.startingGold = mapData.Gold;
 			this.currentGold = this.startingGold;
 			
-			this.waveNumber = mapData.Wave.length;
+			
 			this.currentMap = new CAAT.TileMap()
-				.create("map 1", director.getImage(data.Map[currentLevel].Tile), data.Map[currentLevel].Data, data.Map[currentLevel].Cdata,self, false);
+				.create(data.Map[currentLevel].Data, data.Map[currentLevel].Cdata,self, false);
 			this.currentMap
-				.setBounds(0, 0, this.currentMap.mapWidth*TILE_SIZE, this.currentMap.mapHeight*TILE_SIZE)
+				.setBounds(0, 0, this.currentMap.mapWidth*TILE_SIZE_FOR_DRAWING, this.currentMap.mapHeight*TILE_SIZE_FOR_DRAWING)
 				//.setScaleAnchored(TILE_SIZE / TILE_SIZE_FOR_DRAWING, TILE_SIZE / TILE_SIZE_FOR_DRAWING, 0, 0)
 				.enableEvents(false);
 			
-			
+			if(mapIndex!=0) new CAAT.SyncWave().init(director, this, mapIndex, level, this.currentMap.gateNumber).create();
+			this.waveNumber = mapData.Wave.length;
 			
 			this.mapPanel = new CAAT.Foundation.ActorContainer()
 				.enableEvents(false)
@@ -92,11 +92,11 @@
 				.setFillStyle("#FFF")
 				.enableEvents(false);
 			this.miniMap = new CAAT.MiniMap()
-				.create("map 1", director.getImage(data.Map[currentLevel].Tile), data.Map[currentLevel].Data, self, true);
+				.create(this.currentMap.data, self, true);
 			this.miniMap
-				.setBounds(0, 0, this.currentMap.mapWidth*TILE_SIZE, this.currentMap.mapHeight*TILE_SIZE)
+				.setBounds(0, 0, this.currentMap.mapWidth*TILE_SIZE_FOR_DRAWING, this.currentMap.mapHeight*TILE_SIZE_FOR_DRAWING)
 				.enableEvents(false);
-			this.miniMap.setScaleAnchored(TILE_SIZE / TILE_SIZE_FOR_DRAWING*this.minimapPanel.width / this.miniMap.width, TILE_SIZE / TILE_SIZE_FOR_DRAWING*this.minimapPanel.height / this.miniMap.height, 0, 0);
+			this.miniMap.setScaleAnchored(this.minimapPanel.width / this.miniMap.width, this.minimapPanel.height / this.miniMap.height, 0, 0);
 
 			this.minimapPanel.addChild(this.miniMap);
 			this.addChild(this.minimapPanel);
@@ -119,7 +119,7 @@
 			})
 				.setLocation((CANVAS_WIDTH-menuWidth-buttonSize*2-60),-10)
 				.setScaleAnchored(3/2*buttonSize/startImage.width,3/2*buttonSize/startImage.height,0,0);
-			this.addChild(this.startButton);	
+			this.addChild(this.startButton);
 			
 			var startImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('startButton'), 1, 1 );
 			this.nextWaveButton = new CAAT.Button().initialize(this.director,startImage,0,0,0,0,
@@ -818,7 +818,23 @@
 				}
 			}
 			
-			var mapBound = this.mapBound;
+			
+			var ultimateTower = new CAAT.Tower().initialize(self, 4, 0, this.currentMap.mapWidthCollision*TILE_SIZE/2, this.currentMap.mapHeightCollision *TILE_SIZE/2,0,true);
+			this.ultimateTower = ultimateTower;
+			var ultimateSkillImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('downSkill'), 1, 1 );
+			this.ultimateSkillButton = new CAAT.Button().initialize(this.director,ultimateSkillImage,0,0,0,0,
+			function(){
+				for(var i=0;i<self.monsterArray.length;i++){
+					if((self.monsterArray[i].parent)&&(!self.monsterArray[i].isDead)){
+						self.ultimateTower.fire(self.monsterArray[i],self.director,self.sceneTime);
+					}
+				}
+			})
+				.setLocation(CANVAS_WIDTH-buttonSize*2,buttonSize)
+				.setScaleAnchored(3/2*buttonSize/ultimateSkillImage.width,3/2*buttonSize/ultimateSkillImage.height,0,0);
+			this.addChild(this.ultimateSkillButton);
+			this.mapBound.addChild(this.ultimateTower);
+			this.towerArray.push(this.ultimateTower);
 			
             return this;
         },
@@ -948,7 +964,7 @@
 		towerID : 6,
 		canbuild : false,
 		canBuildRectangle: function (rectX, rectY, rectWidth, rectHeight,currentMap) {
-			var cell_id=((rectX/TILE_SIZE)+currentMap.mapWidth*(rectY/TILE_SIZE));
+			var cell_id=((rectX/TILE_SIZE)+currentMap.mapWidthCollision*(rectY/TILE_SIZE));
 			var r=rectY/rectHeight;
 			var c=rectX/rectWidth;
 			if (r<currentMap.mapHeight&&c<currentMap.mapWidth){
@@ -1130,7 +1146,7 @@
             Sound.playSfx(self.director,"gold");
 			//Xóa con quái khỏi mảng các phần tử nào
             var currentPoint = monster.currentPoint;
-            var pointId = monster.pointList[currentPoint].x * monster.currentMap.mapWidth + monster.pointList[currentPoint].y;
+            var pointId = (monster.pointList[currentPoint].x/2<<0) * monster.currentMap.mapWidthCollision + (monster.pointList[currentPoint].y/2<<0);
             var index = monster.currentMap.distanceData[pointId].currentMonster.indexOf(monster.id);
             this.currentMap.distanceData[pointId].currentMonster.splice(index, 1);
 
@@ -1220,6 +1236,9 @@
 			function(){
 				Sound.playMusic(self.director,"winMelody");
 			});
+			for(var i=0;i<this.towerArray.length;i++){
+				this.towerArray[i].updateState("idle",200);
+			}
 			for(var i=self.userSkill.length;i<this.updateArray.length;i++) this.updateArray[i].setVisible(false);
 			var blurActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).setFillStyle("#000").setGlobalAlpha(true).setAlpha(0);
 			this.addChild(blurActor);
@@ -1306,7 +1325,7 @@
 					var sceneMap = self.director.getScene(self.nextScene);
 					var sceneMapContainer = sceneMap.getChildAt(0);
 					sceneMapContainer.initMap(self.director, self, self.userSkill, self.unlockTower, self.level+1, self.sceneSkillContainer, self.nextScene, self.prevScene, null);
-					sceneMapContainer.semiMainMap.updateWinBattle(starEarned);
+					if(sceneMapContainer.semiMainMap.updateWinBattle) sceneMapContainer.semiMainMap.updateWinBattle(starEarned);
 					Sound.playMusic(self.director,"map"+(1+self.randomNumber(2)));
 					self.switchToNextScene();
 				}
@@ -1525,13 +1544,13 @@
             if (self.isDrag) {
                 var dx = ex - self.last.x;
                 var dy = ey - self.last.y;
-                if ((self.mapBound.x + dx < 0) && (self.mapBound.x + dx > -self.currentMap.mapWidth * TILE_SIZE + CANVAS_WIDTH)) {
+                if ((self.mapBound.x + dx < 0) && (self.mapBound.x + dx > -self.currentMap.mapWidth * TILE_SIZE_FOR_DRAWING + CANVAS_WIDTH)) {
                     self.sumdx -= dx;
                     self.mapBound.setLocation(self.mapBound.x + dx, self.mapBound.y);
 					for(var i=0;i<self.upgradeButton.length;i++) self.upgradeButton[i].x += dx;
                 }
 					
-                if ((self.mapBound.y + dy < 0) && (self.mapBound.y + dy > -self.currentMap.mapHeight * TILE_SIZE + CANVAS_HEIGHT)) {
+                if ((self.mapBound.y + dy < 0) && (self.mapBound.y + dy > -self.currentMap.mapHeight * TILE_SIZE_FOR_DRAWING + CANVAS_HEIGHT)) {
                     self.mapBound.setLocation(self.mapBound.x, self.mapBound.y + dy);
                     self.sumdy -= dy;
 					for(var i=0;i<self.upgradeButton.length;i++) self.upgradeButton[i].y += dy;
