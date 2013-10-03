@@ -199,7 +199,7 @@
             self.isDrag = true;
             self.setSpriteIndex(self.iPress);
             self.fn(self,ex,ey);
-			Sound.playSfx(self.director,"button");
+			Sound.playSfx("button");
         },
 
         _up: function (self, ex,ey) {

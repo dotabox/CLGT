@@ -1,57 +1,57 @@
 Sound = {
-	playSfx: function(director,soundId){
-		director.audioPlay(soundId);
-		this.setSfxVolume(director,SFX_VOLUME);
-		var workingChannels = director.audioManager.workingChannels;
-		workingChannels[workingChannels.length-1].caat_id = soundId;
-		if(director.audioManager.channels.length==0) this.cancelPlay(director,workingChannels[0].caat_id);
-	},
-	playMusic:function(director,soundId,endCallback){
-		director.endSound();
-		director.audioLoop(soundId);
-		this.setMusicVolume(director,MUSIC_VOLUME);
-		var loopingChannels = director.audioManager.loopingChannels;
-		loopingChannels[loopingChannels.length-1].id = soundId;
-		if(endCallback) {
-			var loopingChannels = director.audioManager.loopingChannels;
-			for(var i=0;i<loopingChannels.length;i++){
-				var audio = loopingChannels[i];
-				if(audio.id===soundId){
-					audio.loop = false;
-					audio.addEventListener("ended",endCallback);
-					break;
-				}
-			}
+	initialize: function(audioDescriptor){
+		this.audioDescriptor = audioDescriptor;
+		this.audioObjects =  {};
+		for(var i=0;i<audioDescriptor.length;i++){
+			this.audioObjects[audioDescriptor[i].id] = audioDescriptor[i].audio;
 		}
+		this.sfxChannelId = [];
+		this.musicChannelId;
+		this.sfxLength = 16;
 	},
-	endSound: function(director){
-		director.endSound();
+	playSfx: function(soundId){
+		var self = this;
+		this.sfxChannelId.push(soundId);
+		var audio = this.audioObjects[soundId];
+		audio._onend = [function(){
+			var index = self.sfxChannelId.indexOf(audio);
+			self.sfxChannelId.splice(index,1);
+		}];
+		audio.volume(SFX_VOLUME/100);
+		audio.play();
+		this.setSfxVolume(SFX_VOLUME);
+		//console.log(this.sfxChannelId.length);
 	},
-	cancelPlay:function(director,soundId){
-		var audioManager = director.audioManager;
-		for( var i=0 ; i<audioManager.workingChannels.length; i++ ) {
-			var audio= audioManager.workingChannels[i];
-			if ( audio.caat_id===soundId ) {
-				audio.pause();
-				audioManager.channels.push(audio);
-				audioManager.workingChannels.splice(i,1);
-			}
+	playMusic:function(soundId,endCallback){
+		if(this.musicChannelId) this.audioObjects[this.musicChannelId].stop();
+		this.musicChannelId = soundId;
+		var audio = this.audioObjects[soundId];
+		if(endCallback) {			
+			audio.loop(false);
+			audio._onend = [endCallback];
 		}
+		else audio.loop(true);
+		audio.volume(MUSIC_VOLUME/100);
+		audio.play();
+		this.setMusicVolume(MUSIC_VOLUME);
+		
+		
 	},
-	setSfxVolume: function(director,value){
+	endSound: function(){
+		if(this.musicChannelId) this.audioObjects[this.musicChannelId].stop();
+	},
+	setSfxVolume: function(value){
 		SFX_VOLUME = value;
-		var workingChannels = director.audioManager.workingChannels;
-		for(var i=0;i<workingChannels.length;i++){
-			var audio = workingChannels[i];
-			audio.volume = value/100;
+		for(var i=0;i<this.sfxChannelId.length;i++){
+			var audio = this.audioObjects[this.sfxChannelId[i]];
+			audio.volume(value/100);
+			audio._audioNode[0].volume = value/100;
 		}
 	},
-	setMusicVolume: function(director,value){
+	setMusicVolume: function(value){
 		MUSIC_VOLUME = value;
-		var loopingChannels = director.audioManager.loopingChannels;
-		for(var i=0;i<loopingChannels.length;i++){
-			var audio = loopingChannels[i];
-			audio.volume = value/100;
-		}
+		var audio = this.audioObjects[this.musicChannelId];
+		audio.volume(value/100);
+		audio._audioNode[0].volume = (value/100);
 	}
 }

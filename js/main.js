@@ -11,6 +11,7 @@ var addedMonster = 0;
 */
 window.onload = function () {
     var loadedImage = 0;
+	var loadedAudio = 0;
 	var loadedPercent = 0;
 	var loadAudios,loadImages;
     windowLoad();
@@ -28,7 +29,7 @@ window.onload = function () {
 			context.strokeRect(300,200,200,20);
 			context.fillRect(300,200,200*loadedPercent/100,20)
 			context.fillText(loadedPercent+"%",300,190);
-			
+			(loadedImage==0)? context.fillText("LOADING SOUND...",300,250):context.fillText("LOADING IMAGE...",300,250);
 			if(loadAudios&&loadImages&&(+new Date() - startTime>1000)) {
 				clearInterval(drawIntervalID);
 				run(loadImages,loadAudios);
@@ -37,7 +38,9 @@ window.onload = function () {
 		load();
 	}
     function load() {
-		var audioElement = new CAAT.AudioPreloader().__init().
+		
+		
+		var audioElement = new AudioPreloader().
 			addElement("thunder1", "sound/sfx/thunder1.ogg").
 			addElement("thunder2", "sound/sfx/thunder2.ogg").
 			addElement("thunder3", "sound/sfx/thunder3.ogg").
@@ -202,8 +205,11 @@ window.onload = function () {
             addElement("wood", "img/wood.png").
             addElement("earth", "img/earth.png").
 			
+            addElement("loadingScreen", "img/loading.jpg").
             addElement("backgroundBoard", "img/backgroundBoard.jpg");
-			
+		
+		var multipleAudioBy = 2;
+		var elementLength = multipleAudioBy*audioElement.elements.length + imageElement.elements.length;
 		audioElement.load (
 		function loadAll(audios){
 			loadAudios = audios;
@@ -212,12 +218,12 @@ window.onload = function () {
             },
 			function onEachLoad(index){
 				loadedImage++;
-				var length = imageElement.elements.length;
-				loadedPercent = Math.round(loadedImage/length*100);
+				loadedPercent = Math.round((multipleAudioBy*loadedAudio + loadedImage)/elementLength*100);
 			});
 		},
 		function loadEach(audio){
-		
+			loadedAudio++;
+			loadedPercent = Math.round((multipleAudioBy*loadedAudio + loadedImage)/elementLength*100);
 		});
         
     }
@@ -226,8 +232,8 @@ window.onload = function () {
         console.log('thanhdeptrai');
         var director = new CAAT.Foundation.Director().initialize(CANVAS_WIDTH, CANVAS_HEIGHT, document.getElementById("canvas"));
         director.setImagesCache(images);
-		for(var i=0;i<audios.length;i++) director.addAudio(audios[i].id,audios[i].path);
-		Sound.playMusic(director,"start");
+		Sound.initialize(audios);
+		Sound.playMusic("start");
 		var sceneMenu = director.createScene();
 		var sceneBattle = director.createScene();
 		var sceneMenuBattle = director.createScene();

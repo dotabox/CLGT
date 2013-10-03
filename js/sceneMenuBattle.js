@@ -63,13 +63,13 @@
 							if(self.battleContainer.isStart) self.battleContainer.isStart();
 							self.battleContainer.stopCacheAsBitmap();
 							//self.battleContainer.endBattle = -1;
-							Sound.playMusic(self.director,"map"+(1+self.battleContainer.randomNumber(2)));
+							Sound.playMusic("map"+(1+self.battleContainer.randomNumber(2)));
 							self.director.switchToScene(3);
 							break;
 						case 3:
 							self.battleContainer.stopCacheAsBitmap();
 							//self.battleContainer.endBattle = -1;
-							Sound.playMusic(director,"start");
+							Sound.playMusic("start");
 							self.director.switchToScene(0);
 							break;
 						case 4:

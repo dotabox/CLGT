@@ -100,7 +100,7 @@
                         self.switchToNextScene();
 						var randomSound = (1+(Math.random()*2)<<0);
 						if(randomSound==3) randomSound = 1;
-						Sound.playMusic(self.director,"map"+randomSound);
+						Sound.playMusic("map"+randomSound);
                         break;
                         /* Unlock */
                     case 1:
@@ -128,7 +128,7 @@
                         console.log('credits');
                         self.isDim = true;
                         self.disableButton();
-						Sound.playMusic(self.director,"credits");
+						Sound.playMusic("credits");
                         var credits = [
                             "PROGRAM\n" +
                             "       Nguyễn Hoàng Tú\n\n" +
@@ -165,7 +165,7 @@
                         creditActor.setFn(function () {
                             self.isDim = false;
                             self.enableButton();
-							Sound.playMusic(self.director,"start");
+							Sound.playMusic("start");
                             self.removeChild(this);
                         });
                         self.addChild(creditActor);

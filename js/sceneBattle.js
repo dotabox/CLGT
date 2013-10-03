@@ -44,7 +44,7 @@
 			//this.scene_time=this.parent.time;
 			this.currentLevel = mapIndex;
 			
-			Sound.playMusic(director,"battle"+(1+this.randomNumber(4)));
+			Sound.playMusic("battle"+(1+this.randomNumber(4)));
 			
 			this.updateArray=[];
 			this.towerArray = [];
@@ -836,6 +836,21 @@
 			this.mapBound.addChild(this.ultimateTower);
 			this.towerArray.push(this.ultimateTower);
 			
+			this.loadingScreen = new CAAT.ActorContainer().setBounds(0,0,this.width,this.height);
+			this.loadingScreen.paint = function(director,time){
+				var ctx = director.ctx;
+				ctx.drawImage(self.director.getImage("loadingScreen"),0,0);
+				ctx.fillStyle = "#FFF";
+				ctx.font = "30px Times New Roman";
+				var text = "LOADING...";
+				var measure = ctx.measureText(text).width;
+				ctx.fillStyle = "#0FF";
+				ctx.fillRect(this.width-measure-25,this.height-55,measure+10,50);
+				ctx.fillStyle = "#840";
+				ctx.fillText(text,this.width-measure-20,this.height-20);
+			}
+			this.addChild(this.loadingScreen);
+			
             return this;
         },
         replayInformation: function (actionType, actionArg) {
@@ -1100,7 +1115,7 @@
 		    var self = this;
 		    var tower;
 			self.replayInformation("sellTower",[towerID]);
-			Sound.playSfx(self.director,"gold");
+			Sound.playSfx("gold");
 		    for (i in this.towerArray){
 		        if (this.towerArray[i].id == towerID) {
 					self.selectingIndex = -1;
@@ -1143,7 +1158,7 @@
 			deadMonster.updateDirection(direction);
             deadMonster.textShow(["+ "+monster.bounty,"+ "+monster.bounty],"#FF0");
 			self.mapBound.removeChild(monster);
-            Sound.playSfx(self.director,"gold");
+            Sound.playSfx("gold");
 			//Xóa con quái khỏi mảng các phần tử nào
             var currentPoint = monster.currentPoint;
             var pointId = (monster.pointList[currentPoint].x/2<<0) * monster.currentMap.mapWidthCollision + (monster.pointList[currentPoint].y/2<<0);
@@ -1189,18 +1204,8 @@
 			}
 		},
 		lostBattle : function (){
-			/*
-			for (var i = 0; i < this.towerArray.length; i++) {
-				this.mapBound.removeChild(this.towerArray[i]);
-			}
-			for(var i = 0 ;i<this.monsterArray.length;i++){
-				if(!this.monsterArray[i].isDead) {
-					this.mapBound.removeChild(this.monsterArray[i]);
-				}
-			}
-			*/
 			var self = this;
-			Sound.playMusic(self.director,"lose");
+			Sound.playMusic("lose");
 			for(var i=self.userSkill.length;i<this.updateArray.length;i++) this.updateArray[i].setVisible(false);
 			var blurActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,this.width,this.height).setFillStyle("#000").setGlobalAlpha(true).setAlpha(0);
 			var alphaBehavior = new CAAT.Behavior.AlphaBehavior().setValues(0, 1).setFrameTime(self.time, 4500).setCycle(false).
@@ -1209,7 +1214,7 @@
 					var sceneMap = self.director.getScene(self.nextScene);
 					var sceneMapContainer = sceneMap.getChildAt(0);
 					sceneMapContainer.initMap(self.director, self, self.userSkill, self.unlockTower, self.level, self.sceneSkillContainer, self.nextScene, self.prevScene, null);
-					Sound.playMusic(self.director,"map"+(1+self.randomNumber(2)));
+					Sound.playMusic("map"+(1+self.randomNumber(2)));
 					self.switchToNextScene();
 				}
 			});
@@ -1232,9 +1237,9 @@
 		winBattle : function (){
 			var self = this;
 			this.endBattle = 1;
-			Sound.playMusic(self.director,"win",
+			Sound.playMusic("win",
 			function(){
-				Sound.playMusic(self.director,"winMelody");
+				Sound.playMusic("winMelody");
 			});
 			for(var i=0;i<this.towerArray.length;i++){
 				this.towerArray[i].updateState("idle",200);
@@ -1326,7 +1331,7 @@
 					var sceneMapContainer = sceneMap.getChildAt(0);
 					sceneMapContainer.initMap(self.director, self, self.userSkill, self.unlockTower, self.level+1, self.sceneSkillContainer, self.nextScene, self.prevScene, null);
 					if(sceneMapContainer.semiMainMap.updateWinBattle) sceneMapContainer.semiMainMap.updateWinBattle(starEarned);
-					Sound.playMusic(self.director,"map"+(1+self.randomNumber(2)));
+					Sound.playMusic("map"+(1+self.randomNumber(2)));
 					self.switchToNextScene();
 				}
 			}
@@ -1345,7 +1350,7 @@
 					behaviorApplied: function(director,time){
 						if((time-self.endTime)>500*self.playedStar){
 							self.playedStar++;
-							Sound.playSfx(self.director,"star");
+							Sound.playSfx("star");
 						}
 					}
 				});
@@ -1362,6 +1367,9 @@
 			var self=this;
 			var elapsedTime = self.sceneTime;
 			this.elapsedTime = elapsedTime;
+			if((self.loadingScreen.parent)&&(elapsedTime!=0)){
+				self.removeChild(self.loadingScreen);
+			}
 			if(elapsedTime<self.countDownTime){
 				if(!self.showStartText){
 					self.showStartText = true;

@@ -115,22 +115,48 @@
 			var flagNumber = self.historyData[id].lvlNumber;
 			for(var i = 0; i < flagNumber; i++) {
 				flagBtt[i] = new CAAT.Button().initialize(director, flagImage, 0, 0, 0, 0, function(button){
-		            	i = this.idInArray;
-						
-				        // call battle container
-		            	self.mapindex = 1+(Math.random()*4)<<0;
-						if(self.mapindex>=5) self.mapindex = 4;
-		            	self.initMap(director);
-		            	director.switchToScene(1);
-						
-		            	// sau battle, open next flag, cho no 2 sao lam demo
-						var currentBtt = this;
-						self.updateWinBattle = function(star){
-							
-							setFlagIsLock((i+1 < flagNumber) ? (i+1) : i, false);
-							self.historyData[id][i].star = star;
-							addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
+		            	
+						//Load Screen 
+						///*
+						self.loadingScreen = new CAAT.ActorContainer().setBounds(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+						self.loadingScreen.paint = function(director,time){
+							var ctx = director.ctx;
+							ctx.drawImage(director.getImage("loadingScreen"),0,0);
+							ctx.fillStyle = "#FFF";
+							ctx.font = "30px Times New Roman";
+							var text = "LOADING...";
+							var measure = ctx.measureText(text).width;
+							ctx.fillStyle = "#0FF";
+							ctx.fillRect(this.width-measure-25,this.height-55,measure+10,50);
+							ctx.fillStyle = "#840";
+							ctx.fillText(text,this.width-measure-20,this.height-20);
+							if(time>0) {
+								callBattle();
+								self.removeChild(self.loadingScreen);
+							}
 						}
+						self.addChild(self.loadingScreen);
+						//*/
+						
+						var callBattle = function(){
+							i = button.idInArray;
+							// call battle container
+							self.mapindex = 1+Math.random()*12<<0;
+							if(self.mapindex>=13) self.mapindex = 12;
+							self.initMap(director);
+							director.switchToScene(1);
+							
+							// sau battle, open next flag, cho no 2 sao lam demo
+							var currentBtt = button;
+							
+							self.updateWinBattle = function(star){
+								
+								setFlagIsLock((i+1 < flagNumber) ? (i+1) : i, false);
+								self.historyData[id][i].star = star;
+								addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
+							}
+						}
+						
 		            })
 	            	.setLocation(i*flagImage.width*2, 200);
 	            flagBtt[i].idInArray = i;

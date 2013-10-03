@@ -21,7 +21,7 @@
 			var bttSize = 80;
 			var backImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('back'), 1, 1 );
 			var backBtt = new CAAT.Button().initialize(director, backImage, 0, 0, 0, 0, function(button){
-					Sound.playMusic(director,"start");
+					Sound.playMusic("start");
 	            	self.director.switchToScene(self.semiMainMap.sceneMenuIndex);
 	            })
 	        	.setLocation(0, 0)

@@ -368,7 +368,7 @@
 			if(self.isUltimateTower) bullet.speed = 5*TILE_SIZE;
 			bullet.tower = self;
 			bullet.reloadTime=self.reloadTime;
-			Sound.playSfx(director,"arrow"+(1+battleContainer.randomNumber(5)));
+			Sound.playSfx("arrow"+(1+battleContainer.randomNumber(5)));
 			self.updateState("fire",this.reloadTime/this.frameNumber);
 			var scene= self.parent;
 			scene.addChild(bullet);
