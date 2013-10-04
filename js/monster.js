@@ -131,7 +131,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 		bossDisableTime: 3000,
         takeDmg: function(dmg, bullet) {		//Hàm nhận dam, gồm dam đầu vào và viên đạn(nếu có) gây dam đó
 			//Skill của quái
-			if(typeof bullet != "undefined"){
+			if(bullet&&(!bullet.powerShot)){
 				if((this.isBoss)&&(this.bossDisableCount<this.bossDisableMax)){
 					if(!bullet.tower.disabled) {
 						bullet.tower.disable(this.bossDisableTime);
@@ -157,6 +157,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 				}
 				var reduceDamage = this.reduceDamage;
 				dmg*= (1-reduceDamage);
+				dmg*= this.battleContainer.damageMultiple;
 			}
 			if((this.skill==5)&&(this.immunity==0)){
 				if(this.skillInfo[1]==this.skillDuration)  {
@@ -167,6 +168,10 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 			
 			// Nhận Dam
 			this.currentHP -= dmg*(1-this.immunity);
+			if(bullet&&(bullet.powerShot)){
+				if(!this.isBoss) this.currentHP = 0;
+				else this.currentHP-= this.hp/2;
+			}
             if (!this.isDead) if (this.currentHP <= 0) {
                 if (typeof bullet != "undefined") {
 					if(bullet.bonus == 14){	 	//Eff của trụ, có được mạng thưởng ko
@@ -177,6 +182,7 @@ console.log("thanh da viet gi thi comment vao xem tu da lam kia kia ");
 					}
 					bullet.isLasthit = true;
 				}
+				this.bounty *= this.battleContainer.goldMultiple;
 				this.battleContainer.currentGold += this.bounty;
                 this.battleContainer.removeMonster(this.id); // Hết máu thì chết đê
 				

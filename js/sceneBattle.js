@@ -43,7 +43,10 @@
 			this.sceneTime = 0;
 			//this.scene_time=this.parent.time;
 			this.currentLevel = mapIndex;
-			
+			this.goldMultiple = 1;
+			this.goldMultipleTimeLeft = 0;
+			this.damageMultiple = 1;
+			this.damageMultipleTimeLeft = 0;
 			Sound.playMusic("battle"+(1+this.randomNumber(4)));
 			
 			this.updateArray=[];
@@ -635,7 +638,7 @@
 							if(LANGUAGE) text2+= " Tower";
 						}
 						text3 = ["Sát thương: ","Damage: "][LANGUAGE];
-						text3+=(bonusDmg+dmg[0]>>0)+"-"+(bonusDmg+dmg[1]>>0);
+						text3+=self.damageMultiple*(bonusDmg+dmg[0]>>0)+"-"+self.damageMultiple*(bonusDmg+dmg[1]>>0);
 						text4 = ["Tầm bắn: ","Range: "][LANGUAGE];
 						text4+= tower.range;
 						text5 = ["Tốc độ bắn: ","Attack Speed: "][LANGUAGE];
@@ -671,7 +674,7 @@
 						ctx.drawImage(self.director.getImage("levelIcon"),80,40,30,18);
 						ctx.fillText(tower.level, 115, 55);
 						ctx.drawImage(self.director.getImage("damageIcon"),80,65,25,25);
-						ctx.fillText((bonusDmg+dmg[0]>>0)+"-"+(bonusDmg+dmg[1]>>0),110,80);
+						ctx.fillText(self.damageMultiple*(bonusDmg+dmg[0]>>0)+"-"+self.damageMultiple*(bonusDmg+dmg[1]>>0),110,80);
 						
 						if(img){
 							ctx.drawImage(img,55+measure1,0);
@@ -821,20 +824,26 @@
 			
 			var ultimateTower = new CAAT.Tower().initialize(self, 4, 0, this.currentMap.mapWidthCollision*TILE_SIZE/2, this.currentMap.mapHeightCollision *TILE_SIZE/2,0,true);
 			this.ultimateTower = ultimateTower;
-			var ultimateSkillImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('downSkill'), 1, 1 );
-			this.ultimateSkillButton = new CAAT.Button().initialize(this.director,ultimateSkillImage,0,0,0,0,
-			function(){
-				for(var i=0;i<self.monsterArray.length;i++){
-					if((self.monsterArray[i].parent)&&(!self.monsterArray[i].isDead)){
-						self.ultimateTower.fire(self.monsterArray[i],self.director,self.sceneTime);
-					}
-				}
-			})
-				.setLocation(CANVAS_WIDTH-buttonSize*2,buttonSize)
-				.setScaleAnchored(3/2*buttonSize/ultimateSkillImage.width,3/2*buttonSize/ultimateSkillImage.height,0,0);
-			this.addChild(this.ultimateSkillButton);
 			this.mapBound.addChild(this.ultimateTower);
 			this.towerArray.push(this.ultimateTower);
+			
+			var itemButtonSize = 25;
+			for(var i=0;i<data.Item.length;i++){
+				var itemIcon = new CAAT.Foundation.SpriteImage().initialize(director.getImage(data.Item[i].Icon), 1, 1 );
+				var itemButton = new CAAT.Button().initialize(this.director,itemIcon,0,0,0,0,
+					this.itemButtonFunction(data.Item[i].Id),
+					function(){},
+					function(){},
+					function(){
+						
+						self.tooltip.positionIndex = 0;
+						self.tooltip.reset(0,lang.description.Item[data.Item[this.itemIndex].Id]);
+					})
+					.setLocation(CANVAS_WIDTH-itemButtonSize*3/2*(2-i%2),buttonSize+itemButtonSize*(i/2<<0))
+					.setScaleAnchored(itemButtonSize/itemIcon.width,itemButtonSize/itemIcon.height,0,0);
+				itemButton.itemIndex = i;
+				this.addChild(itemButton);
+			}
 			
 			this.loadingScreen = new CAAT.ActorContainer().setBounds(0,0,this.width,this.height);
 			this.loadingScreen.paint = function(director,time){
@@ -853,6 +862,55 @@
 			
             return this;
         },
+		itemButtonFunction: function(itemId){
+			var self = this;
+			switch(itemId){
+				case "powerShot":
+					return function(){
+						for(var i=0;i<self.monsterArray.length;i++){
+							if((self.monsterArray[i].parent)&&(!self.monsterArray[i].isDead)){
+								self.ultimateTower.fire(self.monsterArray[i],self.director,self.sceneTime);
+							}
+						}
+					}
+				case "hp10":
+					return function(){
+						self.currentLife+=10;
+					}
+				case "hp20":
+					return function(){
+						self.currentLife+=20;
+					}
+				case "hp50":
+					return function(){
+						self.currentLife+=50;
+					}
+				case "freeze":
+					return function(){
+						for(var i=0;i<self.monsterArray.length;i++){
+							if((self.monsterArray[i].parent)&&(!self.monsterArray[i].isDead)){
+								self.monsterArray[i].takeEff(3,[100,5000]);
+							}
+						}
+					}
+				case "cooldown":
+					return function(){
+						for(var i=0;i<self.cdActor.length;i++){
+							self.cdActor[i].stopCooldown();
+						}
+					}
+				case "damagex2":
+					return function(){
+						self.damageMultiple = 2;
+						self.damageMultipleTimeLeft = 10000;
+					}
+				case "goldx2":
+					return function(){
+						self.goldMultiple = 2;
+						self.goldMultipleTimeLeft = 10000;
+					}	
+			}
+		},
         replayInformation: function (actionType, actionArg) {
             
 			this.replayData.actionData.push({
@@ -1409,6 +1467,23 @@
 						ctx.fillText(timeText,-measure0/2,0);
 						ctx.fillText(text,-measure1/2,25);
 						ctx.fillText(self.startText,-measure2/2,50);
+						
+						var line = 0;
+						if(self.damageMultiple!=1){
+							if(self.damageMultipleTimeLeft>0){
+								ctx.fillStyle = "#00F";
+								ctx.fillText("Double Damage: "+(1+self.damageMultipleTimeLeft/1000<<0)+"s.",-this.x + CANVAS_WIDTH - 250 ,-this.y + 70+ line*25);
+								line++;
+							}
+							else self.damageMultiple = 1;
+						}
+						if(self.goldMultiple!=1){
+							if(self.goldMultipleTimeLeft>0){
+								ctx.fillStyle = "#FF0";
+								ctx.fillText("Double Gold: "+(1+self.goldMultipleTimeLeft/1000<<0)+"s.",-this.x + CANVAS_WIDTH - 250 ,-this.y + 70+ line*25);
+							}
+							else self.goldMultiple = 1;
+						}
 					}
 					self.addChild(startText);
 				}
@@ -1418,6 +1493,7 @@
 			for(var i=0;i<self.buildButtonArray.length;i++){
 				self.updateButton(self.buildButtonArray[i],i);
 			}
+
 			if((self.selectingIndex!=-1)&&(self.selectingType==0)){
 				var tower = self.towerArray[self.selectingIndex];
 				if(tower.element.length==1){
@@ -1435,11 +1511,13 @@
 				}
 			}
 		},
-		
 		update : function (director,time){
 		///*
 			var self = this;
 			self.sceneTime = time;
+			
+			if(self.damageMultipleTimeLeft>0) self.damageMultipleTimeLeft-= frameTime;
+			if(self.goldMultipleTimeLeft>0) self.goldMultipleTimeLeft-= frameTime;
 		    ///*
 			if (self.loadingRep) {
 			    if (loadObj.actionData.length>self.action_number&&loadObj.actionData[self.action_number].time == time) {

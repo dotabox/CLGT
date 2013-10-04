@@ -267,6 +267,40 @@
         [0], [1], [2], [3], [4],
         [0,0],[0,1],[0,2],[0,3],[0,4],[1,1],[1,2],[1,3],[1,4],[2,2],[2,3],[2,4],[3,3],[3,4],[4,4]
     ],
+	Item:[
+		{
+			Id: "powerShot",
+			Icon: "downSkill",
+		},
+		{
+			Id: "hp10",
+			Icon: "downSkill",
+		},
+		{
+			Id: "hp20",
+			Icon: "downSkill",
+		},
+		{
+			Id: "hp50",
+			Icon: "downSkill",
+		},
+		{
+			Id: "freeze",
+			Icon: "downSkill",
+		},
+		{
+			Id: "cooldown",
+			Icon: "downSkill",
+		},
+		{
+			Id: "damagex2",
+			Icon: "downSkill",
+		},
+		{
+			Id: "goldx2",
+			Icon: "downSkill",
+		},
+	],
 	UserSkill:[
 		{
 			ID:0,

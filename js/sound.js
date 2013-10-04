@@ -21,6 +21,11 @@ Sound = {
 		audio.play();
 		this.setSfxVolume(SFX_VOLUME);
 		//console.log(this.sfxChannelId.length);
+		if(this.sfxChannelId.length>this.sfxLength){
+			var audio = this.audioObjects[this.sfxChannelId[0]];
+			audio.stop();
+			self.sfxChannelId.splice(0,1);
+		}
 	},
 	playMusic:function(soundId,endCallback){
 		if(this.musicChannelId) this.audioObjects[this.musicChannelId].stop();

@@ -41,6 +41,9 @@
 
         stopCooldown: function() {
             // action
+			this.isCooldown = false;
+            this.isDone = true;
+			this.progress = 1;
             return this;
         },
         paint: function (director, time) {

@@ -58,7 +58,7 @@
 			self.calBonus();
 			if(isUltimateTower){
 				self.isUltimateTower = true;
-				self.damage = [100000,100000];
+				self.damage = [0,0];
 				self.setVisible(false);
 				self.range = 0;
 				self.effect = [];
@@ -365,7 +365,10 @@
 			var currentMap = this.battleContainer.currentMap;
 			var monsterArray = this.battleContainer.monsterArray;
 			var bullet = new CAAT.Bullet().initialize(director, self.type, self.x + TOWER_SIZE / 2, self.y, battleContainer);
-			if(self.isUltimateTower) bullet.speed = 5*TILE_SIZE;
+			if(self.isUltimateTower) {
+				bullet.speed = 5*TILE_SIZE;
+				bullet.powerShot = true;
+			}
 			bullet.tower = self;
 			bullet.reloadTime=self.reloadTime;
 			Sound.playSfx("arrow"+(1+battleContainer.randomNumber(5)));
