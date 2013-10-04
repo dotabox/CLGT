@@ -1,24 +1,31 @@
 (function(window) {
 
-	var namespace = BKGMDapGiac||{};
-	
-	var init = function init() {
-        
-		main();
-        
-	};
+	var namespace = BKGMDapGiac;
+    var game = BKGMDapGiac.game;
+    game.point = 0;
+    var point = 0;
     
     CAAT.DEBUG = 1;
     
     var Actor = CAAT.Foundation.Actor;
     var Behavior = CAAT.Behavior;
 
-	var main = function main() {
+	var main = function main(images) {
         
         var director = new CAAT.Foundation.Director().initialize(
-            800, 600,
-            document.getElementById('BKGMDAPGIAC')
+            CANVAS_WIDTH, CANVAS_HEIGHT,
+            document.getElementById('canvas')
         );
+        director.setImagesCache(images);
+        console.log(director.getImage('assets'));
+
+        // var reset= function(spriteImage, time) {
+        //     spriteImage.playAnimation("stand");
+        // };
+         
+        var asset = new CAAT.Foundation.SpriteImage().initializeFromTexturePackerJSON(director.getImage('assets'), assetjson)
+            .addAnimation("stand",   ["enemy-10000", "enemy-10001"], 100);
+            //.addAnimation("fall",    [0,1,2,3,4,5,6,7], 100, reset);
         
         var scene = director.createScene();
         
@@ -27,13 +34,13 @@
         
         scene.createTimer(scene.time,Number.MAX_VALUE,
             function (scene_time, timer_time, timertask_instance) {   // timeout
-                
+                game.point = point;
             },
             function (scene_time, timer_time, timertask_instance) {   // tick
 
                 if (enemies.length>0) {
                     for(var i = 0; i < enemies.length; i++){
-                        if (scene_time - enemies[i].time >= 1000) {
+                        if (scene_time - enemies[i].time >= 10000) {
                             enemies[i].remove();
                         } else {
                             enemiesNotRemoved.push(enemies[i]);
@@ -43,14 +50,14 @@
                     enemiesNotRemoved = [];
                 }
 
-                if (enemies.length<maxNumberOfEnemies) {
-                    if (scene_time-lastTime>=500) {
+                if (enemies.length < maxNumberOfEnemies) {
+                    if (scene_time-lastTime>=5000) {
                         lastTime = scene_time;
                         slotno = Math.floor(Math.random() * maxNumberOfEnemies);
                         while (slots[slotno].hasEnemy){
                             slotno = Math.floor(Math.random() * maxNumberOfEnemies);
                         }
-                        enemies.push(new Enemy().init(scene,slotno,20,20,'black'));
+                        enemies.push(new Enemy().init(scene,slotno,asset));
                     }
                 }
             },
@@ -65,18 +72,22 @@
     var enemiesNotRemoved = [];
     
     var slots = [
-        {x: 50, y: 120, hasEnemy: false},
-        {x: 100, y: 120, hasEnemy: false},
-        {x: 150, y: 120, hasEnemy: false},
-        {x: 200, y: 120, hasEnemy: false}
+        {x: 50, y: 50, hasEnemy: false},
+        {x: 400, y: 50, hasEnemy: false},
+        {x: 50, y: 300, hasEnemy: false},
+        {x: 400, y: 300, hasEnemy: false}
     ];
+
+    var width = 323;
+    var height = 273;
+
     var maxNumberOfEnemies = slots.length;
     
     var Enemy = function () {return this;};
     Enemy.prototype = {};
     
     (function(Model){
-        Model.init = function(scene,slotno,w,h,color){
+        Model.init = function(scene,slotno,asset){
 
             this.scene = scene;
 
@@ -85,8 +96,11 @@
 
             this.actor = new Actor()
                 .setLocation(slot.x,slot.y)
-                .setSize(w,h)
-                .setFillStyle(color);
+                .setSize(width,height);
+            var actor = this.actor;
+
+            actor.setBackgroundImage(asset);
+            actor.playAnimation("stand");
 
             slot.hasEnemy = true;
 
@@ -97,6 +111,8 @@
             actor.mouseDown = function(e){
                 me.remove();
                 enemies.splice(enemies.indexOf(me),1);
+                point++;
+                console.log(point);
             }
             
             this.time = scene.time;
@@ -111,6 +127,6 @@
         }
     })(Enemy.prototype);
 
-	namespace.init = init;
+	namespace.main = main;
 
 })(window);

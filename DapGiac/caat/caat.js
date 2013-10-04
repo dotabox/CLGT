@@ -17344,6 +17344,8 @@ CAAT.Module({
 
             initializeFromTexturePackerJSON : function( image, obj ) {
 
+                this.initialize(image, 1, 1);
+
                 for( var img in obj.frames ) {
                     var imgData= obj.frames[img];
 
@@ -17355,10 +17357,12 @@ CAAT.Module({
                         id: '0'
                     };
 
-                    var si= new CAAT.Foundation.SpriteImage().initialize( image, 1, 1 );
-                    si.addElement(0,si_obj);
-                    CAAT.currentDirector.addImage( img.substring(0,img.indexOf('.')), si );
+                    //var si= new CAAT.Foundation.SpriteImage().initialize( image, 1, 1 );
+                    this.addElement(img,si_obj);
+                    //CAAT.currentDirector.addImage( img.substring(0,img.indexOf('.')), si );
                 }
+
+                return this;
             },
 
             /**
