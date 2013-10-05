@@ -17352,8 +17352,8 @@ CAAT.Module({
                     var si_obj= {
                         x: imgData.frame.x,
                         y: imgData.frame.y,
-                        width: imgData.spriteSourceSize.w,
-                        height: imgData.spriteSourceSize.h,
+                        width: imgData.frame.w,
+                        height: imgData.frame.h,
                         id: '0'
                     };
 

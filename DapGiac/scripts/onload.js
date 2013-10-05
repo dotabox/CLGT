@@ -50,7 +50,7 @@ var CANVAS_WIDTH = 800, CANVAS_HEIGHT=600;
 			// 	addElement("thunder1", "sound/sfx/thunder1.ogg");
 				
 	        var imageElement = new CAAT.Module.Preloader.Preloader().
-	            addElement("assets", "images/assets.png").
+	            addElement("assets", "images/p1_walk.png").
 	            addElement("hammer", "images/hammer.png");
 				
 			// audioElement.load (
