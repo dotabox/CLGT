@@ -394,7 +394,7 @@
         },
 
         complete: function () {
-			
+			if (this.eventComplete) this.eventComplete(this.choose);
             if (this.createTut) this.createTut(4-this.choose);
             return this;
         },

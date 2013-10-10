@@ -141,9 +141,26 @@
 						var callBattle = function(){
 							i = button.idInArray;
 							// call battle container
-							self.mapindex = 1+Math.random()*12<<0;
+							self.mapindex = 1//+Math.random()*12<<0;
 							if(self.mapindex>=13) self.mapindex = 12;
 							self.initMap(director);
+							//-----------------------------------------
+							var mapData = data.Map[self.mapindex-1];
+							var StoryData=mapData.StoryData;
+							var actors=[];
+							for (m=0;m<StoryData.actors.length;m++){
+								var actor= new CAAT.MyActor().initialize(director, StoryData.actors[m].name, StoryData.actors[m].img, StoryData.actors[m].sprite[0], StoryData.actors[m].sprite[1]);
+								if (StoryData.actors[m].animation) actor.setAnimation(StoryData.actors[m].animation);
+								actors.push(actor);
+							}
+							var sceneDatas = StoryData.sceneDatas;
+							var log = new CAAT.StoryScene().initialize(director, 0, 0, actors, sceneDatas).enableEvents(true);
+							log.setBounds(0, 0, 800, 600);
+							self.battleContainer.addChild(log);
+							log.eventComplete=function(){
+								log.setExpired();
+							}
+							//-------------------------------------------
 							director.switchToScene(1);
 							
 							// sau battle, open next flag, cho no 2 sao lam demo
