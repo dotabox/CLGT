@@ -32,9 +32,11 @@
         var isIn = false;
 
         function in(){
-            actor.playAnimation("in");
-            actor.mouseDown = hit;
-            isIn = true;
+            if (!isIn) {
+                actor.playAnimation("in");
+                actor.mouseDown = hit;
+                isIn = true;
+            }
         }
 
         function out(){
