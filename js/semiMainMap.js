@@ -35,13 +35,23 @@
         			this.historyData[i][j] = {};
         			this.historyData[i][j].isLock = true;
         			this.historyData[i][j].star = 0;
-        			this.historyData[i][j].nextUnlock = [j+1];
+        			this.historyData[i][j].playTimes = 0;
+        			this.historyData[i][j].highScore = 0;
+        			this.historyData[i][j].mapID = 1+(Math.random()*10<<0);
+
+        			if(j == this.historyData[i].lvlNumber-1) {
+        				this.historyData[i][j].nextUnlock = [];
+        			}
+        			else {
+        				this.historyData[i][j].nextUnlock = [j+1];
+        			}
         		}
         		this.historyData[i][0].isLock = false;
         		this.historyData[i][0].nextUnlock = [1, 2];
         		this.historyData[i][1].nextUnlock = [3];
         		this.historyData[i][2].nextUnlock = [3];
 	        }
+	        this.historyData[this.semiMapCoLoaIndex][0].mapID = 1;
 
 			return this;
 		},
@@ -147,7 +157,8 @@
 							i = button.idInArray;
 							self.curFlag = i;
 							// call battle container
-							self.mapindex = 1//+Math.random()*12<<0;
+							//self.mapindex = 1//+Math.random()*12<<0;
+							self.mapindex = self.historyData[id][i].mapID;
 							if(self.mapindex>=13) self.mapindex = 12;
 							self.initMap(director);
 							//-----------------------------------------
@@ -178,6 +189,7 @@
 				            		setFlagIsLock(self.historyData[id][i].nextUnlock[f], false);
 				            	}
 				            	self.historyData[id][i].star = star;
+				            	self.historyData[id][i].playTimes++;
 				            	addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
 							}
 						}
