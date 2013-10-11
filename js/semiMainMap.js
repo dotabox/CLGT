@@ -17,8 +17,8 @@
 
 	        this.historyData = [];
 	        this.semiMapNumber = 6;
-	        this.levelPerSemiMap = 3;
-	        this.levelAtCoLoa = 5;
+	        this.levelPerSemiMap = 4;
+	        this.levelAtCoLoa = 6;
 	        this.semiMapCoLoaIndex = 0;
 	        this.maxStarPerLevel = 5;
 
@@ -35,8 +35,12 @@
         			this.historyData[i][j] = {};
         			this.historyData[i][j].isLock = true;
         			this.historyData[i][j].star = 0;
+        			this.historyData[i][j].nextUnlock = [j+1];
         		}
         		this.historyData[i][0].isLock = false;
+        		this.historyData[i][0].nextUnlock = [1, 2];
+        		this.historyData[i][1].nextUnlock = [3];
+        		this.historyData[i][2].nextUnlock = [3];
 	        }
 
 			return this;
@@ -57,6 +61,7 @@
 
 		setMap: function(director, bgColor, id) {
 			var self = this;
+			self.curID = id;
 
 			this.setFillStyle(bgColor);
 
@@ -140,6 +145,7 @@
 						
 						var callBattle = function(){
 							i = button.idInArray;
+							self.curFlag = i;
 							// call battle container
 							self.mapindex = 1//+Math.random()*12<<0;
 							if(self.mapindex>=13) self.mapindex = 12;
@@ -167,10 +173,12 @@
 							var currentBtt = button;
 							
 							self.updateWinBattle = function(star){
-								
-								setFlagIsLock((i+1 < flagNumber) ? (i+1) : i, false);
-								self.historyData[id][i].star = star;
-								addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
+								i = self.curFlag;
+				            	for(var f = 0; f < self.historyData[id][i].nextUnlock.length; f++) {
+				            		setFlagIsLock(self.historyData[id][i].nextUnlock[f], false);
+				            	}
+				            	self.historyData[id][i].star = star;
+				            	addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
 							}
 						}
 						
@@ -179,6 +187,11 @@
 	            flagBtt[i].idInArray = i;
 	            setFlagIsLock(i, self.historyData[id][i].isLock);
 	            this.addChild(flagBtt[i]);
+			}
+			flagBtt[1].setLocation(flagBtt[1].x, flagBtt[1].y - flagImage.height);
+			flagBtt[2].setLocation(flagBtt[1].x, flagBtt[1].y + flagImage.height*2);
+			for(var i = 3; i < flagNumber; i++) {
+				flagBtt[i].setLocation(flagBtt[i].x - flagImage.width*2, flagBtt[i].y);
 			}
 
 			return this;
