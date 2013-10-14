@@ -27,48 +27,43 @@
             .addAnimation("stand",   ["Symbol 2 instance 10000", "Symbol 2 instance 10001", "Symbol 2 instance 10002", "Symbol 2 instance 10003", "Symbol 2 instance 10004", "Symbol 2 instance 10005", "Symbol 2 instance 10006", "Symbol 2 instance 10007", "Symbol 2 instance 10008", "Symbol 2 instance 10009", "Symbol 2 instance 10010"], 100);
             //.addAnimation("fall",    [0,1,2,3,4,5,6,7], 100, reset);
 
-        var child = new Actor().setBounds(0,0,350,300);
-        child.setBackgroundImage(asset);
-        child.playAnimation("stand");
-        
         var scene = director.createScene();
-        scene.addChild(child);
         
         var lastTime = scene.time;
         var slotno = Math.floor(Math.random() * maxNumberOfEnemies+1);
         
-        // scene.createTimer(scene.time,Number.MAX_VALUE,
-        //     function (scene_time, timer_time, timertask_instance) {   // timeout
-        //         game.point = point;
-        //     },
-        //     function (scene_time, timer_time, timertask_instance) {   // tick
+        scene.createTimer(scene.time,Number.MAX_VALUE,
+            function (scene_time, timer_time, timertask_instance) {   // timeout
+                game.point = point;
+            },
+            function (scene_time, timer_time, timertask_instance) {   // tick
 
-        //         if (enemies.length>0) {
-        //             for(var i = 0; i < enemies.length; i++){
-        //                 if (scene_time - enemies[i].time >= 10000) {
-        //                     enemies[i].remove();
-        //                 } else {
-        //                     enemiesNotRemoved.push(enemies[i]);
-        //                 }
-        //             };
-        //             enemies = enemiesNotRemoved.slice();
-        //             enemiesNotRemoved = [];
-        //         }
+                if (enemies.length>0) {
+                    for(var i = 0; i < enemies.length; i++){
+                        if (scene_time - enemies[i].time >= 2000) {
+                            enemies[i].remove();
+                        } else {
+                            enemiesNotRemoved.push(enemies[i]);
+                        }
+                    };
+                    enemies = enemiesNotRemoved.slice();
+                    enemiesNotRemoved = [];
+                }
 
-        //         if (enemies.length < maxNumberOfEnemies) {
-        //             if (scene_time-lastTime>=5000) {
-        //                 lastTime = scene_time;
-        //                 slotno = Math.floor(Math.random() * maxNumberOfEnemies);
-        //                 while (slots[slotno].hasEnemy){
-        //                     slotno = Math.floor(Math.random() * maxNumberOfEnemies);
-        //                 }
-        //                 enemies.push(new Enemy().init(scene,slotno,asset));
-        //             }
-        //         }
-        //     },
-        //     function (scene_time, timer_time, timertask_instance) {   // cancel
+                if (enemies.length < maxNumberOfEnemies) {
+                    if (scene_time-lastTime>=1000) {
+                        lastTime = scene_time;
+                        slotno = Math.floor(Math.random() * maxNumberOfEnemies);
+                        while (slots[slotno].hasEnemy){
+                            slotno = Math.floor(Math.random() * maxNumberOfEnemies);
+                        }
+                        enemies.push(new Enemy().init(scene,slotno,asset));
+                    }
+                }
+            },
+            function (scene_time, timer_time, timertask_instance) {   // cancel
                 
-        //     });
+            });
         
         CAAT.loop(20);
 	};
