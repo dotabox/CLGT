@@ -119,13 +119,13 @@ window.onload = function () {
             addElement("dmg", "img/dmg.png").
             addElement("redArrow", "img/arrow_red.png").
 			addElement("button1", "img/button.png").
-            addElement("towerEff0", "img/Image 39.png").
-            addElement("towerEff1", "img/Image 45.png").
-            addElement("towerEff2", "img/Image 54.png").
-            addElement("towerEff3", "img/Image 52.png").
-            addElement("towerEff4", "img/Image 44.png").
-            addElement("towerEff5", "img/Image 38.png").
-            addElement("towerEff6", "img/Image 33.png").
+            addElement("towerEff0", "img/Image39.png").
+            addElement("towerEff1", "img/Image45.png").
+            addElement("towerEff2", "img/Image54.png").
+            addElement("towerEff3", "img/Image52.png").
+            addElement("towerEff4", "img/Image44.png").
+            addElement("towerEff5", "img/Image38.png").
+            addElement("towerEff6", "img/Image33.png").
 			addElement("lightning", "img/lightning_0.png").
             addElement("setting", "img/setting.png").
             addElement("cancel", "img/cancer.png").
@@ -134,10 +134,10 @@ window.onload = function () {
             addElement("skillThunder", "img/skillThunder.png").
             addElement("skillIce", "img/skillIce.png").
             addElement("skillCircle", "img/skillCircle.png").
-            addElement("skillAnimation1", "img/ani 48.png").
-            addElement("skillAnimation2", "img/ani 588.png").
+            addElement("skillAnimation1", "img/ani48.png").
+            addElement("skillAnimation2", "img/ani588.png").
             addElement("cloud", "img/cloud.png").
-            addElement("skillAnimation3", "img/ani 998.png").
+            addElement("skillAnimation3", "img/ani998.png").
             addElement("elementIcon0", "img/status/steel2_icon.png").
             addElement("elementIcon1", "img/status/tree_icon.png").
             addElement("elementIcon2", "img/status/rock2_icon.png").
@@ -208,6 +208,7 @@ window.onload = function () {
             addElement("earth", "img/earth.png").
 			
             addElement("loadingScreen", "img/loading.jpg").
+            addElement("loginButton", "img/buttons/login.png").
             addElement("backgroundBoard", "img/backgroundBoard.jpg");
 		
 		var multipleAudioBy = 2;

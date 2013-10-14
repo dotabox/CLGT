@@ -71,6 +71,14 @@
                 button.setPosition(550, 250 + i * 50);
                 self.addChild(button);
             }
+			var loginImage = new CAAT.SpriteImage().initialize(director.getImage("loginButton"),1,1);
+			var loginButton = new CAAT.Button().initialize(director,loginButton,0,0,0,0,
+			function(){
+				console.log("Đăng cmn nhập.");
+			}).
+				setLocation(0,0);
+				//setScaleAnchored(100/loginImage.singleWidth,50/loginImage.singleHeight);
+			this.addChild(loginButton);
             return this;
         },
 
