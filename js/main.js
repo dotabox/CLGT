@@ -16,26 +16,28 @@ window.onload = function () {
 	var loadAudios,loadImages;
     windowLoad();
 	function windowLoad(){
-		var canvas = document.getElementById("canvas");
-		var context = canvas.getContext("2d");
-		var drawIntervalID = setInterval(paint, 24);
+		var director = new CAAT.Foundation.Director().initialize(CANVAS_WIDTH, CANVAS_HEIGHT, document.getElementById("canvas"));
+		var sceneMenu = director.createScene();
 		var startTime = +new Date();
-		var currentIndex = 0;
-		function paint(){
-			context.fillStyle = "#0F0";
-			context.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-			context.fillStyle = "#0FF";
-			context.font = "30px Times New Roman";
-			context.strokeRect(300,200,200,20);
-			context.fillRect(300,200,200*loadedPercent/100,20)
-			context.fillText(loadedPercent+"%",300,190);
-			(loadedImage==0)? context.fillText("LOADING SOUND...",300,250):context.fillText("LOADING IMAGE...",300,250);
+        var loadActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,director.width,director.height);
+		sceneMenu.addChild(loadActor);
+		loadActor.paint = function(director,time){
+			var ctx = director.ctx;
+			ctx.fillStyle = "#0F0";
+			ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+			ctx.fillStyle = "#0FF";
+			ctx.font = "30px Times New Roman";
+			ctx.strokeRect(300,200,200,20);
+			ctx.fillRect(300,200,200*loadedPercent/100,20)
+			ctx.fillText(loadedPercent+"%",300,190);
+			(loadedImage==0)? ctx.fillText("LOADING SOUND...",300,250):ctx.fillText("LOADING IMAGE...",300,250);
 			if(loadAudios&&loadImages&&(+new Date() - startTime>1000)) {
-				clearInterval(drawIntervalID);
-				run(loadImages,loadAudios);
+				run(director,loadImages,loadAudios);
+				sceneMenu.removeChild(this);
 			}
 		}
 		load();
+		CAAT.loop(60);
 	}
     function load() {
 		
@@ -227,14 +229,14 @@ window.onload = function () {
 		});
         
     }
-    function run(images,audios) {
+    function run(director,images,audios) {
         CAAT.DEBUG = 1;
         console.log('thanhdeptrai');
-        var director = new CAAT.Foundation.Director().initialize(CANVAS_WIDTH, CANVAS_HEIGHT, document.getElementById("canvas"));
+        
         director.setImagesCache(images);
 		Sound.initialize(audios);
 		Sound.playMusic("start");
-		var sceneMenu = director.createScene();
+		var sceneMenu = director.currentScene;
 		var sceneBattle = director.createScene();
 		var sceneMenuBattle = director.createScene();
         //main map
@@ -466,13 +468,6 @@ window.onload = function () {
 		    //menu.initialize(director, 3);
 		    
 		}
-
-       
-        
-
-		
-		
-        CAAT.loop(60);
     }
 }
 
