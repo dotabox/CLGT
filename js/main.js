@@ -176,6 +176,7 @@ window.onload = function () {
             addElement("skillIcon3", "img/buttons/tho.png").
             addElement("skillIcon4", "img/buttons/thuy.png").
             addElement("skillIcon5", "img/buttons/hoa.png").
+            addElement("skillTable", "img/buttons/skillTable.jpg").
             addElement("pauseButton", "img/buttons/pauseButton.png").
 			addElement("startButton", "img/buttons/start.png").
             addElement("talk1", "img/talk1.png").
@@ -244,6 +245,13 @@ window.onload = function () {
 		var sceneMap = director.createScene();
 		var sceneGame = director.createScene();
 		var sceneSkill = director.createScene();		
+
+		var sceneMenuIndex = 0;
+		var sceneBattleIndex = 1;
+		var sceneMenuBattleIndex = 2;
+		var sceneMapIndex =sceneMainMenuIndex= 3;
+		var sceneGameIndex = 4;		
+		var sceneSkillIndex = 5;
 		
 		var sceneMapContainer = new CAAT.SceneMapCtn().create(director);
 		sceneMap.addChild(sceneMapContainer);
@@ -252,12 +260,11 @@ window.onload = function () {
 		var sceneSkillContainer = new CAAT.SceneSkill().create(director);
 		sceneSkill.addChild(sceneSkillContainer);
 
-		var sceneMenuIndex = 0;
-		var sceneBattleIndex = 1;
-		var sceneMenuBattleIndex = 2;
-		var sceneMapIndex =sceneMainMenuIndex= 3;
-		var sceneGameIndex = 4;		
-		var sceneSkillIndex = 5;
+		sceneSkillContainer.sceneIndex = sceneSkillIndex;
+		sceneMapContainer.sceneIndex = sceneMapIndex;
+
+		sceneSkillContainer.sceneMap = sceneMapContainer;
+
         //load user data
 		var user = new CAAT.User().init(0, 0, 1, 0, 0, 0, [0,1,2,3,4,5,6,7,8,9,10], []);
 		

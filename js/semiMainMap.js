@@ -180,21 +180,6 @@
 							if(self.mapindex>=13) self.mapindex = 12;
 							self.initMap(director);
 							//-----------------------------------------
-							// var mapData = data.Map[self.mapindex-1];
-							// var StoryData=mapData.StoryData;
-							// var actors=[];
-							// for (m=0;m<StoryData.actors.length;m++){
-							// 	var actor= new CAAT.MyActor().initialize(director, StoryData.actors[m].name, StoryData.actors[m].img, StoryData.actors[m].sprite[0], StoryData.actors[m].sprite[1]);
-							// 	if (StoryData.actors[m].animation) actor.setAnimation(StoryData.actors[m].animation);
-							// 	actors.push(actor);
-							// }
-							// var sceneDatas = StoryData.sceneDatas;
-							// var log = new CAAT.StoryScene().initialize(director, 0, 0, actors, sceneDatas).enableEvents(true);
-							// log.setBounds(0, 0, 800, 600);
-							// self.battleContainer.addChild(log);
-							// log.eventComplete=function(){
-							// 	log.setExpired();
-							// }
 							self.historyData[id][i].storyBegin();
 							//-------------------------------------------
 							director.switchToScene(1);
@@ -208,6 +193,7 @@
 				            		setFlagIsLock(self.historyData[id][i].nextUnlock[f], false);
 				            	}
 				            	self.historyData[id][i].star = star;
+				            	self.sceneSkillContainer.addNewPoint(star*10);
 				            	self.historyData[id][i].playTimes++;
 				            	addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
 							}
