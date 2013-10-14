@@ -75,6 +75,7 @@
 				.setLocation(this.skillInfo.width - bttSize, this.skillInfo.height - bttSize);
 			this.skillInfo.addChild(downSkillBtt);
 
+			self.curPoint = self.pointLeft;
 			var okImage = new CAAT.Foundation.SpriteImage().initialize(this.director.getImage("okIcon"), 1, 1);
 			var okBtt = new CAAT.Button().initialize(self.director, okImage,0,0,0,0,
 				function(button,ex,ey){		// down
@@ -85,7 +86,8 @@
 					self.pointLeft = self.curPoint;
 					setLevel();
 					console.log("back to menu scene");
-					self.director.switchToScene(0);
+					self.sceneMap.updateSkillPoint(self.pointLeft);
+					self.director.switchToScene(self.sceneMap.sceneIndex);
 				})
 				.setScaleAnchored(2.5*bttSize/okImage.singleWidth, bttSize/okImage.singleHeight, 0, 0)
 				.setLocation((this.skillPoint.width - 2.5*bttSize)/2, this.skillPoint.height - bttSize);
@@ -245,6 +247,7 @@
             	setTempLevel(); 
 	            setCurSkillInfo();
 	            setPoint(this.pointLeft + point);
+	            self.sceneMap.updateSkillPoint(self.pointLeft);
             }
 
 			return this;
