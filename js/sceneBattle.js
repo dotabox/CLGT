@@ -6,7 +6,7 @@
     }
     CAAT.BattleContainer.prototype = {
 		endBattle: 0, // 0 là chưa dừng, 1 là thắng, -1 là thua
-        initialize: function (director,mapIndex, skillArray, unlockTower, level, sceneSkillContainer, nextScene, prevScene) { //Level hiện tại, quái của level đó, số wave, số mạng, tiền ban đầu
+        initialize: function (director,mapId, skillArray, unlockTower, level, sceneSkillContainer, nextScene, prevScene) { //Level hiện tại, quái của level đó, số wave, số mạng, tiền ban đầu
 			CAAT.BattleContainer.superclass.initialize.call(this, director, nextScene, prevScene);
 			var self = this;
 			this.isTimePaused=false; // khoi tao bien pause
@@ -42,7 +42,16 @@
 			this.director = director;
 			this.sceneTime = 0;
 			//this.scene_time=this.parent.time;
-			this.currentLevel = mapIndex;
+			for(var i=0;i<data.Map.length;i++){
+				if(data.Map[i].id==mapId){
+					this.currentLevel = mapId;
+					break;
+				}
+				if(i == data.Map.length-1){
+					console.log("Map Not Found.");
+					return;
+				}
+			}
 			this.goldMultiple = 1;
 			this.goldMultipleTimeLeft = 0;
 			this.damageMultiple = 1;
@@ -59,7 +68,7 @@
 			this.deadMonster = 0;
 			this.miniMapSize = CANVAS_HEIGHT/4;
 			var miniMapSize = this.miniMapSize;
-			var currentLevel = mapIndex;
+			var currentLevel = this.currentLevel;
 			this.mapData = data.Map[currentLevel];
 			
 			var mapData = this.mapData;
@@ -76,7 +85,7 @@
 				//.setScaleAnchored(TILE_SIZE / TILE_SIZE_FOR_DRAWING, TILE_SIZE / TILE_SIZE_FOR_DRAWING, 0, 0)
 				.enableEvents(false);
 			
-			if(mapIndex!=0) new CAAT.SyncWave().init(director, this, mapIndex, level, this.currentMap.gateNumber).create();
+			if(mapId!=0) new CAAT.SyncWave().init(director, this, mapId, level, this.currentMap.gateNumber).create();
 			this.waveNumber = mapData.Wave.length;
 			
 			this.mapPanel = new CAAT.Foundation.ActorContainer()

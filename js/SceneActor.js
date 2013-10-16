@@ -110,11 +110,13 @@
 						if(randomSound==3) randomSound = 1;
 						Sound.playMusic("map"+randomSound);
                         break;
-                        /* Unlock */
+                        /* Mini Game */
                     case 1:
-                        console.log('unlock');
-                        self.isDim = true;
-                        self.disableButton();
+                        console.log('mini game');
+                        self.switchToScene(sceneMiniGameIndex);
+						var randomSound = (1+(Math.random()*2)<<0);
+						if(randomSound==3) randomSound = 1;
+						Sound.playMusic("map"+randomSound);
                         break;
                         /* Option */
                     case 2:

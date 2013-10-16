@@ -15,7 +15,6 @@
 			this.battleContainer = battleContainer;
 			this.director = battleContainer.director;
             this.tileSize = TILE_SIZE;
-            this.name = name;
 			this.layerNumber = data.length;
 			this.data = [];
 			for(var i=0;i<this.layerNumber;i++){

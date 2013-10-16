@@ -9,6 +9,12 @@ var currentMap;
 var monsterAddTime = 750;
 var addedMonster = 0;
 */
+var sceneMenuIndex = 0;
+var sceneBattleIndex = 1;
+var sceneMenuBattleIndex = 2;
+var sceneMapIndex =sceneMainMenuIndex= 3;
+var sceneMiniGameIndex = 4;		
+var sceneSkillIndex = 5;
 window.onload = function () {
     var loadedImage = 0;
 	var loadedAudio = 0;
@@ -30,7 +36,8 @@ window.onload = function () {
 			ctx.strokeRect(300,200,200,20);
 			ctx.fillRect(300,200,200*loadedPercent/100,20)
 			ctx.fillText(loadedPercent+"%",300,190);
-			(loadedImage==0)? ctx.fillText("LOADING SOUND...",300,250):ctx.fillText("LOADING IMAGE...",300,250);
+			//(loadedImage==0)? ctx.fillText("LOADING SOUND...",300,250):ctx.fillText("LOADING IMAGE...",300,250);
+			ctx.fillText("LOADING...",300,250);
 			if(loadAudios&&loadImages&&(+new Date() - startTime>1000)) {
 				run(director,loadImages,loadAudios);
 				sceneMenu.removeChild(this);
@@ -217,19 +224,19 @@ window.onload = function () {
 		audioElement.load (
 		function loadAll(audios){
 			loadAudios = audios;
-			imageElement.load(function onAllAssetsLoaded(images) {
-				loadImages = images;
-            },
-			function onEachLoad(index){
-				loadedImage++;
-				loadedPercent = Math.round((multipleAudioBy*loadedAudio + loadedImage)/elementLength*100);
-			});
+			
 		},
 		function loadEach(audio){
 			loadedAudio++;
 			loadedPercent = Math.round((multipleAudioBy*loadedAudio + loadedImage)/elementLength*100);
 		});
-        
+        imageElement.load(function onAllAssetsLoaded(images) {
+			loadImages = images;
+		},
+		function onEachLoad(index){
+			loadedImage++;
+			loadedPercent = Math.round((multipleAudioBy*loadedAudio + loadedImage)/elementLength*100);
+		});
     }
     function run(director,images,audios) {
         CAAT.DEBUG = 1;
@@ -243,20 +250,13 @@ window.onload = function () {
 		var sceneMenuBattle = director.createScene();
         //main map
 		var sceneMap = director.createScene();
-		var sceneGame = director.createScene();
-		var sceneSkill = director.createScene();		
-
-		var sceneMenuIndex = 0;
-		var sceneBattleIndex = 1;
-		var sceneMenuBattleIndex = 2;
-		var sceneMapIndex =sceneMainMenuIndex= 3;
-		var sceneGameIndex = 4;		
-		var sceneSkillIndex = 5;
+		var sceneMiniGame = director.createScene();
+		var sceneSkill = director.createScene();
 		
 		var sceneMapContainer = new CAAT.SceneMapCtn().create(director);
 		sceneMap.addChild(sceneMapContainer);
-		var sceneGameContainer = new CAAT.SceneGameCtn().create(director);
-		sceneGame.addChild(sceneGameContainer);
+		var MiniGameContainer = new CAAT.MiniGameContainer().initialize(director);
+		sceneMiniGame.addChild(MiniGameContainer);
 		var sceneSkillContainer = new CAAT.SceneSkill().create(director);
 		sceneSkill.addChild(sceneSkillContainer);
 

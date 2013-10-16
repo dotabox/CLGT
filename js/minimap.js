@@ -13,7 +13,6 @@
 			this.battleContainer = battleContainer;
 			this.director = battleContainer.director;
             this.tileSize = TILE_SIZE;
-            this.name = name;
             this.data = data;
             this.mapHeight = this.data[0].length;
             this.mapWidth = this.data[0][0].length;

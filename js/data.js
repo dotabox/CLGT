@@ -2,6 +2,7 @@
 	Map:[
 	{
 		WaveNumber: 3,
+		id: 0,
 		WavePoint: [5,10,15],
 		Life: 20,
 		Gold: 300,
@@ -125,6 +126,7 @@
 	},
 	{
 		WaveNumber: 3,
+		id: 1,
 		WavePoint: [5,10,15],
 		Life: 16,
 		Gold: 200,
@@ -138,6 +140,7 @@
 	},
 	{
 		WaveNumber: 4,
+		id: 2,
 		WavePoint: [5,10,15,20],
 		Life: 12,
 		Gold: 200,
@@ -151,6 +154,7 @@
 	},
 	{
 		WaveNumber: 5,
+		id: 3,
 		WavePoint: [5,10,13,16,22],
 		Life: 10,
 		Gold: 300,
@@ -165,6 +169,7 @@
 	
 	{
 		WaveNumber: 6,
+		id: 4,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -178,6 +183,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 5,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -191,6 +197,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 6,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -204,6 +211,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 7,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -217,6 +225,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 8,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -230,6 +239,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 9,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -243,6 +253,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 10,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -256,6 +267,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 11,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -269,6 +281,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 12,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -282,6 +295,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 13,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -295,6 +309,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 14,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -308,6 +323,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 15,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -321,6 +337,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 16,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -334,6 +351,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 17,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
@@ -347,6 +365,7 @@
 	},
 	{
 		WaveNumber: 6,
+		id: 18,
 		WavePoint: [5,10,13,16,20,25],
 		Life: 10,
 		Gold: 400,
