@@ -17,7 +17,7 @@
 			var cellX = (positionX/TILE_SIZE)>>0;
 			var cellY = (positionY/TILE_SIZE)>>0;
 			var currentMap = self.battleContainer.currentMap;
-			this.cellId = cellX + currentMap.mapWidth*cellY;
+			this.cellId = cellX + currentMap.mapWidthCollision*cellY;
 			var skillData = data.UserSkill[animationIndex];
 			this.skillData = skillData;
 			var skillRange = self.skillData.Range;
@@ -169,7 +169,7 @@
 				if(frameIndex == (2*self.data.length/3)>>0){
 					if(!self.takeDmg){
 						self.takeDmg = true;
-						Sound.playSfx(self.director,self.sound);
+						Sound.playSfx(self.sound);
 						var currentMap = self.battleContainer.currentMap;
 						var queue = self.queue;
 						var arrayTarget = [];
@@ -270,7 +270,7 @@
 						self.frameAnimationIndex.push(randomNumber);
 						self.frameIndex.push(0);
 						self.targetArray.push(foundedID);
-						Sound.playSfx(self.director,self.sound[self.battleContainer.randomNumber(self.sound.length)]);
+						Sound.playSfx(self.sound[self.battleContainer.randomNumber(self.sound.length)]);
 					}
 				}
 				if(self.frameIndex.length>self.skillData.TargetNumber) {

@@ -71,6 +71,14 @@
                 button.setPosition(550, 250 + i * 50);
                 self.addChild(button);
             }
+			var loginImage = new CAAT.SpriteImage().initialize(director.getImage("loginButton"),1,1);
+			var loginButton = new CAAT.Button().initialize(director,loginImage,0,0,0,0,
+			function(){
+				console.log("Đăng cmn nhập.");
+			}).
+				setLocation(20,20).
+				setScaleAnchored(100/loginImage.singleWidth,50/loginImage.singleHeight,0,0);
+			this.addChild(loginButton);
             return this;
         },
 
@@ -100,13 +108,15 @@
                         self.switchToNextScene();
 						var randomSound = (1+(Math.random()*2)<<0);
 						if(randomSound==3) randomSound = 1;
-						Sound.playMusic(self.director,"map"+randomSound);
+						Sound.playMusic("map"+randomSound);
                         break;
-                        /* Unlock */
+                        /* Mini Game */
                     case 1:
-                        console.log('unlock');
-                        self.isDim = true;
-                        self.disableButton();
+                        console.log('mini game');
+                        self.switchToScene(sceneMiniGameIndex);
+						var randomSound = (1+(Math.random()*2)<<0);
+						if(randomSound==3) randomSound = 1;
+						Sound.playMusic("map"+randomSound);
                         break;
                         /* Option */
                     case 2:
@@ -128,7 +138,7 @@
                         console.log('credits');
                         self.isDim = true;
                         self.disableButton();
-						Sound.playMusic(self.director,"credits");
+						Sound.playMusic("credits");
                         var credits = [
                             "PROGRAM\n" +
                             "       Nguyễn Hoàng Tú\n\n" +
@@ -165,7 +175,7 @@
                         creditActor.setFn(function () {
                             self.isDim = false;
                             self.enableButton();
-							Sound.playMusic(self.director,"start");
+							Sound.playMusic("start");
                             self.removeChild(this);
                         });
                         self.addChild(creditActor);
@@ -394,7 +404,7 @@
         },
 
         complete: function () {
-			
+			if (this.eventComplete) this.eventComplete(this.choose);
             if (this.createTut) this.createTut(4-this.choose);
             return this;
         },

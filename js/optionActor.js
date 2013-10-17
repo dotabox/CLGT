@@ -88,8 +88,8 @@
 				if(this.scrollBar[i].AABB.contains(ex+this.x,ey+this.y)){
 					this.scrolling = i;
 					this.lastX = ex;
-					if(i==0) Sound.setSfxVolume(this.director,Math.round(100*(ex-this.startScroll)/this.scrollLength));
-					if(i==1) Sound.setMusicVolume(this.director,Math.round(100*(ex-this.startScroll)/this.scrollLength));
+					if(i==0) Sound.setSfxVolume(Math.round(100*(ex-this.startScroll)/this.scrollLength));
+					if(i==1) Sound.setMusicVolume(Math.round(100*(ex-this.startScroll)/this.scrollLength));
 					break;
 				}
 			}
@@ -99,10 +99,10 @@
 			if(this.scrolling!=-1){
 				switch(this.scrolling){
 					case 0:
-						if((ex>=this.startScroll)&&(ex<=this.stopScroll)) Sound.setSfxVolume(this.director,Math.round(100*(ex-this.startScroll)/this.scrollLength));
+						if((ex>=this.startScroll)&&(ex<=this.stopScroll)) Sound.setSfxVolume(Math.round(100*(ex-this.startScroll)/this.scrollLength));
 						break;
 					case 1:
-						if((ex>=this.startScroll)&&(ex<=this.stopScroll)) Sound.setMusicVolume(this.director,Math.round(100*(ex-this.startScroll)/this.scrollLength));
+						if((ex>=this.startScroll)&&(ex<=this.stopScroll)) Sound.setMusicVolume(Math.round(100*(ex-this.startScroll)/this.scrollLength));
 						break;
 					case 2:
 //						if(this.inBattle) break;

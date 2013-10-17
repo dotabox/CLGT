@@ -60,13 +60,12 @@
 			this.actor.setAnimationImageIndex([this.action * 4, this.action * 4 + 1, this.action * 4 + 2, this.action * 4 + 3]);
 		},
 		*/
-		updateState : function(state){ //update state
+		updateState : function(state,fps){ //update state
 			var updatedState = (state == "idle")?0:1;
+			if(updatedState == 0) this.setChangeFPS(200);
 			if(this.state != updatedState){
 				var w = this.frameNumber;
-				if(updatedState == 0){
-					this.setChangeFPS(200);
-				}
+				if(updatedState!=0) this.setChangeFPS(fps);
 				if(updatedState>=this.heightLength) return;
 				this.state = updatedState;
 				var animationIndex = [];

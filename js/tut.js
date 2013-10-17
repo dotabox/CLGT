@@ -197,8 +197,8 @@
 				var pointList = _this.currentMap.pointList[0];
 				var pointStart = pointList[0],pointEnd = pointList[pointList.length-1];
 				
-				var px1 = pointStart.y*TILE_SIZE, py1 = pointStart.x*TILE_SIZE,
-					px2= pointEnd.y*TILE_SIZE, py2 = pointEnd.x*TILE_SIZE;
+				var px1 = pointStart.y*TILE_SIZE_FOR_DRAWING, py1 = pointStart.x*TILE_SIZE_FOR_DRAWING,
+					px2= pointEnd.y*TILE_SIZE_FOR_DRAWING, py2 = pointEnd.x*TILE_SIZE_FOR_DRAWING;
 				var actor=new CAAT.Foundation.ActorContainer().
 							setBounds(0,0,_this.width,_this.height).
 							enableEvents(true);

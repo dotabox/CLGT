@@ -8,20 +8,18 @@
     CAAT.TileMap.prototype = {
         canvas: null,
         ctx: null,
-        name: '',
 		moveViewPortHorizontal:0,
 		moveViewPortVertical:0,
-        create: function (name, tileImage, data, collisionData,battleContainer,isMinimap) {
+        create: function (data, collisionData,battleContainer,isMinimap) {
 			var self = this;
 			this.battleContainer = battleContainer;
+			this.director = battleContainer.director;
             this.tileSize = TILE_SIZE;
-			this.tileImage = tileImage;
-            this.tileImages = new CAAT.SpriteImage().initialize(tileImage, tileImage.height / TILE_SIZE_FOR_DRAWING, tileImage.width / TILE_SIZE_FOR_DRAWING);
-            this.name = name;
-            this.data = data;
-            this.collisionData = collisionData;
-            this.mapHeight = this.data.length;
-            this.mapWidth = this.data[0].length;
+			this.layerNumber = data.length;
+			this.data = [];
+			for(var i=0;i<this.layerNumber;i++){
+				this.data[i] = this.readString(data[i],"data");
+			}
             this.viewportX = 0;
 			this.viewportY = 0;
 			this.viewportWidth = CANVAS_WIDTH/this.tileSize;
@@ -31,74 +29,28 @@
 			this.pointList = [];
 			this.pointListTotal = [];
             this.canvas = document.getElementById('canvas');
+			var collisionTemp = this.readString(collisionData);
+			//console.log(collisionTemp);
+			var outputCollision = [];
+			for(var i=0;i<collisionTemp.length/2;i++){
+				outputCollision[i] = [];
+				for(var j=0;j<collisionTemp[0].length/2;j++){
+					var tempCell = [
+										collisionTemp[i*2][j*2],
+										collisionTemp[i*2+1][j*2],
+										collisionTemp[i*2][j*2+1],
+										collisionTemp[i*2+1][j*2+1],
+									];
+					outputCollision[i][j] = this.readCell(tempCell);
+				}
+			}
+			this.collisionData = outputCollision;
+			this.mapHeight = collisionTemp.length;
+            this.mapWidth = collisionTemp[0].length;
+			console.log(this.mapHeight+" "+this.mapWidth);
 			this.isMinimap = isMinimap;
-            //this.ctx = this.canvas.getContext('2d'); 
 			
 			if(this.isMinimap) return this;
-			// Phần tính và đưa ra dữ liệu khoảng cách giữa các ô
-			this.distanceData = [];
-			var totalCell = this.mapHeight*this.mapWidth;
-			var Cell=function(id,x,y){
-				this.id=id;		
-				this.x=x;
-				this.y=y;
-				this.queue=[];
-				this.currentMonster = [];
-				this.currentTower;
-				this.bonusDmg=[];
-				this.bonusSpeed=[];
-			}
-			for (var i=0;i<this.mapHeight;i++){
-				for (var j=0;j<this.mapWidth;j++){
-					this.distanceData.push(
-						new Cell(i*self.mapWidth+j,
-							i*this.tileSize + this.tileSize/2,
-							j*this.tileSize + this.tileSize/2)
-						);
-				}		
-			}
-			for (var i=0;i<totalCell;i++){
-				for (var j=0;j<totalCell;j++){
-					D= getDistance(this.distanceData[i],this.distanceData[j]);
-					Queue={"ID":this.distanceData[j].id,"distance":D};
-					this.distanceData[i].queue.push(Queue);
-				}
-			}
-			var sortO = [];
-			var sortR = [];
-			var sortS = [];
-			for (var i=0;i<totalCell;i++){
-				var maxR = 0;
-				for (var j=0; j<totalCell; j++){
-					sortO[j] = this.distanceData[i].queue[j].ID;
-					sortR[j] = this.distanceData[i].queue[j].distance >> 0;
-					if(maxR < sortR[j]) maxR = sortR[j];
-				}
-				for(var j=0; j <= maxR; j++) {
-					sortS[j] = [];
-				}
-				for(var j=0; j < totalCell; j++) {
-					sortS[sortR[j]].push(sortO[j]);
-				}
-				this.distanceData[i].queue = [];
-				for(var j=0; j <= maxR; j++) {
-					if(sortS[j].length > 0) {
-						for(var k=0; k<sortS[j].length; k++) {
-							ID=sortS[j][k];
-							y=ID%this.mapWidth;
-							x=(ID-ID%this.mapWidth)/this.mapWidth>>0;
-							if (this.collisionData[x])Type=this.collisionData[x][y];//Dung de check nhung o tru ban dc
-							Queue={"ID":sortS[j][k],"distance":j,"type":Type};
-							this.distanceData[i].queue.push(Queue);
-						}
-					}
-				}
-			}
-			function getDistance(cell1,cell2) {
-				var dx = Math.pow((cell1.x - cell2.x),2);
-				var dy = Math.pow((cell1.y - cell2.y),2);
-				return Math.sqrt(dx + dy);
-			}
 			
 			// Phần tính đường đi ngắn nhất trong map
 			var Point = function(x,y){
@@ -111,18 +63,19 @@
 			var startPointNum = 0;
 			for(var i=0;i<mapHeight;i++){
 				for(var j=0;j<mapWidth;j++){
-					if((this.collisionData[i][j]>=3)&&(this.collisionData[i][j]<=9)){
+					if((collisionTemp[i][j]>=3)&&(collisionTemp[i][j]<=9)){
 						startPointNum++;
 					}
 				}
 			}
+			this.gateNumber = startPointNum;
 			for(var i=0;i<startPointNum;i++){
 				gScore = [], fScore = [], cameFrom = [], pointList= [];
-				this.pointList.push(findPath(this.collisionData,3+i));
+				this.pointList.push(findPath(collisionTemp,3+i));
 			}
 			for(var i=0;i<mapHeight;i++){
 				for (var j=0;j<mapWidth;j++){
-					if(this.collisionData[i][j]==2){
+					if(collisionTemp[i][j]==2){
 						this.pointListTotal.push(new Point(i,j));
 					}
 				}
@@ -146,9 +99,11 @@
 						}
 						if(map[i][j]==startIndex){
 							source = new Point(i,j);
+							//console.log(source);
 						}
 						if(map[i][j]==10){
 							destination = new Point(i,j);
+							//console.log(destination);
 						}
 					}
 					mapMatrix.push(rowArray);
@@ -249,6 +204,75 @@
 				}
 				return -1;
 			}
+			// Phần tính và đưa ra dữ liệu khoảng cách giữa các ô
+			
+			this.distanceData = [];
+			this.mapHeightCollision = this.mapHeight/2;
+			this.mapWidthCollision = this.mapWidth/2;
+			var totalCell = this.mapHeightCollision * this.mapWidthCollision ;
+			var Cell=function(id,x,y){
+				this.id=id;		
+				this.x=x;
+				this.y=y;
+				this.queue=[];
+				this.currentMonster = [];
+				this.currentTower;
+				this.bonusDmg=[];
+				this.bonusSpeed=[];
+			}
+			for (var i=0;i<this.mapHeightCollision;i++){
+				for (var j=0;j<this.mapWidthCollision;j++){
+					this.distanceData.push(
+						new Cell(i*self.mapWidthCollision+j,
+							i*this.tileSize + this.tileSize/2,
+							j*this.tileSize + this.tileSize/2)
+						);
+				}		
+			}
+			for (var i=0;i<totalCell;i++){
+				for (var j=0;j<totalCell;j++){
+					D= getDistance(this.distanceData[i],this.distanceData[j]);
+					Queue={"ID":this.distanceData[j].id,"distance":D};
+					this.distanceData[i].queue.push(Queue);
+				}
+			}
+			var sortO = [];
+			var sortR = [];
+			var sortS = [];
+			for (var i=0;i<totalCell;i++){
+				var maxR = 0;
+				for (var j=0; j<totalCell; j++){
+					sortO[j] = this.distanceData[i].queue[j].ID;
+					sortR[j] = this.distanceData[i].queue[j].distance >> 0;
+					if(maxR < sortR[j]) maxR = sortR[j];
+				}
+				for(var j=0; j <= maxR; j++) {
+					sortS[j] = [];
+				}
+				for(var j=0; j < totalCell; j++) {
+					sortS[sortR[j]].push(sortO[j]);
+				}
+				this.distanceData[i].queue = [];
+				for(var j=0; j <= maxR; j++) {
+					if(sortS[j].length > 0) {
+						for(var k=0; k<sortS[j].length; k++) {
+							ID=sortS[j][k];
+							y=ID%this.mapWidthCollision;
+							x=(ID-ID%this.mapWidthCollision)/this.mapWidthCollision>>0;
+							if (this.collisionData[x])Type=this.collisionData[x][y];//Dung de check nhung o tru ban dc
+							Queue={"ID":sortS[j][k],"distance":j,"type":Type};
+							this.distanceData[i].queue.push(Queue);
+						}
+					}
+				}
+			}
+			function getDistance(cell1,cell2) {
+				var dx = Math.pow((cell1.x - cell2.x),2);
+				var dy = Math.pow((cell1.y - cell2.y),2);
+				return Math.sqrt(dx + dy);
+			}
+			//*/
+			//console.log(this.distanceData);
             return this;
         },
 		
@@ -269,12 +293,8 @@
 			if(viewportY>=0) startRow = viewportY;
             var col = this.viewportWidth;
             var row = this.viewportHeight;
-			//ctx.drawImage(this.tileImage,0,0);
 			///*
 			var rectX,rectY,rectWidth,rectHeight;
-			
-			//if(this.isMinimap){
-				
 			rectX = startCol*TILE_SIZE;
 			rectY = startRow*TILE_SIZE;
 			rectWidth = col*TILE_SIZE;
@@ -285,21 +305,19 @@
 			col = this.mapWidth;
 			//}
 			if(time<1){
-				for (var i = startRow; i <= startRow+row+1; i++) {
-					
-					for (var j = startCol; j <= startCol+col+1; j++) {
-						if (j >= this.mapWidth || i >= this.mapHeight) continue;
-						if (this.data[i][j] != -1) {
-							//this.tileImages.paintTile(ctx, this.data[i][j], (j) * TILE_SIZE_FOR_DRAWING, (i) * TILE_SIZE_FOR_DRAWING); 
-							for(var x=0;x<TILE_SIZE/TILE_SIZE_FOR_DRAWING;x++){
-								for(var y=0;y<TILE_SIZE/TILE_SIZE_FOR_DRAWING;y++){
-									this.tileImages.paintTile(ctx,0,j*TILE_SIZE + x*TILE_SIZE_FOR_DRAWING,i*TILE_SIZE +y*TILE_SIZE_FOR_DRAWING);
-									this.tileImages.paintTile(ctx,this.data[i][j],j*TILE_SIZE + x*TILE_SIZE_FOR_DRAWING,i*TILE_SIZE +y*TILE_SIZE_FOR_DRAWING);
-								}
-							}
+				///*
+				var data = this.data;
+				for(var layerIndex = 0;layerIndex<this.layerNumber;layerIndex++){
+					var mapData = data[layerIndex];
+					for(var i=0;i<mapData.length;i++){
+						for (var j=0;j<mapData[i].length;j++){
+							var tileSet = this.director.getImage("tile"+(mapData[i][j][0]+1));
+							var tileImages = new CAAT.SpriteImage().initialize(tileSet, tileSet.height / TILE_SIZE_FOR_DRAWING, tileSet.width / TILE_SIZE_FOR_DRAWING);
+							tileImages.paintTile(ctx,mapData[i][j][1],j*TILE_SIZE_FOR_DRAWING,i*TILE_SIZE_FOR_DRAWING);
 						}
 					}
 				}
+				//*/
 			}
 			else if(this.firstPaint){
 				this.firstPaint = false;
@@ -307,6 +325,41 @@
 			}
 			//*/
         },
+		readString: function(dataString,type){
+			if(dataString[0]=="#") dataString = dataString.substr(1);
+			var splitData = dataString.split("#");
+			var width = splitData[0]<<0;
+			var index = 1;
+			var lineIndex = 0;
+			var mapData = [];
+			var tempArray = [];
+			for(index; index<splitData.length;index++) {
+				
+				if(lineIndex >= width) {
+					mapData.push(tempArray);
+					tempArray = [];
+					lineIndex=0;
+				}
+				lineIndex++;
+				var temp = splitData[index];
+				if(type=="data"){
+					var tile = temp.substr(0,2)>>0;
+					var value = temp.substr(2)>>0;
+					tempArray.push([tile,value]);
+				}
+				else tempArray.push(temp<<0);
+			}
+			mapData.push(tempArray);
+			return mapData;
+		},
+		readCell: function(cellArray){
+			for(var i=0;i<cellArray.length;i++){
+				if(cellArray[i]==0)	return 0;
+				//if((cellArray[i]==1)&&(i==cellArray.length-1)) return 1;
+				if(cellArray[i]>=2) return 2;
+			}
+			return 1;
+		}
     };
     extend(CAAT.TileMap, CAAT.Foundation.Actor);
 })();

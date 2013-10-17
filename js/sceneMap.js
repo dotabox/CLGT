@@ -21,12 +21,32 @@
 			var bttSize = 80;
 			var backImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('back'), 1, 1 );
 			var backBtt = new CAAT.Button().initialize(director, backImage, 0, 0, 0, 0, function(button){
-					Sound.playMusic(director,"start");
+					Sound.playMusic("start");
 	            	self.director.switchToScene(self.semiMainMap.sceneMenuIndex);
 	            })
 	        	.setLocation(0, 0)
 	        	.setScaleAnchored(bttSize / backImage.singleWidth, bttSize / backImage.singleHeight, 0, 0);
 	        this.addChild(backBtt);
+
+	        var skillTableImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('skillTable'), 1, 1 );
+	        var skillTableBtt = new CAAT.Button().initialize(director, skillTableImg, 0, 0, 0, 0, function(button){
+	            	self.director.switchToScene(self.semiMainMap.sceneSkillContainer.sceneIndex);
+	            })
+	        	.setLocation(bttSize, CANVAS_HEIGHT - bttSize)
+	        	.setScaleAnchored(bttSize / skillTableImg.singleWidth, bttSize / skillTableImg.singleHeight, 0, 0);
+	        this.addChild(skillTableBtt);
+
+	        var skillPointInfo = new CAAT.Foundation.UI.TextActor()
+                .setFont('30px Arial')
+                .setSize(bttSize, bttSize)
+                .setTextFillStyle('#333')
+                .setText(""+0)
+                .setLocation(2*bttSize, CANVAS_HEIGHT - bttSize);
+            this.addChild(skillPointInfo);
+
+            this.updateSkillPoint = function(pointLeft) {
+            	skillPointInfo.setText(""+pointLeft);
+            }
 			
 			var areaButtonSize = 150;
 			var castleImage = new CAAT.Foundation.SpriteImage().initialize(director.getImage('castle'), 1, 1 );

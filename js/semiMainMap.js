@@ -17,8 +17,8 @@
 
 	        this.historyData = [];
 	        this.semiMapNumber = 6;
-	        this.levelPerSemiMap = 3;
-	        this.levelAtCoLoa = 5;
+	        this.levelPerSemiMap = 4;
+	        this.levelAtCoLoa = 6;
 	        this.semiMapCoLoaIndex = 0;
 	        this.maxStarPerLevel = 5;
 
@@ -35,9 +35,41 @@
         			this.historyData[i][j] = {};
         			this.historyData[i][j].isLock = true;
         			this.historyData[i][j].star = 0;
+        			this.historyData[i][j].playTimes = 0;
+        			this.historyData[i][j].highScore = 0;
+        			this.historyData[i][j].mapID = 2+(Math.random()*10<<0);
+        			this.historyData[i][j].storyBegin = function() {};
+
+        			if(j == this.historyData[i].lvlNumber-1) {
+        				this.historyData[i][j].nextUnlock = [];
+        			}
+        			else {
+        				this.historyData[i][j].nextUnlock = [j+1];
+        			}
         		}
         		this.historyData[i][0].isLock = false;
+        		this.historyData[i][0].nextUnlock = [1, 2];
+        		this.historyData[i][1].nextUnlock = [3];
+        		this.historyData[i][2].nextUnlock = [3];
 	        }
+	        this.historyData[this.semiMapCoLoaIndex][0].mapID = 1;
+	        this.historyData[this.semiMapCoLoaIndex][0].storyBegin = function() {
+	        	var mapData = data.Map[self.mapindex-1];
+				var StoryData=mapData.StoryData;
+				var actors=[];
+				for (m=0;m<StoryData.actors.length;m++){
+					var actor= new CAAT.MyActor().initialize(director, StoryData.actors[m].name, StoryData.actors[m].img, StoryData.actors[m].sprite[0], StoryData.actors[m].sprite[1]);
+					if (StoryData.actors[m].animation) actor.setAnimation(StoryData.actors[m].animation);
+					actors.push(actor);
+				}
+				var sceneDatas = StoryData.sceneDatas;
+				var log = new CAAT.StoryScene().initialize(director, 0, 0, actors, sceneDatas).enableEvents(true);
+				log.setBounds(0, 0, 800, 600);
+				self.battleContainer.addChild(log);
+				log.eventComplete=function(){
+					log.setExpired();
+				}
+	        };
 
 			return this;
 		},
@@ -57,6 +89,7 @@
 
 		setMap: function(director, bgColor, id) {
 			var self = this;
+			self.curID = id;
 
 			this.setFillStyle(bgColor);
 
@@ -115,26 +148,67 @@
 			var flagNumber = self.historyData[id].lvlNumber;
 			for(var i = 0; i < flagNumber; i++) {
 				flagBtt[i] = new CAAT.Button().initialize(director, flagImage, 0, 0, 0, 0, function(button){
-		            	i = this.idInArray;
-						
-				        // call battle container
-		            	self.mapindex = 1;
-		            	self.initMap(director);
-		            	director.switchToScene(1);
-						
-		            	// sau battle, open next flag, cho no 2 sao lam demo
-						var currentBtt = this;
-						self.updateWinBattle = function(star){
-							
-							setFlagIsLock((i+1 < flagNumber) ? (i+1) : i, false);
-							self.historyData[id][i].star = star;
-							addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
+		            	
+						//Load Screen 
+						///*
+						self.loadingScreen = new CAAT.ActorContainer().setBounds(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+						self.loadingScreen.paint = function(director,time){
+							var ctx = director.ctx;
+							ctx.drawImage(director.getImage("loadingScreen"),0,0);
+							ctx.fillStyle = "#FFF";
+							ctx.font = "30px Times New Roman";
+							var text = "LOADING...";
+							var measure = ctx.measureText(text).width;
+							ctx.fillStyle = "#0FF";
+							ctx.fillRect(this.width-measure-25,this.height-55,measure+10,50);
+							ctx.fillStyle = "#840";
+							ctx.fillText(text,this.width-measure-20,this.height-20);
+							if(time>0) {
+								callBattle();
+								self.removeChild(self.loadingScreen);
+							}
 						}
+						self.addChild(self.loadingScreen);
+						//*/
+						
+						var callBattle = function(){
+							i = button.idInArray;
+							self.curFlag = i;
+							// call battle container
+							//self.mapindex = 1//+Math.random()*12<<0;
+							self.mapindex = self.historyData[id][i].mapID;
+							if(self.mapindex>=13) self.mapindex = 12;
+							self.initMap(director);
+							//-----------------------------------------
+							self.historyData[id][i].storyBegin();
+							//-------------------------------------------
+							director.switchToScene(1);
+							
+							// sau battle, open next flag, cho no 2 sao lam demo
+							var currentBtt = button;
+							
+							self.updateWinBattle = function(star){
+								i = self.curFlag;
+				            	for(var f = 0; f < self.historyData[id][i].nextUnlock.length; f++) {
+				            		setFlagIsLock(self.historyData[id][i].nextUnlock[f], false);
+				            	}
+				            	self.historyData[id][i].star = star;
+				            	self.sceneSkillContainer.addNewPoint(star*10);
+				            	self.historyData[id][i].playTimes++;
+				            	addStar(currentBtt, self.historyData[id][i].star, self.maxStarPerLevel);
+							}
+						}
+						
 		            })
 	            	.setLocation(i*flagImage.width*2, 200);
 	            flagBtt[i].idInArray = i;
 	            setFlagIsLock(i, self.historyData[id][i].isLock);
 	            this.addChild(flagBtt[i]);
+			}
+			flagBtt[1].setLocation(flagBtt[1].x, flagBtt[1].y - flagImage.height);
+			flagBtt[2].setLocation(flagBtt[1].x, flagBtt[1].y + flagImage.height*2);
+			for(var i = 3; i < flagNumber; i++) {
+				flagBtt[i].setLocation(flagBtt[i].x - flagImage.width*2, flagBtt[i].y);
 			}
 
 			return this;

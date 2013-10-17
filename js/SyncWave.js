@@ -3,15 +3,14 @@
         return (this);
     }
     CAAT.SyncWave.prototype = {
-		// id: id của map, level: level người chơi, num_gate: số điểm xuất phát, arr_mon: tổng số quái mỗi wave
-        init: function (director, battleContainer, id, level, num_gate, arr_mon) {
+		// id: id của map, level: level người chơi, num_gate: số điểm xuất phát
+        init: function (director, battleContainer, id, level, num_gate) {
 
             this.id = id;
             this.level = level;
             this.director = director;
             this.battleContainer = battleContainer;
             this.num_gate = num_gate;
-            this.arr_mon = arr_mon;
 			
             return this;
         },
@@ -46,8 +45,8 @@
 					wave[i].push(a1);
 				}
 			}
-			console.log(wave);
-			wave = [[[1,2,0],[0,2,1],[2,2,0],[3,2,1],[4,2,0],[5,2,1],[6,2,0],[7,2,1],[8,2,0],[9,2,1],[10,2,0],[11,2,1],[12,2,0],[13,2,1],[14,2,0]]];
+			//console.log(wave);
+			//wave = [[[1,2,0],[0,2,1],[2,2,0],[3,2,1],[4,2,0],[5,2,1],[6,2,0],[7,2,1],[8,2,0],[9,2,1],[10,2,0],[11,2,1],[12,2,0],[13,2,1],[14,2,0]]];
 			data.Map[this.id].Wave=wave;
         },
 		random: function (x) {

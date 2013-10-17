@@ -9,35 +9,47 @@ var currentMap;
 var monsterAddTime = 750;
 var addedMonster = 0;
 */
+var sceneMenuIndex = 0;
+var sceneBattleIndex = 1;
+var sceneMenuBattleIndex = 2;
+var sceneMapIndex =sceneMainMenuIndex= 3;
+var sceneMiniGameIndex = 4;		
+var sceneSkillIndex = 5;
 window.onload = function () {
     var loadedImage = 0;
+	var loadedAudio = 0;
 	var loadedPercent = 0;
 	var loadAudios,loadImages;
     windowLoad();
 	function windowLoad(){
-		var canvas = document.getElementById("canvas");
-		var context = canvas.getContext("2d");
-		var drawIntervalID = setInterval(paint, 24);
+		var director = new CAAT.Foundation.Director().initialize(CANVAS_WIDTH, CANVAS_HEIGHT, document.getElementById("canvas"));
+		var sceneMenu = director.createScene();
 		var startTime = +new Date();
-		var currentIndex = 0;
-		function paint(){
-			context.fillStyle = "#0F0";
-			context.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-			context.fillStyle = "#0FF";
-			context.font = "30px Times New Roman";
-			context.strokeRect(300,200,200,20);
-			context.fillRect(300,200,200*loadedPercent/100,20)
-			context.fillText(loadedPercent+"%",300,190);
-			
+        var loadActor = new CAAT.Foundation.ActorContainer().setBounds(0,0,director.width,director.height);
+		sceneMenu.addChild(loadActor);
+		loadActor.paint = function(director,time){
+			var ctx = director.ctx;
+			ctx.fillStyle = "#0F0";
+			ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+			ctx.fillStyle = "#0FF";
+			ctx.font = "30px Times New Roman";
+			ctx.strokeRect(300,200,200,20);
+			ctx.fillRect(300,200,200*loadedPercent/100,20)
+			ctx.fillText(loadedPercent+"%",300,190);
+			//(loadedImage==0)? ctx.fillText("LOADING SOUND...",300,250):ctx.fillText("LOADING IMAGE...",300,250);
+			ctx.fillText("LOADING...",300,250);
 			if(loadAudios&&loadImages&&(+new Date() - startTime>1000)) {
-				clearInterval(drawIntervalID);
-				run(loadImages,loadAudios);
+				run(director,loadImages,loadAudios);
+				sceneMenu.removeChild(this);
 			}
 		}
 		load();
+		CAAT.loop(60);
 	}
     function load() {
-		var audioElement = new CAAT.AudioPreloader().__init().
+		
+		
+		var audioElement = new AudioPreloader().
 			addElement("thunder1", "sound/sfx/thunder1.ogg").
 			addElement("thunder2", "sound/sfx/thunder2.ogg").
 			addElement("thunder3", "sound/sfx/thunder3.ogg").
@@ -88,7 +100,16 @@ window.onload = function () {
             addElement("towerEarth1", "img/earth_tower.png").
             addElement("towerEarth2", "img/earth_tower2.png").
             addElement("tile1", "img/tile1.png").
-            addElement("bullet1", "img/bullet1.png").            
+            addElement("tile2", "img/tile2.png").
+            addElement("tile3", "img/tile3.png").
+            addElement("tile4", "img/tile4.png").
+            addElement("tile5", "img/tile5.png").
+            addElement("tile6", "img/tile6.png").
+            addElement("tile7", "img/tile7.png").
+            addElement("tile8", "img/tile8.png").
+            addElement("tile12", "img/tile12.png").
+            addElement("bulletArrow", "img/arrow1.png").
+            addElement("bullet1", "img/bullet1.png").        
             addElement("bullet2", "img/star1.png").
             addElement("flag", "img/Flag.png").
 			addElement("star", "img/star.png").
@@ -105,13 +126,13 @@ window.onload = function () {
             addElement("dmg", "img/dmg.png").
             addElement("redArrow", "img/arrow_red.png").
 			addElement("button1", "img/button.png").
-            addElement("towerEff0", "img/Image 39.png").
-            addElement("towerEff1", "img/Image 45.png").
-            addElement("towerEff2", "img/Image 54.png").
-            addElement("towerEff3", "img/Image 52.png").
-            addElement("towerEff4", "img/Image 44.png").
-            addElement("towerEff5", "img/Image 38.png").
-            addElement("towerEff6", "img/Image 33.png").
+            addElement("towerEff0", "img/Image39.png").
+            addElement("towerEff1", "img/Image45.png").
+            addElement("towerEff2", "img/Image54.png").
+            addElement("towerEff3", "img/Image52.png").
+            addElement("towerEff4", "img/Image44.png").
+            addElement("towerEff5", "img/Image38.png").
+            addElement("towerEff6", "img/Image33.png").
 			addElement("lightning", "img/lightning_0.png").
             addElement("setting", "img/setting.png").
             addElement("cancel", "img/cancer.png").
@@ -120,10 +141,10 @@ window.onload = function () {
             addElement("skillThunder", "img/skillThunder.png").
             addElement("skillIce", "img/skillIce.png").
             addElement("skillCircle", "img/skillCircle.png").
-            addElement("skillAnimation1", "img/ani 48.png").
-            addElement("skillAnimation2", "img/ani 588.png").
+            addElement("skillAnimation1", "img/ani48.png").
+            addElement("skillAnimation2", "img/ani588.png").
             addElement("cloud", "img/cloud.png").
-            addElement("skillAnimation3", "img/ani 998.png").
+            addElement("skillAnimation3", "img/ani998.png").
             addElement("elementIcon0", "img/status/steel2_icon.png").
             addElement("elementIcon1", "img/status/tree_icon.png").
             addElement("elementIcon2", "img/status/rock2_icon.png").
@@ -162,6 +183,7 @@ window.onload = function () {
             addElement("skillIcon3", "img/buttons/tho.png").
             addElement("skillIcon4", "img/buttons/thuy.png").
             addElement("skillIcon5", "img/buttons/hoa.png").
+            addElement("skillTable", "img/buttons/skillTable.jpg").
             addElement("pauseButton", "img/buttons/pauseButton.png").
 			addElement("startButton", "img/buttons/start.png").
             addElement("talk1", "img/talk1.png").
@@ -193,53 +215,56 @@ window.onload = function () {
             addElement("wood", "img/wood.png").
             addElement("earth", "img/earth.png").
 			
+            addElement("loadingScreen", "img/loading.jpg").
+            addElement("loginButton", "img/buttons/login.png").
             addElement("backgroundBoard", "img/backgroundBoard.jpg");
-			
+		
+		var multipleAudioBy = 2;
+		var elementLength = multipleAudioBy*audioElement.elements.length + imageElement.elements.length;
 		audioElement.load (
 		function loadAll(audios){
 			loadAudios = audios;
-			imageElement.load(function onAllAssetsLoaded(images) {
-				loadImages = images;
-            },
-			function onEachLoad(index){
-				loadedImage++;
-				var length = imageElement.elements.length;
-				loadedPercent = Math.round(loadedImage/length*100);
-			});
+			
 		},
 		function loadEach(audio){
-		
+			loadedAudio++;
+			loadedPercent = Math.round((multipleAudioBy*loadedAudio + loadedImage)/elementLength*100);
 		});
-        
+        imageElement.load(function onAllAssetsLoaded(images) {
+			loadImages = images;
+		},
+		function onEachLoad(index){
+			loadedImage++;
+			loadedPercent = Math.round((multipleAudioBy*loadedAudio + loadedImage)/elementLength*100);
+		});
     }
-    function run(images,audios) {
+    function run(director,images,audios) {
         CAAT.DEBUG = 1;
         console.log('thanhdeptrai');
-        var director = new CAAT.Foundation.Director().initialize(CANVAS_WIDTH, CANVAS_HEIGHT, document.getElementById("canvas"));
+        
         director.setImagesCache(images);
-		for(var i=0;i<audios.length;i++) director.addAudio(audios[i].id,audios[i].path);
-		Sound.playMusic(director,"start");
-		var sceneMenu = director.createScene();
+		Sound.initialize(audios);
+		Sound.playMusic("start");
+		var sceneMenu = director.currentScene;
 		var sceneBattle = director.createScene();
 		var sceneMenuBattle = director.createScene();
         //main map
 		var sceneMap = director.createScene();
-		var sceneGame = director.createScene();
-		var sceneSkill = director.createScene();		
+		var sceneMiniGame = director.createScene();
+		var sceneSkill = director.createScene();
 		
 		var sceneMapContainer = new CAAT.SceneMapCtn().create(director);
 		sceneMap.addChild(sceneMapContainer);
-		var sceneGameContainer = new CAAT.SceneGameCtn().create(director);
-		sceneGame.addChild(sceneGameContainer);
+		var MiniGameContainer = new CAAT.MiniGameContainer().initialize(director);
+		sceneMiniGame.addChild(MiniGameContainer);
 		var sceneSkillContainer = new CAAT.SceneSkill().create(director);
 		sceneSkill.addChild(sceneSkillContainer);
 
-		var sceneMenuIndex = 0;
-		var sceneBattleIndex = 1;
-		var sceneMenuBattleIndex = 2;
-		var sceneMapIndex =sceneMainMenuIndex= 3;
-		var sceneGameIndex = 4;		
-		var sceneSkillIndex = 5;
+		sceneSkillContainer.sceneIndex = sceneSkillIndex;
+		sceneMapContainer.sceneIndex = sceneMapIndex;
+
+		sceneSkillContainer.sceneMap = sceneMapContainer;
+
         //load user data
 		var user = new CAAT.User().init(0, 0, 1, 0, 0, 0, [0,1,2,3,4,5,6,7,8,9,10], []);
 		
@@ -451,13 +476,6 @@ window.onload = function () {
 		    //menu.initialize(director, 3);
 		    
 		}
-
-       
-        
-
-		
-		
-        CAAT.loop(60);
     }
 }
 
