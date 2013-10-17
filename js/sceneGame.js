@@ -25,6 +25,7 @@
 			var gameImage = new CAAT.SpriteImage().initialize(director.getImage("skillTable"),1,1);
 			var gameButton = new CAAT.Button().initialize(director,gameImage,0,0,0,0,function(){
 				console.log("game on");
+				self.loadGame(director,0);
 			}).
 				setLocation(100,200).
 				setScaleAnchored(3/2*buttonSize/gameImage.singleWidth,3/2*buttonSize/gameImage.singleHeight,0,0);
@@ -39,7 +40,33 @@
 			var text = "Mini Game";
 			var measure = ctx.measureText(text).width;
 			ctx.fillText(text,this.width/2-measure/2,50);
-		}
+		},
+		loadjs: function(src){
+			var file=document.createElement("script");
+			file.src=src;
+			document.body.appendChild(file);
+		},
+		loadGame: function (director,id) {
+			var _self=this;
+			switch(id){
+			// Ban no than
+			case 0:
+				_self.loadjs("miniGame/BanNoThan/js/main.js");
+				_self.loadjs("miniGame/BanNoThan/js/draw.js");
+				var imageElement = new CAAT.Module.Preloader.Preloader().
+				addElement("bn_bg", "miniGame/BanNoThan/imgs/bg.png").
+				addElement("bn_player", "miniGame/BanNoThan/imgs/player.png").
+				addElement("bn_enemy", "miniGame/BanNoThan/imgs/enemy.png").
+				addElement("bn_bullet", "miniGame/BanNoThan/imgs/bullet.png").
+				addElement("bn_bulletenemy", "miniGame/BanNoThan/imgs/bullet_enemy.png").
+				load(function onAllAssetsLoaded(images) {					
+					bannothan(images,director);
+				});
+				return this;
+				break;
+			}
+            
+        }
 	};
 	extend(CAAT.MiniGameContainer, CAAT.Foundation.ActorContainer);
 	 

@@ -6,7 +6,7 @@
     CAAT.Player.prototype = {
         init: function(director, Main){
         	this.Main=Main;
-        	var PlayerImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('player'), 1, 1 );
+        	var PlayerImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('bn_player'), 1, 1 );
         	this.enableEvents(false)
         		.setBackgroundImage(PlayerImg)
         		.setScaleAnchored(1,1,0.5,0.5);
@@ -43,7 +43,7 @@
     }
     CAAT.Bullet.prototype = {
         init: function(director){
-        	var BulletImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('bullet'), 1, 1 );
+        	var BulletImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('bn_bullet'), 1, 1 );
         	this.setBackgroundImage(BulletImg)
         		.enableEvents(false)
         		.setScaleAnchored(1,1,0.5,0.5);
@@ -74,7 +74,7 @@
     }
     CAAT.BulletEnemy.prototype = {
         init: function(director){
-        	var BulletImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('bulletenemy'), 1, 1 );
+        	var BulletImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('bn_bulletenemy'), 1, 1 );
         	this.setBackgroundImage(BulletImg)
         		.enableEvents(false)
         		.setScaleAnchored(1,1,0.5,0.5);
@@ -116,7 +116,7 @@
     }
     CAAT.Enemy.prototype = {
         init: function(director,Main){
-        	var EnemyImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('enemy'), 1, 1 );
+        	var EnemyImg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('bn_enemy'), 1, 1 );
         	this.Main=Main;
         	this.setBackgroundImage(EnemyImg)
         		.enableEvents(false)

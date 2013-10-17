@@ -1,31 +1,10 @@
-﻿//Global var
-var CANVAS_WIDTH = 800;
-var CANVAS_HEIGHT = 600;
-//------------------
-window.onload = function () {
-		load();
-	
-    function load() {
+﻿    function bannothan(images,director) {  
 		
-			
-        var imageElement = new CAAT.Module.Preloader.Preloader().
-            addElement("bg", "imgs/bg.png").
-            addElement("player", "imgs/player.png").
-            addElement("enemy", "imgs/enemy.png").
-            addElement("bullet", "imgs/bullet.png").
-            addElement("bulletenemy", "imgs/bullet_enemy.png").
-            load(function onAllAssetsLoaded(images) {
-                run(images);
-            });
-    }
-}
-    function run(images) {
-        CAAT.DEBUG = 1;        
-        var director = new CAAT.Foundation.Director().initialize(CANVAS_WIDTH, CANVAS_HEIGHT, document.getElementById("canvas"));
         director.setImagesCache(images);
-		var SceneMain = director.createScene();
+		var SceneMain = director.currentScene;
+		SceneMain.emptyChildren();
 		var Main = new CAAT.Foundation.ActorContainer().setBounds(0,0,CANVAS_WIDTH, CANVAS_HEIGHT);
-		var BGimg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('bg'), 1, 1 );
+		var BGimg = new CAAT.Foundation.SpriteImage().initialize(director.getImage('bn_bg'), 1, 1 );
 		var BG = new CAAT.Background().setBG(BGimg);
 		SceneMain.addChild(Main);
 		Main.isEnd=false;
