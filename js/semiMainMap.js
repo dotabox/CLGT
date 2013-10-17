@@ -37,7 +37,7 @@
         			this.historyData[i][j].star = 0;
         			this.historyData[i][j].playTimes = 0;
         			this.historyData[i][j].highScore = 0;
-        			this.historyData[i][j].mapID = 2+(Math.random()*10<<0);
+        			this.historyData[i][j].mapID = 2;//+(Math.random()*10<<0);	// demo cac map ko phai map tutorail se co ID la 2, map tut ID la 1
         			this.historyData[i][j].storyBegin = function() {};
 
         			if(j == this.historyData[i].lvlNumber-1) {
@@ -70,6 +70,34 @@
 					log.setExpired();
 				}
 	        };
+
+
+	        /*
+			data 1 map: [mapID, localID, star, highScore, playTimes]
+			localID: 0 -> 5, 0 is CoLoa
+			*/
+			var serverData = [[1, 0, 4, 4123, 2], [2, 0, 3, 5321, 3], [2, 2, 3, 5321, 3]];
+
+			if(serverData.length > 0) {
+				for(var m = 0; m < serverData.length; m++) {
+					var localID = serverData[m][1];
+					var localLength;
+					if(localID == self.semiMapCoLoaIndex) {
+		        		localLength = self.levelAtCoLoa;
+		        	}
+		        	else {
+		        		localLength = self.levelPerSemiMap;
+		        	}
+					for(var j = 0; j < localLength; j++) {
+						if(self.historyData[localID][j].mapID == serverData[m][0]) {
+							self.historyData[localID][j].star = serverData[m][2];
+							self.historyData[localID][j].highScore = serverData[m][3];
+							self.historyData[localID][j].playTimes = serverData[m][4];
+							self.historyData[localID][j].isLock = false;
+						}
+					}
+				}
+			}
 
 			return this;
 		},
