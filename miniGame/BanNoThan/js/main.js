@@ -1,6 +1,6 @@
 ﻿    function bannothan(images,director) {  
+		for(var i=0;i<images.length;i++) director.addImage(images[i].id,images[i].image);
 		
-        director.setImagesCache(images);
 		var SceneMain = director.currentScene;
 		SceneMain.emptyChildren();
 		var Main = new CAAT.Foundation.ActorContainer().setBounds(0,0,CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -9,7 +9,24 @@
 		SceneMain.addChild(Main);
 		Main.isEnd=false;
 		Main.addChild(BG);
-
+		var menuImage = new CAAT.SpriteImage().initialize(director.getImage("menuListButton"),5,2);
+		var quitButton = new CAAT.Button().initialize(director,menuImage,6,7,6,7,function(){
+			var MiniGameContainer = new CAAT.MiniGameContainer().initialize(director);
+			SceneMain.emptyChildren();
+			SceneMain.addChild(MiniGameContainer);
+		}).
+			setLocation(CANVAS_WIDTH-170,CANVAS_HEIGHT-80);
+		
+		;
+		var restartButton = new CAAT.Button().initialize(director,menuImage,0,1,1,0,function(){
+			
+		}).
+			setLocation(CANVAS_WIDTH-170,CANVAS_HEIGHT-50);
+		Main.addChild(quitButton);
+		Main.addChild(restartButton);
+		console.log("dsds");
+		console.log(quitButton);
+		
 		var Player= new CAAT.Player().init(director,Main);
 		
 		Main.addChild(Player);

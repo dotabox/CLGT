@@ -176,9 +176,9 @@
 			var flagNumber = self.historyData[id].lvlNumber;
 			for(var i = 0; i < flagNumber; i++) {
 				flagBtt[i] = new CAAT.Button().initialize(director, flagImage, 0, 0, 0, 0, function(button){
-		            	
 						//Load Screen 
 						///*
+						self.loadBattle = true;
 						self.loadingScreen = new CAAT.ActorContainer().setBounds(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 						self.loadingScreen.paint = function(director,time){
 							var ctx = director.ctx;
@@ -191,12 +191,15 @@
 							ctx.fillRect(this.width-measure-25,this.height-55,measure+10,50);
 							ctx.fillStyle = "#840";
 							ctx.fillText(text,this.width-measure-20,this.height-20);
-							if(time>0) {
-								callBattle();
+							if(self.loadBattle&&(time>0)) {
+								self.loadBattle = false;
 								self.removeChild(self.loadingScreen);
+								callBattle();
+								
 							}
 						}
 						self.addChild(self.loadingScreen);
+						
 						//*/
 						
 						var callBattle = function(){
