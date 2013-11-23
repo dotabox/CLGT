@@ -38,7 +38,23 @@
         			this.historyData[i][j].playTimes = 0;
         			this.historyData[i][j].highScore = 0;
         			this.historyData[i][j].mapID = 2;//+(Math.random()*10<<0);	// demo cac map ko phai map tutorail se co ID la 2, map tut ID la 1
-        			this.historyData[i][j].storyBegin = function() {};
+        			this.historyData[i][j].storyBegin = function() {
+        				var mapData = data.Map[self.mapindex-1];
+						var StoryData=mapData.StoryData;
+						var actors=[];
+						for (m=0;m<StoryData.actors.length;m++){
+							var actor= new CAAT.MyActor().initialize(director, StoryData.actors[m].name, StoryData.actors[m].img, StoryData.actors[m].sprite[0], StoryData.actors[m].sprite[1]);
+							if (StoryData.actors[m].animation) actor.setAnimation(StoryData.actors[m].animation);
+							actors.push(actor);
+						}
+						var sceneDatas = StoryData.sceneDatas;
+						var log = new CAAT.StoryScene().initialize(director, 0, 0, actors, sceneDatas).enableEvents(true);
+						log.setBounds(0, 0, 800, 600);
+						self.battleContainer.addChild(log);
+						log.eventComplete=function(){
+							log.setExpired();
+						}
+        			};
 
         			if(j == this.historyData[i].lvlNumber-1) {
         				this.historyData[i][j].nextUnlock = [];
@@ -53,24 +69,7 @@
         		this.historyData[i][2].nextUnlock = [3];
 	        }
 	        this.historyData[this.semiMapCoLoaIndex][0].mapID = 1;
-	        this.historyData[this.semiMapCoLoaIndex][0].storyBegin = function() {
-	        	var mapData = data.Map[self.mapindex-1];
-				var StoryData=mapData.StoryData;
-				var actors=[];
-				for (m=0;m<StoryData.actors.length;m++){
-					var actor= new CAAT.MyActor().initialize(director, StoryData.actors[m].name, StoryData.actors[m].img, StoryData.actors[m].sprite[0], StoryData.actors[m].sprite[1]);
-					if (StoryData.actors[m].animation) actor.setAnimation(StoryData.actors[m].animation);
-					actors.push(actor);
-				}
-				var sceneDatas = StoryData.sceneDatas;
-				var log = new CAAT.StoryScene().initialize(director, 0, 0, actors, sceneDatas).enableEvents(true);
-				log.setBounds(0, 0, 800, 600);
-				self.battleContainer.addChild(log);
-				log.eventComplete=function(){
-					log.setExpired();
-				}
-	        };
-
+	        this.historyData[this.semiMapCoLoaIndex][1].mapID = 2;
 
 	        /*
 			data 1 map: [mapID, localID, star, highScore, playTimes]
